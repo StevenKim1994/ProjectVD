@@ -15,12 +15,14 @@ class PROJECTVD_API AVDTitleController : public APlayerController
 	GENERATED_BODY()
 
 private:
-
 	UPROPERTY()
 	TSubclassOf<class UVDTitlePanelUserWidget> TitlePanelUserWidgetClass;
 
 	UPROPERTY()
 	TWeakObjectPtr<class UVDTitlePanelUserWidget> TitlePanelUserWidget;
+
+	UPROPERTY()
+	TObjectPtr <class AVDTitleMovieActor> TitleMovieActor;
 
 public:
 	AVDTitleController();

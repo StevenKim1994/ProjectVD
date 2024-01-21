@@ -16,8 +16,4 @@ class PROJECTVD_API AVDGameMode : public AGameModeBase
 
 public:
 	AVDGameMode();
-
-	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
-
-	
 };

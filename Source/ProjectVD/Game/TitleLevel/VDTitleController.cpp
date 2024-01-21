@@ -2,25 +2,45 @@
 
 
 #include "Game/TitleLevel/VDTitleController.h"
-#include "UI/Title/VDTitlePanelUserWidget.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "UI/Title/VDTitlePanelUserWidget.h"
+#include "ETC/VDTitleMovieActor.h"
 AVDTitleController::AVDTitleController()
 {
 	static ConstructorHelpers::FClassFinder<UVDTitlePanelUserWidget> TitlePanelUserWidgetRef(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/TitleUI/TitleUIPanel.TitleUIPanel_C'"));
 	if(TitlePanelUserWidgetRef.Class)
 	{
 		TitlePanelUserWidgetClass = TitlePanelUserWidgetRef.Class;
-	}
-	bShowMouseCursor = true;
+	}	
+	SetShowMouseCursor(true);
 }
 
 void AVDTitleController::BeginPlay()
 {
 	Super::BeginPlay();
+	SetInputMode(FInputModeUIOnly());
+	TArray<AActor*> WorldActorArray;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AVDTitleMovieActor::StaticClass(), WorldActorArray);
+	for(auto& ActorElement : WorldActorArray)
+	{
+		TitleMovieActor = Cast<AVDTitleMovieActor>(ActorElement);
+		if (TitleMovieActor)
+		{
+			break;
+		}
+	}
 
 	TitlePanelUserWidget = CreateWidget<UVDTitlePanelUserWidget>(this, TitlePanelUserWidgetClass);
 	if(TitlePanelUserWidget.IsValid())
 	{
+		TitlePanelUserWidget->OnClickStartButtonEvent.AddLambda([&] {    UGameplayStatics::OpenLevel(this, TEXT("Stage")); });
+		TitlePanelUserWidget->OnClickExitButtonEvent.AddLambda([&]{	UKismetSystemLibrary::QuitGame(GetWorld(), GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);});
+		TitlePanelUserWidget->OnToggleTitleMovieMuteEvent.AddLambda([&](bool ChangeState)
+			{
+				TitleMovieActor->SetChangeState(ChangeState);
+			});
 		TitlePanelUserWidget->AddToViewport();
 	}
 }

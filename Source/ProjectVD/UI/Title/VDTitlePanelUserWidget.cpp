@@ -1,22 +1,40 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UI/Title/VDTitlePanelUserWidget.h"
-#include "Kismet/GameplayStatics.h"
 
 void UVDTitlePanelUserWidget::OnClickStartButton()
 {
-	UGameplayStatics::OpenLevel(this, TEXT("Stage"));
+	if(OnClickStartButtonEvent.IsBound())
+	{
+		OnClickStartButtonEvent.Broadcast();
+	}
 }
 
 void UVDTitlePanelUserWidget::OnClickExitButton()
 {
-	UE_LOG(LogTemp, Log, TEXT("ExitClick!"));
-	UKismetSystemLibrary::QuitGame(GetWorld(), GetWorld()->GetFirstPlayerController() , EQuitPreference::Quit, false);
+	if (OnClickExitButtonEvent.IsBound())
+	{
+		OnClickExitButtonEvent.Broadcast();
+	}
+}
+
+void UVDTitlePanelUserWidget::OnToggleTitleMovieMute(bool ChangedToggleValue) 
+{
+	if(OnToggleTitleMovieMuteEvent.IsBound())
+	{
+		OnToggleTitleMovieMuteEvent.Broadcast(ChangedToggleValue);
+	}
 }
 
 void UVDTitlePanelUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	if(TitleBackgroundMediaPlayer)
+	{
+		TitleBackgroundMediaPlayer->OpenSource(TitleBackgroundMediaSource);
+	}
+
 	TitleTextWidget = Cast<UTextBlock>(GetWidgetFromName("GameTitleName"));
 	if (TitleTextWidget)
 	{
@@ -46,5 +64,17 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 		
 		ExitButtonWidget->OnClicked.AddDynamic(this, &UVDTitlePanelUserWidget::OnClickExitButton);
 	}
+
+	TitleMovieSoundMuteToggleWidget = Cast<UCheckBox>(GetWidgetFromName("TitleMovieMuteToggle"));
+	if(TitleMovieSoundMuteToggleWidget)
+	{
+		UTextBlock* ToggleText = Cast<UTextBlock>(TitleMovieSoundMuteToggleWidget->GetChildAt(0));
+		if(ToggleText)
+		{
+			ToggleText->SetText(FText::FromString(FString(TEXT("MovieSoundMute"))));
+		}
+		TitleMovieSoundMuteToggleWidget->OnCheckStateChanged.AddDynamic(this, &UVDTitlePanelUserWidget::OnToggleTitleMovieMute);
+	}
+
 
 }
