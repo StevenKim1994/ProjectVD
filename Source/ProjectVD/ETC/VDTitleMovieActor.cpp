@@ -35,11 +35,11 @@ void AVDTitleMovieActor::SetChangeState(bool ChangeState)
 {
 	if(ChangeState)
 	{
-		TitleMovieSoundComponent->SetMediaPlayer(nullptr);
+		TitleMovieSoundComponent->GetAudioComponent()->SetVolumeMultiplier(0.0f);
 	}
 	else
 	{
-		TitleMovieSoundComponent->SetMediaPlayer(TitleMoviePlayer);
+		TitleMovieSoundComponent->GetAudioComponent()->SetVolumeMultiplier(1.0f);
 	}
 }
 
