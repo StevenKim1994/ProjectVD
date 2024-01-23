@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "VDGameMode.generated.h"
+#include "VDTitleGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTVD_API AVDGameMode : public AGameModeBase
+class PROJECTVD_API AVDTitleGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
-	AVDGameMode();
+	AVDTitleGameMode();
 };
