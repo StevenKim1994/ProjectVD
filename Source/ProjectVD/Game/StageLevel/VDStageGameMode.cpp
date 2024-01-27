@@ -2,16 +2,20 @@
 
 
 #include "Game/StageLevel/VDStageGameMode.h"
+#include "Game/StageLevel/VDStagePlayerController.h"
+#include "Actor/Character/VDStagePlayerCharacter.h"
 
 AVDStageGameMode::AVDStageGameMode()
 {
-	
+	PlayerControllerClass = AVDStagePlayerController::StaticClass();
+	DefaultPawnClass = AVDStagePlayerCharacter::StaticClass();
 }
 
 void AVDStageGameMode::StartPlay()
 {
 	Super::StartPlay();
-	UE_LOG(LogTemp, Log, TEXT("StartLevel: %s"), *GetLevel()->GetOuter()->GetName());
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Black, TEXT("Init Stage Level"));
+	
 }
 
 

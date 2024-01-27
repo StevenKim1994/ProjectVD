@@ -26,6 +26,11 @@ void UVDTitlePanelUserWidget::OnToggleTitleMovieMute(bool ChangedToggleValue)
 	}
 }
 
+void UVDTitlePanelUserWidget::OnHoverExitButton()
+{
+	UE_LOG(LogTemp, Log, TEXT("Hovered!"));
+}
+
 void UVDTitlePanelUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -61,7 +66,7 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 		{
 			ExitButtonText->SetText(FText::FromString(FString(TEXT("Exit"))));
 		}
-		
+		ExitButtonWidget->OnHovered.AddDynamic(this, &UVDTitlePanelUserWidget::OnHoverExitButton);
 		ExitButtonWidget->OnClicked.AddDynamic(this, &UVDTitlePanelUserWidget::OnClickExitButton);
 	}
 

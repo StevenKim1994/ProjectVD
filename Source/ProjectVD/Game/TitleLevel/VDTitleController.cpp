@@ -23,14 +23,9 @@ void AVDTitleController::BeginPlay()
 	SetInputMode(FInputModeUIOnly());
 	TArray<AActor*> WorldActorArray;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AVDTitleMovieActor::StaticClass(), WorldActorArray);
-	for(auto& ActorElement : WorldActorArray)
-	{
-		TitleMovieActor = Cast<AVDTitleMovieActor>(ActorElement);
-		if (TitleMovieActor)
-		{
-			break;
-		}
-	}
+	TitleMovieActor = Cast<AVDTitleMovieActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AVDTitleMovieActor::StaticClass()));
+
+	ensure(TitleMovieActor);
 
 	TitlePanelUserWidget = CreateWidget<UVDTitlePanelUserWidget>(this, TitlePanelUserWidgetClass);
 	if(TitlePanelUserWidget.IsValid())

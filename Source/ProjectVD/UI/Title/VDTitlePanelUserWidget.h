@@ -53,7 +53,10 @@ private:
 	UFUNCTION()
 	void OnToggleTitleMovieMute(bool ChangedToggleValue);
 
+	UFUNCTION()
+	void OnHoverExitButton();
 protected:
+	UFUNCTION()
 	virtual void NativeConstruct() override;
 
 public:
