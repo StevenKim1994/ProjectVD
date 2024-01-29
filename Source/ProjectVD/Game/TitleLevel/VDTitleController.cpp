@@ -9,7 +9,7 @@
 #include "ETC/VDTitleMovieActor.h"
 AVDTitleController::AVDTitleController()
 {
-	static ConstructorHelpers::FClassFinder<UVDTitlePanelUserWidget> TitlePanelUserWidgetRef(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/TitleUI/TitleUIPanel.TitleUIPanel_C'"));
+	static ConstructorHelpers::FClassFinder<UVDTitlePanelUserWidget> TitlePanelUserWidgetRef(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/ProjectVD/UI/TitleUI/TitleUIPanel.TitleUIPanel_C'"));
 	if(TitlePanelUserWidgetRef.Class)
 	{
 		TitlePanelUserWidgetClass = TitlePanelUserWidgetRef.Class;

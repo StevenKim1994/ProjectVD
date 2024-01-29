@@ -19,7 +19,7 @@ AVDTitleMovieActor::AVDTitleMovieActor()
 		TitleMovieSource = MediaSourceRef.Object;
 	}
 
-	TitleMoviePlayer->OpenSource(TitleMovieSource);
+	//TitleMoviePlayer->OpenSource(TitleMovieSource);
 	TitleMovieSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("TitleMovieSound"));
 }
 
@@ -28,7 +28,7 @@ void AVDTitleMovieActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TitleMovieSoundComponent->SetMediaPlayer(TitleMoviePlayer);
+	//TitleMovieSoundComponent->SetMediaPlayer(TitleMoviePlayer);
 }
 
 void AVDTitleMovieActor::SetChangeState(bool ChangeState)
