@@ -3,12 +3,16 @@
 
 #include "Game/StageLevel/VDStageGameMode.h"
 #include "Game/StageLevel/VDStagePlayerController.h"
-#include "Actor/Character/VDStagePlayerCharacter.h"
 
 AVDStageGameMode::AVDStageGameMode()
 {
 	PlayerControllerClass = AVDStagePlayerController::StaticClass();
-	DefaultPawnClass = AVDStagePlayerCharacter::StaticClass();
+
+	static ConstructorHelpers::FClassFinder<APawn> DefaultPawnClassRef(TEXT("/Script/CoreUObject.Class'/Script/ProjectVD.VDStagePlayerCharacter'"));
+	if(DefaultPawnClassRef.Class)
+	{
+		DefaultPawnClass = DefaultPawnClassRef.Class;
+	}
 }
 
 void AVDStageGameMode::StartPlay()

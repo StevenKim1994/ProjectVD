@@ -2,8 +2,11 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "Actor/Character/VDCharacterBase.h"
+#include "InputActionValue.h"
 #include "VDStagePlayerCharacter.generated.h"
+
 UENUM(BlueprintType)
 enum class EClassType : uint8
 {
@@ -16,9 +19,19 @@ class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase
 {
 	GENERATED_BODY()
 
+#pragma region Variable
 private:
 	EClassType CharacterClass;
 
+// Camera Section
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class USpringArmComponent> CameraSpringArmComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCameraComponent> FollowCameraComponent;
+	
+#pragma endregion Var
 public:
 	// Sets default values for this character's properties
 	AVDStagePlayerCharacter();

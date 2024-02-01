@@ -2,20 +2,37 @@
 
 
 #include "Actor/Character/VDStagePlayerCharacter.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 
-// Sets default values
-AVDStagePlayerCharacter::AVDStagePlayerCharacter()
+AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-	CharacterClass = EClassType::None;
+	// Camera
+	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
+	CameraSpringArmComponent->SetupAttachment(RootComponent);
+	CameraSpringArmComponent->TargetArmLength = 350.0f;
+	CameraSpringArmComponent->bUsePawnControlRotation = true;
+
+	FollowCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCameraComponent->SetupAttachment(CameraSpringArmComponent, USpringArmComponent::SocketName);
+	FollowCameraComponent->bUsePawnControlRotation = false;
+
+	// Class
+	CharacterClass = EClassType::Knight;
 }
 
 // Called when the game starts or when spawned
 void AVDStagePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if(PlayerController)
+	{
+		EnableInput(PlayerController);
+	}
 }
 
 // Called every frame
