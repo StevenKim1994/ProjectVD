@@ -4,11 +4,50 @@
 #include "Actor/Character/VDStagePlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+void AVDStagePlayerCharacter::Move(const FInputActionValue& InputValue)
+{
+	FVector2D MovementVector = InputValue.Get<FVector2D>();
+
+	const FRotator Rotation = Controller->GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(ForwardDirection, MovementVector.X);
+	AddMovementInput(RightDirection, MovementVector.Y);
+}
+
+void AVDStagePlayerCharacter::RotateLook(const FInputActionValue& InputValue)
+{
+	FVector2D LookAxisVector = InputValue.Get<FVector2D>();
+
+	AddControllerYawInput(LookAxisVector.X);
+	AddControllerYawInput(LookAxisVector.Y);
+}
+
 AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
 {
+	// CapsuleComponent
+	GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
+
+	// Movement
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+
+	// Mesh
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, -90.0f, 0.0f));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef = (TEXT("/Script/Engine.SkeletalMesh'/Game/GKnight/Meshes/SK_GothicKnight_VA.SK_GothicKnight_VA'"));
+	if (CharacterMeshRef.Object)
+	{
+		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
+	}
+
 	// Camera
 	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	CameraSpringArmComponent->SetupAttachment(RootComponent);
@@ -47,5 +86,9 @@ void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
+
+	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::Move);
+	EnhancedInputComponent->BindAction(RotateLookAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::RotateLook);
 }
 

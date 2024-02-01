@@ -19,7 +19,6 @@ class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase
 {
 	GENERATED_BODY()
 
-#pragma region Variable
 private:
 	EClassType CharacterClass;
 
@@ -30,8 +29,20 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> FollowCameraComponent;
-	
-#pragma endregion Var
+
+// Input Section
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta= (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> RotateLookAction;
+
+	void Move(const FInputActionValue& InputValue);
+	void RotateLook(const FInputActionValue& InputValue);
+
 public:
 	// Sets default values for this character's properties
 	AVDStagePlayerCharacter();
