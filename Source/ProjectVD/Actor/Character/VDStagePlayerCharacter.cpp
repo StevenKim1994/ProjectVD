@@ -12,7 +12,6 @@
 
 void AVDStagePlayerCharacter::Move(const FInputActionValue& InputValue)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Move!"));
 	FVector2D MovementVector = InputValue.Get<FVector2D>();
 
 	const FRotator Rotation = Controller->GetControlRotation();
