@@ -18,7 +18,6 @@ AVDStageGameMode::AVDStageGameMode()
 void AVDStageGameMode::StartPlay()
 {
 	Super::StartPlay();
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Black, TEXT("Init Stage Level"));
 	
 }
 

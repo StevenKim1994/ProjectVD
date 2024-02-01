@@ -12,13 +12,6 @@ void AVDStagePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const AVDStagePlayerCharacter* PlayerCharacter = GetPawn<AVDStagePlayerCharacter>();
-	if(PlayerCharacter->GetClassType() == EClassType::None)
-	{
-		GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Cyan, TEXT("State : Character Select"));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Yellow, TEXT("Start!"));
-	}
+	FInputModeGameAndUI InputMode;
+	SetInputMode(InputMode);
 }

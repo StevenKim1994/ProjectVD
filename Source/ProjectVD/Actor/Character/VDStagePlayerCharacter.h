@@ -40,6 +40,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta= (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> RotateLookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputMappingContext> InputMappingContext;
+
 	void Move(const FInputActionValue& InputValue);
 	void RotateLook(const FInputActionValue& InputValue);
 

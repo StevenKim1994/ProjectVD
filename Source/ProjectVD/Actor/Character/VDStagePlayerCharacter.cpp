@@ -8,9 +8,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
 
 void AVDStagePlayerCharacter::Move(const FInputActionValue& InputValue)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Move!"));
 	FVector2D MovementVector = InputValue.Get<FVector2D>();
 
 	const FRotator Rotation = Controller->GetControlRotation();
@@ -58,6 +60,25 @@ AVDStagePlayerCharacter::AVDStagePlayerCharacter()
 	FollowCameraComponent->SetupAttachment(CameraSpringArmComponent, USpringArmComponent::SocketName);
 	FollowCameraComponent->bUsePawnControlRotation = false;
 
+	// Input
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionMoveRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Move.IA_Move'"));
+	if (nullptr != InputActionMoveRef.Object)
+	{
+		MoveAction = InputActionMoveRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputRotateLookRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_RotateLook.IA_RotateLook'"));
+	if (nullptr != InputRotateLookRef.Object)
+	{
+		RotateLookAction = InputRotateLookRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextRef(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/ProjectVD/Input/IMC_Default.IMC_Default'"));
+	if(nullptr != InputMappingContextRef.Object)
+	{
+		InputMappingContext = InputMappingContextRef.Object;
+	}
+
 	// Class
 	CharacterClass = EClassType::Knight;
 }
@@ -72,6 +93,13 @@ void AVDStagePlayerCharacter::BeginPlay()
 	{
 		EnableInput(PlayerController);
 	}
+
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+	{
+		Subsystem->ClearAllMappings();
+		Subsystem->AddMappingContext(InputMappingContext, 0);
+	}
+
 }
 
 // Called every frame
