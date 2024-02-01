@@ -10,7 +10,8 @@ public class ProjectVD : ModuleRules
 
         PublicIncludePaths.AddRange(new string[] { "ProjectVD" });
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" ,"UMG", "MediaAssets", "AudioMixer" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" ,"UMG", "MediaAssets", "AudioMixer", "EnhancedInput",
+		"NavigationSystem", "AIModule" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
