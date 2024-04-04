@@ -3,12 +3,30 @@
 
 #include "Actor/Character/VDCharacterBase.h"
 
+#include "VDCharacterControlData.h"
 #include "Animation/AnimMontage.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AVDCharacterBase::AVDCharacterBase()
 {
 
+}
+
+void AVDCharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+}
+
+void AVDCharacterBase::SetCharacterControlData(const UVDCharacterControlData* CharacterControlData)
+{
+	// Pawn
+	bUseControllerRotationYaw = CharacterControlData->bUseControllerRotationYaw;
+
+	// CharacterMovement
+	GetCharacterMovement()->bOrientRotationToMovement = CharacterControlData->bOrientRotationToMovement;
+	GetCharacterMovement()->bUseControllerDesiredRotation = CharacterControlData->bUseControllerDesiredRotation;
+	GetCharacterMovement()->RotationRate = CharacterControlData->RotationRate;
 }
 
 // Called when the game starts or when spawned

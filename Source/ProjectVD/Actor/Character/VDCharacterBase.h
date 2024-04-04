@@ -14,6 +14,10 @@ class PROJECTVD_API AVDCharacterBase : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AVDCharacterBase();
+	virtual void PostInitializeComponents() override;
+
+protected:
+	virtual void SetCharacterControlData(const class UVDCharacterControlData* CharacterControlData);
 
 protected:
 	// Called when the game starts or when spawned

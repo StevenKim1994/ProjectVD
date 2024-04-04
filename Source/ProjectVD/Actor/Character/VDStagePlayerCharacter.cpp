@@ -29,7 +29,7 @@ void AVDStagePlayerCharacter::RotateLook(const FInputActionValue& InputValue)
 	FVector2D LookAxisVector = InputValue.Get<FVector2D>();
 
 	AddControllerYawInput(LookAxisVector.X);
-	AddControllerYawInput(LookAxisVector.Y);
+	AddControllerPitchInput(LookAxisVector.Y);
 }
 
 AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
@@ -66,7 +66,7 @@ AVDStagePlayerCharacter::AVDStagePlayerCharacter()
 		MoveAction = InputActionMoveRef.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputRotateLookRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_RotateLook.IA_RotateLook'"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputRotateLookRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Look.IA_Look''"));
 	if (nullptr != InputRotateLookRef.Object)
 	{
 		RotateLookAction = InputRotateLookRef.Object;
@@ -99,6 +99,16 @@ void AVDStagePlayerCharacter::BeginPlay()
 		Subsystem->AddMappingContext(InputMappingContext, 0);
 	}
 
+}
+
+void AVDStagePlayerCharacter::SetCharacterControlData(const UVDCharacterControlData* CharacterControlData)
+{
+	Super::SetCharacterControlData(CharacterControlData);
+}
+
+void AVDStagePlayerCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 }
 
 // Called every frame
