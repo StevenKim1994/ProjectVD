@@ -57,6 +57,7 @@ void AVDTitleController::AsyncLevelLoad(const FString& LevelDir, const FString& 
 				{
 					if (Result == EAsyncLoadingResult::Succeeded)
 					{
+						LoadingScreenWidget->RemoveFromViewport();
 						AsyncLevelLoadFinished(LevelName);
 					}
 					else
