@@ -2,7 +2,7 @@
 
 
 #include "Game/TitleLevel/VDTitleController.h"
-
+#include "UObject/UObjectGlobals.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "UI/Title/VDTitlePanelUserWidget.h"
@@ -30,7 +30,10 @@ void AVDTitleController::BeginPlay()
 	TitlePanelUserWidget = CreateWidget<UVDTitlePanelUserWidget>(this, TitlePanelUserWidgetClass);
 	if(TitlePanelUserWidget.IsValid())
 	{
-		TitlePanelUserWidget->OnClickStartButtonEvent.AddLambda([&] {    UGameplayStatics::OpenLevel(this, TEXT("Stage")); });
+		TitlePanelUserWidget->OnClickStartButtonEvent.AddLambda([&]
+		{
+			AsyncLevelLoad(TEXT("/Game/ProjectVD/Level/"), TEXT("Stage"));
+		});
 		TitlePanelUserWidget->OnClickExitButtonEvent.AddLambda([&]{	UKismetSystemLibrary::QuitGame(GetWorld(), GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);});
 		TitlePanelUserWidget->OnToggleTitleMovieMuteEvent.AddLambda([&](bool ChangeState)
 			{
@@ -38,6 +41,42 @@ void AVDTitleController::BeginPlay()
 			});
 		TitlePanelUserWidget->AddToViewport();
 	}
+}
+
+void AVDTitleController::AsyncLevelLoad(const FString& LevelDir, const FString& LevelName)
+{
+	FSoftClassPath LoadingScreenWidgetRef(TEXT("/Game/ProjectVD/UI/Global/LoadingScreen.LoadingScreen_C"));
+	UClass* LoadingScreenWidgetClass = LoadingScreenWidgetRef.TryLoadClass<UUserWidget>();
+
+	if (LoadingScreenWidgetClass)
+	{
+		UUserWidget* LoadingScreenWidget = CreateWidget<UUserWidget>(this, LoadingScreenWidgetClass);
+		LoadingScreenWidget->AddToViewport();
+		LoadPackageAsync(LevelDir + LevelName,
+			FLoadPackageAsyncDelegate::CreateLambda([=, this](const FName& PackageName, UPackage* LoadPackage, EAsyncLoadingResult::Type Result)
+				{
+					if (Result == EAsyncLoadingResult::Succeeded)
+					{
+						AsyncLevelLoadFinished(LevelName);
+					}
+					else
+					{
+						UE_LOG(LogTemp, Log, TEXT("LevelLoad Error"));
+					}
+				}
+			),
+			0,
+			PKG_ContainsMap);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log,TEXT("LoadingScreen Error"));
+	}
+}
+
+void AVDTitleController::AsyncLevelLoadFinished(const FString LevelName)
+{
+	UGameplayStatics::OpenLevel(this, FName(*LevelName));
 }
 
 

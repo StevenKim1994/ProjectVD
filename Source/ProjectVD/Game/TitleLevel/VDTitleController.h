@@ -28,4 +28,12 @@ public:
 	AVDTitleController();
 
 	virtual void BeginPlay() override;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void AsyncLevelLoad(const FString& LevelDir, const FString& LevelName);
+
+private:
+	void AsyncLevelLoadFinished(const FString LevelName);
+
 };
