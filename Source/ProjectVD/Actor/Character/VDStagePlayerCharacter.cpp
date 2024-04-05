@@ -4,15 +4,15 @@
 #include "Actor/Character/VDStagePlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "Game/StageLevel/VDStagePlayerController.h"
 
-void AVDStagePlayerCharacter::Move(const FInputActionValue& InputValue)
+
+void AVDStagePlayerCharacter::Move(const FInputActionValue& Value)
 {
-	FVector2D MovementVector = InputValue.Get<FVector2D>();
+	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -24,62 +24,70 @@ void AVDStagePlayerCharacter::Move(const FInputActionValue& InputValue)
 	AddMovementInput(RightDirection, MovementVector.Y);
 }
 
-void AVDStagePlayerCharacter::RotateLook(const FInputActionValue& InputValue)
+void AVDStagePlayerCharacter::Look(const FInputActionValue& Value)
 {
-	FVector2D LookAxisVector = InputValue.Get<FVector2D>();
+	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	AddControllerYawInput(LookAxisVector.X);
+	AddControllerYawInput(-LookAxisVector.X);
 	AddControllerPitchInput(LookAxisVector.Y);
+}
+
+void AVDStagePlayerCharacter::JumpBegin(const FInputActionValue& Value)
+{
+	ACharacter::Jump();
+}
+
+void AVDStagePlayerCharacter::JumpEnd(const FInputActionValue& Value)
+{
+	ACharacter::StopJumping();
 }
 
 AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
 {
-	// CapsuleComponent
-	GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
+	// Mesh Override
+	USkeletalMeshComponent* SkeletalMesh = GetMesh();
 
-	// Movement
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
-
-	// Mesh
-	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, -90.0f, 0.0f));
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef = (TEXT("/Script/Engine.SkeletalMesh'/Game/GKnight/Meshes/SK_GothicKnight_VA.SK_GothicKnight_VA'"));
-	if (CharacterMeshRef.Object)
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/GKnight/Meshes/SK_GothicKnight_VA.SK_GothicKnight_VA'"));
+	if (CharacterMeshRef.Object != nullptr)
 	{
-		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
+		SkeletalMesh->SetSkeletalMesh(CharacterMeshRef.Object);
 	}
 
-	// Camera
-	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
+	// Camera Init
+	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
 	CameraSpringArmComponent->SetupAttachment(RootComponent);
-	CameraSpringArmComponent->TargetArmLength = 350.0f;
+	CameraSpringArmComponent->TargetArmLength = 400.0f;
 	CameraSpringArmComponent->bUsePawnControlRotation = true;
 
 	FollowCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCameraComponent->SetupAttachment(CameraSpringArmComponent, USpringArmComponent::SocketName);
 	FollowCameraComponent->bUsePawnControlRotation = false;
 
-	// Input
+	// Input init
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextRef(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/ProjectVD/Input/IMC_Default.IMC_Default'"));
+	if(InputMappingContextRef.Object != nullptr)
+	{
+		DefaultMappingContext = InputMappingContextRef.Object;
+	}
+
 	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionMoveRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Move.IA_Move'"));
-	if (nullptr != InputActionMoveRef.Object)
+	if (InputActionMoveRef.Object != nullptr)
 	{
 		MoveAction = InputActionMoveRef.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputRotateLookRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Look.IA_Look''"));
-	if (nullptr != InputRotateLookRef.Object)
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionLookRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Look.IA_Look'"));
+	if (InputActionLookRef.Object != nullptr)
 	{
-		RotateLookAction = InputRotateLookRef.Object;
+		LookAction = InputActionLookRef.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextRef(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/ProjectVD/Input/IMC_Default.IMC_Default'"));
-	if(nullptr != InputMappingContextRef.Object)
-	{
-		InputMappingContext = InputMappingContextRef.Object;
-	}
 
-	// Class
-	CharacterClass = EClassType::Knight;
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionJumpRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Jump.IA_Jump'"));
+	if (InputActionLookRef.Object != nullptr)
+	{
+		JumpAction = InputActionJumpRef.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -87,23 +95,11 @@ void AVDStagePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if(PlayerController)
+	AVDStagePlayerController* PlayerController = CastChecked<AVDStagePlayerController>(GetController());
+	if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 	{
-		EnableInput(PlayerController);
+		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
-
-	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-	{
-		Subsystem->ClearAllMappings();
-		Subsystem->AddMappingContext(InputMappingContext, 0);
-	}
-
-}
-
-void AVDStagePlayerCharacter::SetCharacterControlData(const UVDCharacterControlData* CharacterControlData)
-{
-	Super::SetCharacterControlData(CharacterControlData);
 }
 
 void AVDStagePlayerCharacter::PostInitializeComponents()
@@ -126,6 +122,8 @@ void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::Move);
-	EnhancedInputComponent->BindAction(RotateLookAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::RotateLook);
+	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::Look);
+	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::JumpBegin);
+	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AVDStagePlayerCharacter::JumpEnd);
 }
 

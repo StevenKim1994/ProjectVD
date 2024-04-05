@@ -13,6 +13,8 @@ AVDStageGameMode::AVDStageGameMode()
 	{
 		DefaultPawnClass = DefaultPawnClassRef.Class;
 	}
+
+
 }
 
 void AVDStageGameMode::StartPlay()
