@@ -42,16 +42,25 @@ void AVDStagePlayerCharacter::JumpEnd(const FInputActionValue& Value)
 	ACharacter::StopJumping();
 }
 
+void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("Press Default Attack"));
+}
+
+void AVDStagePlayerCharacter::DefendHold(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("Hold DefendHold"));
+}
+
+void AVDStagePlayerCharacter::DefendCancel(const FInputActionValue& InputActionValue)
+{
+	UE_LOG(LogTemp, Log, TEXT("Cancel Defend"));
+}
+
 AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
 {
 	// Mesh Override
 	USkeletalMeshComponent* SkeletalMesh = GetMesh();
-
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/GKnight/Meshes/SK_GothicKnight_VA.SK_GothicKnight_VA'"));
-	if (CharacterMeshRef.Object != nullptr)
-	{
-		SkeletalMesh->SetSkeletalMesh(CharacterMeshRef.Object);
-	}
 
 	// Camera Init
 	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
@@ -82,11 +91,22 @@ AVDStagePlayerCharacter::AVDStagePlayerCharacter()
 		LookAction = InputActionLookRef.Object;
 	}
 
-
 	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionJumpRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Jump.IA_Jump'"));
 	if (InputActionLookRef.Object != nullptr)
 	{
 		JumpAction = InputActionJumpRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionDefendRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Defend.IA_Defend'"));
+	if (InputActionDefendRef.Object != nullptr)
+	{
+		DefendAction = InputActionDefendRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionDefaultAttackRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_DefaultAttack.IA_DefaultAttack'"));
+	if (InputActionDefaultAttackRef.Object != nullptr)
+	{
+		DefaultAttackAction = InputActionDefaultAttackRef.Object;
 	}
 }
 
@@ -125,5 +145,8 @@ void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::Look);
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::JumpBegin);
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AVDStagePlayerCharacter::JumpEnd);
+	EnhancedInputComponent->BindAction(DefendAction, ETriggerEvent::Ongoing, this, &AVDStagePlayerCharacter::DefendHold);
+	EnhancedInputComponent->BindAction(DefendAction, ETriggerEvent::Canceled, this, &AVDStagePlayerCharacter::DefendCancel);
+	EnhancedInputComponent->BindAction(DefaultAttackAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::DefaultAttack);
 }
 
