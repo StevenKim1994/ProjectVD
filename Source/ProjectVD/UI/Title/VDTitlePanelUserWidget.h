@@ -9,6 +9,7 @@
 #include "Components/CheckBox.h"
 #include "MediaPlayer.h"
 #include "MediaSource.h"
+#include "MediaSoundComponent.h"
 #include "VDTitlePanelUserWidget.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnClickStartButtonEvent);
@@ -25,11 +26,14 @@ class PROJECTVD_API UVDTitlePanelUserWidget : public UUserWidget
 private:
 
 // MediaSection -> 추후 Actor로 이동시켜야함 어짜피 재생되면 알아서 Image에 그려줌.
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"), meta = (ExposeOnSpawn = true))
 	UMediaPlayer* TitleBackgroundMediaPlayer;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"), meta = (ExposeOnSpawn = true))
 	UMediaSource* TitleBackgroundMediaSource;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"), meta = (ExposeOnSpawn = true))
+	UMediaSoundComponent* TitleMediaSoundComponent;
 
 // UISection
 	UPROPERTY()
