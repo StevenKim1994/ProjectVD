@@ -1,12 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UI/Title/VDTitlePanelUserWidget.h"
+#include "Game/VDGameInstance.h"
 
 void UVDTitlePanelUserWidget::OnClickStartButton()
 {
 	if(OnClickStartButtonEvent.IsBound())
 	{
 		OnClickStartButtonEvent.Broadcast();
+	}
+
+	UGameInstance* GI = GetGameInstance();
+	if (GI != nullptr)
+	{
+		UVDGameInstance* VDGI = Cast<UVDGameInstance>(GI);
+		if (VDGI != nullptr)
+		{
+			VDGI->GotoInGameLevel("Stage");
+		}
 	}
 }
 
