@@ -5,20 +5,11 @@
 
 void UVDTitlePanelUserWidget::OnClickStartButton()
 {
-	if(OnClickStartButtonEvent.IsBound())
+	if (OnClickStartButtonEvent.IsBound())
 	{
 		OnClickStartButtonEvent.Broadcast();
 	}
 
-	UGameInstance* GI = GetGameInstance();
-	if (GI != nullptr)
-	{
-		UVDGameInstance* VDGI = Cast<UVDGameInstance>(GI);
-		if (VDGI != nullptr)
-		{
-			VDGI->GotoInGameLevel("Stage");
-		}
-	}
 }
 
 void UVDTitlePanelUserWidget::OnClickExitButton()
@@ -29,13 +20,10 @@ void UVDTitlePanelUserWidget::OnClickExitButton()
 	}
 }
 
-void UVDTitlePanelUserWidget::OnToggleTitleMovieMute(bool ChangedToggleValue) 
+void UVDTitlePanelUserWidget::OnToggleTitleMovieMute(bool ChangedToggleValue)
 {
-	if (TitleMediaSoundComponent)
-	{
-		TitleMediaSoundComponent->SetVolumeMultiplier(ChangedToggleValue ? 0.0f : 1.0f);
-	}
-	if(OnToggleTitleMovieMuteEvent.IsBound())
+
+	if (OnToggleTitleMovieMuteEvent.IsBound())
 	{
 		OnToggleTitleMovieMuteEvent.Broadcast(ChangedToggleValue);
 	}
@@ -50,7 +38,7 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if(TitleBackgroundMediaPlayer && TitleBackgroundMediaSource)
+	if (TitleBackgroundMediaPlayer && TitleBackgroundMediaSource)
 	{
 		TitleMediaSoundComponent = NewObject<UMediaSoundComponent>(this);
 		TitleMediaSoundComponent->SetMediaPlayer(TitleBackgroundMediaPlayer);
@@ -68,10 +56,10 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 	}
 
 	StartButtonWidget = Cast<UButton>(GetWidgetFromName("StartButton"));
-	if(StartButtonWidget)
+	if (StartButtonWidget)
 	{
 		UTextBlock* StartButtonText = Cast<UTextBlock>(StartButtonWidget->GetChildAt(0));
-		if(StartButtonText)
+		if (StartButtonText)
 		{
 			StartButtonText->SetText(FText::FromString(FString(TEXT("Start"))));
 		}
@@ -80,10 +68,10 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 	}
 
 	ExitButtonWidget = Cast<UButton>(GetWidgetFromName("ExitButton"));
-	if(ExitButtonWidget)
+	if (ExitButtonWidget)
 	{
 		UTextBlock* ExitButtonText = Cast<UTextBlock>(ExitButtonWidget->GetChildAt(0));
-		if(ExitButtonText)
+		if (ExitButtonText)
 		{
 			ExitButtonText->SetText(FText::FromString(FString(TEXT("Exit"))));
 		}
@@ -92,16 +80,22 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 	}
 
 	TitleMovieSoundMuteToggleWidget = Cast<UCheckBox>(GetWidgetFromName("TitleMovieMuteToggle"));
-	if(TitleMovieSoundMuteToggleWidget)
+	if (TitleMovieSoundMuteToggleWidget)
 	{
 		UTextBlock* ToggleText = Cast<UTextBlock>(TitleMovieSoundMuteToggleWidget->GetChildAt(0));
-		if(ToggleText)
+		if (ToggleText)
 		{
 			ToggleText->SetText(FText::FromString(FString(TEXT("MovieSoundMute"))));
 		}
 		TitleMovieSoundMuteToggleWidget->OnCheckStateChanged.AddDynamic(this, &UVDTitlePanelUserWidget::OnToggleTitleMovieMute);
 		TitleMovieSoundMuteToggleWidget->SetCheckedState(ECheckBoxState::Unchecked);
 	}
+}
 
-
+void UVDTitlePanelUserWidget::SetToggleBackgroundSound(bool IsOn)
+{
+	if (TitleMediaSoundComponent)
+	{
+		TitleMediaSoundComponent->SetVolumeMultiplier(IsOn ? 0.0f : 1.0f);
+	}
 }

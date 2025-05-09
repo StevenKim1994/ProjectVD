@@ -67,4 +67,6 @@ public:
 	FOnClickStartButtonEvent OnClickStartButtonEvent;
 	FOnClickExitButtonEvent OnClickExitButtonEvent;
 	FOnToggleTitleMovieMuteEvent OnToggleTitleMovieMuteEvent;
+
+	void SetToggleBackgroundSound(bool IsOn);
 };

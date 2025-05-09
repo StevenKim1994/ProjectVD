@@ -7,6 +7,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "UI/Title/VDTitlePanelUserWidget.h"
 #include "ETC/VDTitleMovieActor.h"
+#include "Game/VDGameInstance.h"
+
 AVDTitleController::AVDTitleController()
 {
 	static ConstructorHelpers::FClassFinder<UVDTitlePanelUserWidget> TitlePanelUserWidgetRef(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/ProjectVD/UI/TitleUI/TitleUIPanel.TitleUIPanel_C'"));
@@ -32,13 +34,24 @@ void AVDTitleController::BeginPlay()
 	{
 		TitlePanelUserWidget->OnClickStartButtonEvent.AddLambda([&]
 		{
-			AsyncLevelLoad(TEXT("/Game/ProjectVD/Level/"), TEXT("Stage"));
-		});
-		TitlePanelUserWidget->OnClickExitButtonEvent.AddLambda([&]{	UKismetSystemLibrary::QuitGame(GetWorld(), GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);});
-		TitlePanelUserWidget->OnToggleTitleMovieMuteEvent.AddLambda([&](bool ChangeState)
+			UGameInstance* GI = GetGameInstance();
+			if (GI != nullptr)
 			{
-				TitleMovieActor->SetChangeState(ChangeState);
-			});
+				UVDGameInstance* VDGI = Cast<UVDGameInstance>(GI);
+				if (VDGI != nullptr)
+				{
+					VDGI->GotoInGameLevel("Stage");
+				}
+			}
+		});
+		TitlePanelUserWidget->OnClickExitButtonEvent.AddLambda([&]
+		{	
+			UKismetSystemLibrary::QuitGame(GetWorld(), GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
+		});
+		TitlePanelUserWidget->OnToggleTitleMovieMuteEvent.AddLambda([&](bool ChangeState)
+		{
+				TitlePanelUserWidget->SetToggleBackgroundSound(ChangeState);
+		});
 		TitlePanelUserWidget->AddToViewport();
 	}
 }
