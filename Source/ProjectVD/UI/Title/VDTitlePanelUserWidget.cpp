@@ -134,8 +134,8 @@ void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 
 void UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete(bool IsOn)
 {
-	ButtonsParentsBox->Visibility = IsOn ? ESlateVisibility::Visible : ESlateVisibility::Collapsed;
-	OptionsParentsBox->Visibility = IsOn ? ESlateVisibility::Collapsed : ESlateVisibility::Visible;
+	ButtonsParentsBox->SetVisibility(IsOn ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	OptionsParentsBox->SetVisibility(IsOn ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 }
 
 void UVDTitlePanelUserWidget::NativeConstruct()
