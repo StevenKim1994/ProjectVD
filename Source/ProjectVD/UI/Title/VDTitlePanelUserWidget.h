@@ -37,14 +37,15 @@ private:
 
 	// UISection
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Options", meta = (AllowPrivateAccess = "true"))
-	UVerticalBox* OptionsParentsBox;
+	UPROPERTY(meta = (BindWidget))
+	UVerticalBox* OptionsParentBox;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Title", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(meta = (BindWidget))
+	UVerticalBox* ButtonsParentBox;
+
+	UPROPERTY(meta = (BindWidget))	
 	UTextBlock* GameTitleName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
-	UVerticalBox* ButtonsParentsBox;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
 	UCheckBox* TitleMovieMuteToggle;

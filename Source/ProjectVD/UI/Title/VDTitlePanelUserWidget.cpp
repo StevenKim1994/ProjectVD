@@ -17,7 +17,7 @@ void UVDTitlePanelUserWidget::OnClickStartButton()
 
 void UVDTitlePanelUserWidget::OnClickOptionButton()
 {
-	if (ButtonsParentsBox)
+	if (ButtonsParentBox)
 	{
 		bIsMainMenuButtonToggledOn = !bIsMainMenuButtonToggledOn;
 		OnMainButtonToggle(bIsMainMenuButtonToggledOn);
@@ -38,7 +38,7 @@ void UVDTitlePanelUserWidget::OnClickExitButton()
 
 void UVDTitlePanelUserWidget::OnClickOptionsBackButton()
 {
-	if (ButtonsParentsBox)
+	if (OptionsParentBox)
 	{
 		bIsMainMenuButtonToggledOn = !bIsMainMenuButtonToggledOn;
 		OnMainButtonToggle(bIsMainMenuButtonToggledOn);
@@ -80,7 +80,7 @@ void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 		CurrentPosition = FinalTranslation;
 	}
 	
-	ButtonsParentsBox->SetRenderTranslation(CurrentPosition);
+	ButtonsParentBox->SetRenderTranslation(CurrentPosition);
 
 	struct FTweenState
 	{
@@ -94,8 +94,8 @@ void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 	};
 
 	TSharedRef<FTweenState, ESPMode::ThreadSafe> State = MakeShared<FTweenState, ESPMode::ThreadSafe>();
-	State->InBox = ButtonsParentsBox;
-	State->OutBox = OptionsParentsBox;
+	State->InBox = ButtonsParentBox;
+	State->OutBox = OptionsParentBox;
 	State->Widget = this;
 	State->From = CurrentPosition;
 	State->To = TargetPosition;
@@ -132,10 +132,10 @@ void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 	);
 }
 
-void UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete(bool IsOn)
+void UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete(bool isOn)
 {
-	ButtonsParentsBox->SetVisibility(IsOn ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
-	OptionsParentsBox->SetVisibility(IsOn ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+	ButtonsParentBox->SetVisibility(isOn ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	OptionsParentBox->SetVisibility(isOn ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 }
 
 void UVDTitlePanelUserWidget::NativeConstruct()
@@ -153,7 +153,7 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 		}
 	}
 
-	if (ButtonsParentsBox)
+	if (ButtonsParentBox)
 	{
 		bIsMainMenuButtonToggledOn = true;
 		OnMainButtonToggle(bIsMainMenuButtonToggledOn);
@@ -196,9 +196,9 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 		ExitButton->OnClicked.AddDynamic(this, &UVDTitlePanelUserWidget::OnClickExitButton);
 	}
 
-	if(OptionsParentsBox)
+	if(OptionsParentBox)
 	{
-		OptionsParentsBox->SetVisibility(ESlateVisibility::Collapsed);
+		OptionsParentBox->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
 	if(OptionsBackButton)
@@ -214,7 +214,7 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 			ToggleText->SetText(VDConstants::GetTitleSoundMuteToggleText());
 		}
 		TitleMovieMuteToggle->OnCheckStateChanged.AddDynamic(this, &UVDTitlePanelUserWidget::OnToggleTitleMovieMute);
-		TitleMovieMuteToggle->SetCheckedState(ECheckBoxState::Unchecked);
+		TitleMovieMuteToggle->SetCheckedState(ECheckBoxState::Checked);
 	}
 }
 
