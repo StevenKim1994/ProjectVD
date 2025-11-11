@@ -52,26 +52,26 @@ void UVDTitlePanelUserWidget::OnHoverExitButton()
 
 void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 {
-	// 1) 시작 위치: 화면 왼쪽 밖(-800, 0)으로 번역
-	const FVector2D StartTranslation(-800.f, 0.f);
+	FIntPoint ScreenSize = GEngine->GameViewport->Viewport->GetSizeXY();
+	const FVector2D StartTranslation(ScreenSize.X, 0.f);
 	const FVector2D FinalTranslation(0.f, 0.f); // 최종 위치(원래 배치 지점)
-	const float Duration = 1.5f;                 // 트윈 시간
+	const float Duration = 2.5f;                 // 트윈 시간
 	FVector2D TargetPosition;
 	FVector2D CurrentPosition;
 
 	if (IsOn)
 	{
-		TargetPosition = StartTranslation;
-		CurrentPosition = FinalTranslation;
-	}
-	else
-	{
 		TargetPosition = FinalTranslation;
 		CurrentPosition = StartTranslation;
 	}
-	ButtonsParentsBox->SetRenderTranslation(StartTranslation);
+	else
+	{
+		TargetPosition = StartTranslation;
+		CurrentPosition = FinalTranslation;
+	}
+	
+	ButtonsParentsBox->SetRenderTranslation(CurrentPosition);
 
-	// 2) 상태를 캡처하는 공유 포인터(위젯 파괴 시 WeakPtr로 자동 종료)
 	struct FTweenState
 	{
 		TWeakObjectPtr<UVerticalBox> Box;
@@ -86,7 +86,6 @@ void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 	State->To = TargetPosition;
 	State->Duration = FMath::Max(0.f, Duration);
 
-	// 3) 매 프레임 보간(Ticker). 반환값이 false가 되면 자동으로 등록 해제됨.
 	FTSTicker::GetCoreTicker().AddTicker(
 		FTickerDelegate::CreateLambda([State](float DeltaTime)
 			{
@@ -97,8 +96,10 @@ void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 
 				State->Elapsed += DeltaTime;
 				const float Alpha = (State->Duration > 0.f) ? FMath::Clamp(State->Elapsed / State->Duration, 0.f, 1.f) : 1.f;
+				const float EaseExp = 2.0f;
+				const float EasedAlpha = FMath::InterpEaseInOut(0.f, 1.f, Alpha, EaseExp);
 
-				const FVector2D NewT = FMath::Lerp(State->From, State->To, Alpha);
+				const FVector2D NewT = FMath::Lerp(State->From, State->To, EasedAlpha);
 				State->Box->SetRenderTranslation(NewT);
 
 				return Alpha < 1.f; // 완료 시 false 반환하여 Ticker 해제
@@ -125,6 +126,7 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 	//ButtonsParentsBox = Cast<UVerticalBox>(GetWidgetFromName(VDConstants::TitleWidgetButtonsParentsBox));
 	if (ButtonsParentsBox)
 	{
+		bIsMainMenuButtonToggledOn = true;
 		OnMainButtonToggle(bIsMainMenuButtonToggledOn);
 	}
 
