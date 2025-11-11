@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "System/UISystem.h"
 #include "VDGameInstance.generated.h"
 /**
  * 
@@ -21,9 +20,6 @@ public:
 	void GotoInGameLevel(FName _TargetLevelName);
 	bool DoesLevelExist(FName _TargetLevelName);
 	void OnPostLoadLevel();
-
-protected:
-	UUISystem* UISystem;
 
 private:
 	FName TargetLevelName;
