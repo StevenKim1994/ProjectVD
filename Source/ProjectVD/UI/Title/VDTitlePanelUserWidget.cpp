@@ -13,7 +13,6 @@ void UVDTitlePanelUserWidget::OnClickStartButton()
 	{
 		OnClickStartButtonEvent.Broadcast();
 	}
-
 }
 
 void UVDTitlePanelUserWidget::OnClickOptionButton()
@@ -66,7 +65,7 @@ void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 	FIntPoint ScreenSize = GEngine->GameViewport->Viewport->GetSizeXY();
 	const FVector2D StartTranslation(ScreenSize.X, 0.f);
 	const FVector2D FinalTranslation(0.f, 0.f);
-	const float Duration = 2.5f;
+	const float Duration = TitleButtonSlideDuration;
 	FVector2D TargetPosition;
 	FVector2D CurrentPosition;
 
@@ -195,6 +194,11 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 		}
 		ExitButton->OnHovered.AddDynamic(this, &UVDTitlePanelUserWidget::OnHoverExitButton);
 		ExitButton->OnClicked.AddDynamic(this, &UVDTitlePanelUserWidget::OnClickExitButton);
+	}
+
+	if(OptionsParentsBox)
+	{
+		OptionsParentsBox->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
 	if(OptionsBackButton)

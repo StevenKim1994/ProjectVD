@@ -40,14 +40,20 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Options", meta = (AllowPrivateAccess = "true"))
 	UVerticalBox* OptionsParentsBox;
 
-	UPROPERTY(meta = (BindWidget))
-	UButton* OptionsBackButton;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Title", meta = (AllowPrivateAccess = "true"))
 	UTextBlock* GameTitleName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
 	UVerticalBox* ButtonsParentsBox;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
+	UCheckBox* TitleMovieMuteToggle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Title", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0"))
+	float TitleButtonSlideDuration = 2.5f;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* OptionsBackButton;
 
 	UPROPERTY(meta = (BindWidget))// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
 	UButton* StartButton;
@@ -57,12 +63,6 @@ private:
 
 	UPROPERTY( meta = (BindWidget)) // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
 	UButton* ExitButton;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
-	UCheckBox* TitleMovieMuteToggle;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Title", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0"))
-	float TitleButtonSlideDuration = 2.5f;
 
 	UFUNCTION()
 	void OnClickStartButton();
