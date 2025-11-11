@@ -6,6 +6,7 @@
 #include "Containers/Ticker.h"        
 #include "Components/CanvasPanelSlot.h" 
 
+
 void UVDTitlePanelUserWidget::OnClickStartButton()
 {
 	if (OnClickStartButtonEvent.IsBound())
@@ -36,6 +37,15 @@ void UVDTitlePanelUserWidget::OnClickExitButton()
 	}
 }
 
+void UVDTitlePanelUserWidget::OnClickOptionsBackButton()
+{
+	if (ButtonsParentsBox)
+	{
+		bIsMainMenuButtonToggledOn = !bIsMainMenuButtonToggledOn;
+		OnMainButtonToggle(bIsMainMenuButtonToggledOn);
+	}
+}
+
 void UVDTitlePanelUserWidget::OnToggleTitleMovieMute(bool ChangedToggleValue)
 {
 
@@ -50,12 +60,13 @@ void UVDTitlePanelUserWidget::OnHoverExitButton()
 	UE_LOG(LogTemp, Log, TEXT("Hovered!"));
 }
 
+
 void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 {
 	FIntPoint ScreenSize = GEngine->GameViewport->Viewport->GetSizeXY();
 	const FVector2D StartTranslation(ScreenSize.X, 0.f);
-	const FVector2D FinalTranslation(0.f, 0.f); // 최종 위치(원래 배치 지점)
-	const float Duration = 2.5f;                 // 트윈 시간
+	const FVector2D FinalTranslation(0.f, 0.f);
+	const float Duration = 2.5f;
 	FVector2D TargetPosition;
 	FVector2D CurrentPosition;
 
@@ -74,24 +85,30 @@ void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 
 	struct FTweenState
 	{
-		TWeakObjectPtr<UVerticalBox> Box;
+		TWeakObjectPtr<UVerticalBox> InBox;
+		TWeakObjectPtr<UVerticalBox> OutBox;
+		TWeakObjectPtr<UVDTitlePanelUserWidget> Widget;
 		FVector2D From, To;
 		float Duration = 0.f;
 		float Elapsed = 0.f;
+		bool bIsOn = false;
 	};
 
 	TSharedRef<FTweenState, ESPMode::ThreadSafe> State = MakeShared<FTweenState, ESPMode::ThreadSafe>();
-	State->Box = ButtonsParentsBox;
+	State->InBox = ButtonsParentsBox;
+	State->OutBox = OptionsParentsBox;
+	State->Widget = this;
 	State->From = CurrentPosition;
 	State->To = TargetPosition;
-	State->Duration = FMath::Max(0.f, Duration);
+	State->Duration = FMath::Max(0.f, TitleButtonSlideDuration);
+	State->bIsOn = IsOn;
 
 	FTSTicker::GetCoreTicker().AddTicker(
 		FTickerDelegate::CreateLambda([State](float DeltaTime)
 			{
-				if (!State->Box.IsValid())
+				if (!State->InBox.IsValid() || !State->Widget.IsValid())
 				{
-					return false; // 위젯이 파괴되면 중단
+					return false;
 				}
 
 				State->Elapsed += DeltaTime;
@@ -100,12 +117,26 @@ void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 				const float EasedAlpha = FMath::InterpEaseInOut(0.f, 1.f, Alpha, EaseExp);
 
 				const FVector2D NewT = FMath::Lerp(State->From, State->To, EasedAlpha);
-				State->Box->SetRenderTranslation(NewT);
+				State->InBox->SetRenderTranslation(NewT);
 
-				return Alpha < 1.f; // 완료 시 false 반환하여 Ticker 해제
+				if (Alpha >= 1.f)
+				{
+					State->Widget->OnChangedMenuStateTweenComplete(State->bIsOn);
+					return false;
+				}
+				else
+				{
+					return true;
+				}
 			}),
-		0.0f // 0.0 = 매 프레임
+		0.0f
 	);
+}
+
+void UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete(bool IsOn)
+{
+	ButtonsParentsBox->Visibility = IsOn ? ESlateVisibility::Visible : ESlateVisibility::Collapsed;
+	OptionsParentsBox->Visibility = IsOn ? ESlateVisibility::Collapsed : ESlateVisibility::Visible;
 }
 
 void UVDTitlePanelUserWidget::NativeConstruct()
@@ -123,20 +154,17 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 		}
 	}
 
-	//ButtonsParentsBox = Cast<UVerticalBox>(GetWidgetFromName(VDConstants::TitleWidgetButtonsParentsBox));
 	if (ButtonsParentsBox)
 	{
 		bIsMainMenuButtonToggledOn = true;
 		OnMainButtonToggle(bIsMainMenuButtonToggledOn);
 	}
 
-	TitleTextWidget = Cast<UTextBlock>(GetWidgetFromName(VDConstants::TitleWidgetTitleName));
-	if (TitleTextWidget)
+	if (GameTitleName)
 	{
-		TitleTextWidget->SetText(VDConstants::TitleProjectName);
+		GameTitleName->SetText(VDConstants::TitleProjectName);
 	}
 
-	//StartButton= Cast<UButton>(GetWidgetFromName(VDConstants::TitleStartButtonName));
 	if (StartButton)
 	{
 		UTextBlock* StartButtonText = Cast<UTextBlock>(StartButton->GetChildAt(0));
@@ -148,7 +176,6 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 		StartButton->OnClicked.AddDynamic(this, &UVDTitlePanelUserWidget::OnClickStartButton);
 	}
 
-	//OptionButton= Cast<UButton>(GetWidgetFromName(VDConstants::TitleOptionButtonName));
 	if (OptionButton)
 	{
 		UTextBlock* OptionButtonText = Cast<UTextBlock>(OptionButton->GetChildAt(0));
@@ -159,7 +186,6 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 		OptionButton->OnClicked.AddDynamic(this, &UVDTitlePanelUserWidget::OnClickOptionButton);
 	}
 
-	//ExitButton= Cast<UButton>(GetWidgetFromName(VDConstants::TitleExitButtonName));
 	if (ExitButton)
 	{
 		UTextBlock* ExitButtonText = Cast<UTextBlock>(ExitButton->GetChildAt(0));
@@ -171,16 +197,20 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 		ExitButton->OnClicked.AddDynamic(this, &UVDTitlePanelUserWidget::OnClickExitButton);
 	}
 
-	TitleMovieSoundMuteToggleWidget = Cast<UCheckBox>(GetWidgetFromName(VDConstants::TitleMovieSoundMuteToggleName));
-	if (TitleMovieSoundMuteToggleWidget)
+	if(OptionsBackButton)
 	{
-		UTextBlock* ToggleText = Cast<UTextBlock>(TitleMovieSoundMuteToggleWidget->GetChildAt(0));
+		OptionsBackButton->OnClicked.AddDynamic(this, &UVDTitlePanelUserWidget::OnClickOptionsBackButton);
+	}
+
+	if (TitleMovieMuteToggle)
+	{
+		UTextBlock* ToggleText = Cast<UTextBlock>(TitleMovieMuteToggle->GetChildAt(0));
 		if (ToggleText)
 		{
 			ToggleText->SetText(VDConstants::GetTitleSoundMuteToggleText());
 		}
-		TitleMovieSoundMuteToggleWidget->OnCheckStateChanged.AddDynamic(this, &UVDTitlePanelUserWidget::OnToggleTitleMovieMute);
-		TitleMovieSoundMuteToggleWidget->SetCheckedState(ECheckBoxState::Unchecked);
+		TitleMovieMuteToggle->OnCheckStateChanged.AddDynamic(this, &UVDTitlePanelUserWidget::OnToggleTitleMovieMute);
+		TitleMovieMuteToggle->SetCheckedState(ECheckBoxState::Unchecked);
 	}
 }
 

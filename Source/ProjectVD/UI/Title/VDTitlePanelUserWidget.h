@@ -16,9 +16,7 @@
 DECLARE_MULTICAST_DELEGATE(FOnClickStartButtonEvent);
 DECLARE_MULTICAST_DELEGATE(FOnClickExitButtonEvent);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleTitleMovieMuteEvent, bool);
-/**
- * 
- */
+
 UCLASS()
 class PROJECTVD_API UVDTitlePanelUserWidget : public UUserWidget
 {
@@ -27,7 +25,7 @@ class PROJECTVD_API UVDTitlePanelUserWidget : public UUserWidget
 private:
 	bool bIsMainMenuButtonToggledOn = true;
 
-// MediaSection -> 추후 Actor로 이동시켜야함 어짜피 재생되면 알아서 Image에 그려줌.
+	// MediaSection -> 추후 Actor로 이동시켜야함 어짜피 재생되면 알아서 Image에 그려줌.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"), meta = (ExposeOnSpawn = true))
 	UMediaPlayer* TitleBackgroundMediaPlayer;
 
@@ -37,24 +35,34 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"), meta = (ExposeOnSpawn = true))
 	UMediaSoundComponent* TitleMediaSoundComponent;
 
-// UISection
+	// UISection
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Options", meta = (AllowPrivateAccess = "true"))
+	UVerticalBox* OptionsParentsBox;
+
 	UPROPERTY(meta = (BindWidget))
+	UButton* OptionsBackButton;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Title", meta = (AllowPrivateAccess = "true"))
+	UTextBlock* GameTitleName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
 	UVerticalBox* ButtonsParentsBox;
 
-	UPROPERTY()
-	UTextBlock* TitleTextWidget;
-
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget))// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
 	UButton* StartButton;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget)) // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
 	UButton* OptionButton;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY( meta = (BindWidget)) // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
 	UButton* ExitButton;
 
-	UPROPERTY()
-	UCheckBox* TitleMovieSoundMuteToggleWidget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
+	UCheckBox* TitleMovieMuteToggle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Title", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0"))
+	float TitleButtonSlideDuration = 2.5f;
 
 	UFUNCTION()
 	void OnClickStartButton();
@@ -66,6 +74,9 @@ private:
 	void OnClickExitButton();
 
 	UFUNCTION()
+	void OnClickOptionsBackButton();
+
+	UFUNCTION()
 	void OnToggleTitleMovieMute(bool ChangedToggleValue);
 
 	UFUNCTION()
@@ -73,6 +84,9 @@ private:
 
 	UFUNCTION()
 	void OnMainButtonToggle(bool IsOn);
+
+	UFUNCTION()
+	void OnChangedMenuStateTweenComplete(bool IsOn); // 트윈 완료시 콜백
 
 protected:
 	UFUNCTION()
