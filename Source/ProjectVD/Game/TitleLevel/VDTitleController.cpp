@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Game/TitleLevel/VDTitleController.h"
@@ -70,7 +70,7 @@ void AVDTitleController::AsyncLevelLoad(const FString& LevelDir, const FString& 
 				{
 					if (Result == EAsyncLoadingResult::Succeeded)
 					{
-						LoadingScreenWidget->RemoveFromViewport();
+						LoadingScreenWidget->RemoveFromParent();
 						AsyncLevelLoadFinished(LevelName);
 					}
 					else
