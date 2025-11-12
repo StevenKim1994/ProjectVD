@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,9 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "VDTitleController.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PROJECTVD_API AVDTitleController : public APlayerController
 {
@@ -16,7 +13,7 @@ class PROJECTVD_API AVDTitleController : public APlayerController
 
 private:
 	UPROPERTY()
-	TSubclassOf<class UVDTitlePanelUserWidget> TitlePanelUserWidgetClass;
+	FSoftClassPath TitlePanelUserWidgetClass;
 
 	UPROPERTY()
 	TWeakObjectPtr<class UVDTitlePanelUserWidget> TitlePanelUserWidget;
@@ -35,5 +32,4 @@ public:
 
 private:
 	void AsyncLevelLoadFinished(const FString LevelName);
-
 };

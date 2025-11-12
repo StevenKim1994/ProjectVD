@@ -16,6 +16,13 @@ namespace VDConstants
 	extern const FName TitleWidgetTitleName;
 	extern const FName TitleExitButtonName;
 	extern const FName TitleMovieSoundMuteToggleName;
+	extern const FString UIRegistryDataAssetPath;
+
+	// UI Widget Keys for UISubsystem
+	namespace UIWidgetKeys
+	{
+		constexpr const TCHAR* TitlePanel = TEXT("TitlePanel");
+	}
 #pragma endregion
 
 #pragma region UI_TEXT

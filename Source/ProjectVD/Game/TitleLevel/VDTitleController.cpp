@@ -8,14 +8,10 @@
 #include "UI/Title/VDTitlePanelUserWidget.h"
 #include "ETC/VDTitleMovieActor.h"
 #include "Game/VDGameInstance.h"
-
+#include "System/VDResourceSystem.h"
 AVDTitleController::AVDTitleController()
 {
-	static ConstructorHelpers::FClassFinder<UVDTitlePanelUserWidget> TitlePanelUserWidgetRef(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/ProjectVD/UI/TitleUI/TitleUIPanel.TitleUIPanel_C'"));
-	if(TitlePanelUserWidgetRef.Class)
-	{
-		TitlePanelUserWidgetClass = TitlePanelUserWidgetRef.Class;
-	}	
+	TitlePanelUserWidgetClass = FSoftClassPath(TEXT("/Game/ProjectVD/UI/TitleUI/TitleUIPanel.TitleUIPanel_C"));
 	SetShowMouseCursor(true);
 }
 
@@ -29,31 +25,28 @@ void AVDTitleController::BeginPlay()
 
 	ensure(TitleMovieActor);
 
-	TitlePanelUserWidget = CreateWidget<UVDTitlePanelUserWidget>(this, TitlePanelUserWidgetClass);
-	if(TitlePanelUserWidget.IsValid())
+	UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
+
+	if (GI)
 	{
-		TitlePanelUserWidget->OnClickStartButtonEvent.AddLambda([&]
+		UVDResourceSystem* RS = GI->GetSubsystem<UVDResourceSystem>();
+		if (RS)
 		{
-			UGameInstance* GI = GetGameInstance();
-			if (GI != nullptr)
-			{
-				UVDGameInstance* VDGI = Cast<UVDGameInstance>(GI);
-				if (VDGI != nullptr)
+			RS->LoadResourceAsync(TitlePanelUserWidgetClass, [this](UClass* LoadedClass)
 				{
-					VDGI->GotoInGameLevel("Stage");
-				}
-			}
-		});
-		TitlePanelUserWidget->OnClickExitButtonEvent.AddLambda([&]
-		{	
-			UKismetSystemLibrary::QuitGame(GetWorld(), GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
-		});
-		TitlePanelUserWidget->OnToggleTitleMovieMuteEvent.AddLambda([&](bool ChangeState)
-		{
-				TitlePanelUserWidget->SetToggleBackgroundSound(ChangeState);
-		});
-		TitlePanelUserWidget->AddToViewport();
+					if (LoadedClass)
+					{
+						TitlePanelUserWidget = CreateWidget<UVDTitlePanelUserWidget>(this, LoadedClass);
+						if (TitlePanelUserWidget.IsValid())
+						{
+							TitlePanelUserWidget->AddToViewport();
+							UE_LOG(LogTemp, Log, TEXT("TitlePanelUserWidget Created"));
+						}
+					}
+				});
+		}
 	}
+
 }
 
 void AVDTitleController::AsyncLevelLoad(const FString& LevelDir, const FString& LevelName)

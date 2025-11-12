@@ -10,6 +10,8 @@ namespace VDConstants
 	const FName TitleExitButtonName(TEXT("ExitButton"));
 	const FName TitleMovieSoundMuteToggleName(TEXT("TitleMovieSoundMuteToggle"));
 
+	const FString UIRegistryDataAssetPath(TEXT("/Game/ProjectVD/DataAsset/UIRegistry.UIRegistry"));
+
 	// 로컬라이제이션 가능한 프로젝트 이름
 	const FText TitleProjectName = NSLOCTEXT("VD.UI", "ProjectName", "ProjectVD");
 

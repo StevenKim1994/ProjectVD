@@ -18,7 +18,4 @@ public:
 	UVDUISubsystem();
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
-	
-protected:
-
 };
