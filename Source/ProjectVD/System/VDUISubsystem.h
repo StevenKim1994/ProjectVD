@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "DataAsset/VDUIRegistry.h"
 #include "VDUISubsystem.generated.h"
 
 /**
@@ -14,8 +15,14 @@ class PROJECTVD_API UVDUISubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
+private:
+    UPROPERTY()
+    TSoftObjectPtr<UVDUIRegistry> UIRegistry;
+
 public:
 	UVDUISubsystem();
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
+
+	TSoftClassPtr<UUserWidget> GetUIWidgetClassPathByName(const FName& WidgetName);
 };

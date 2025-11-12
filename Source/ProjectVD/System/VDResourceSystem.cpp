@@ -5,7 +5,7 @@
 
 void UVDResourceSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-	AssetManager = UAssetManager::Get();
+	AssetManager = UAssetManager::GetIfInitialized();
 
 	UE_LOG(LogTemp, Warning, TEXT("UVDResourceSystem Initialize"));
 }
@@ -44,3 +44,21 @@ void UVDResourceSystem::LoadResourceAsync(const FSoftClassPath& ResourcePath, TF
 		);
 	}
 }
+
+void UVDResourceSystem::LoadResourceAsync(const FSoftObjectPath& ResourcePath, TFunction<void(UObject*)> OnLoadedCallback)
+{
+	if(ResourcePath.IsValid())
+	{
+		FStreamableManager& Streamable = AssetManager->GetStreamableManager();
+		Streamable.RequestAsyncLoad(ResourcePath,
+			FStreamableDelegate::CreateLambda([ResourcePath, OnLoadedCallback]()
+				{
+					UObject* LoadedObject = ResourcePath.ResolveObject();
+					OnLoadedCallback(LoadedObject);
+				})
+		);
+	}
+}
+
+
+

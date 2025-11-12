@@ -9,9 +9,9 @@
 #include "ETC/VDTitleMovieActor.h"
 #include "Game/VDGameInstance.h"
 #include "System/VDResourceSystem.h"
+#include "System/VDUISubsystem.h"
 AVDTitleController::AVDTitleController()
 {
-	TitlePanelUserWidgetClass = FSoftClassPath(TEXT("/Game/ProjectVD/UI/TitleUI/TitleUIPanel.TitleUIPanel_C"));
 	SetShowMouseCursor(true);
 }
 
@@ -25,6 +25,8 @@ void AVDTitleController::BeginPlay()
 
 	ensure(TitleMovieActor);
 
+	TitlePanelUserWidgetClass = FSoftClassPath(TEXT("/Game/ProjectVD/UI/TitleUI/TitleUIPanel.TitleUIPanel_C"));
+
 	UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
 
 	if (GI)
@@ -32,18 +34,26 @@ void AVDTitleController::BeginPlay()
 		UVDResourceSystem* RS = GI->GetSubsystem<UVDResourceSystem>();
 		if (RS)
 		{
-			RS->LoadResourceAsync(TitlePanelUserWidgetClass, [this](UClass* LoadedClass)
-				{
-					if (LoadedClass)
+			UVDUISubsystem* UISubsys = GI->GetSubsystem<UVDUISubsystem>();
+			TSoftClassPtr<UUserWidget> WidgetClass = UISubsys->GetUIWidgetClassPathByName(TEXT("TitlePanel"));
+
+			auto& Streamable = UAssetManager::GetStreamableManager();
+			auto World = GetWorld();
+			Streamable.RequestAsyncLoad(
+				WidgetClass.ToSoftObjectPath(),
+				FStreamableDelegate::CreateLambda([WidgetClass, World]()
 					{
-						TitlePanelUserWidget = CreateWidget<UVDTitlePanelUserWidget>(this, LoadedClass);
-						if (TitlePanelUserWidget.IsValid())
+						if (UClass* Cls = WidgetClass.Get())
 						{
-							TitlePanelUserWidget->AddToViewport();
-							UE_LOG(LogTemp, Log, TEXT("TitlePanelUserWidget Created"));
+							if (UVDTitlePanelUserWidget* W = CreateWidget<UVDTitlePanelUserWidget>(World, Cls))
+							{
+								W->AddToViewport();
+							}
 						}
-					}
-				});
+					})
+			);
+
+		//	TitlePanelUserWidget = CreateWidget<UVDTitlePanelUserWidget>(this, GI->GetSubsystem<UVDUISubsystem>()-> );
 		}
 	}
 
