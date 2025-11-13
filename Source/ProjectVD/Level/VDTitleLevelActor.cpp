@@ -29,6 +29,10 @@ void AVDTitleLevelActor::InitializeTitleLevel()
 	LoadTitleMovieResources();
 }
 
+void AVDTitleLevelActor::ShowTitleUI()
+{
+}
+
 void AVDTitleLevelActor::LoadTitleMovieResources()
 {
 	if (TitleMovieActor)

@@ -8,8 +8,9 @@
 #include "UI/Title/VDTitlePanelUserWidget.h"
 #include "ETC/VDTitleMovieActor.h"
 #include "Game/VDGameInstance.h"
-#include "System/VDResourceSystem.h"
 #include "System/VDUISubsystem.h"
+#include "Public/VDConstrants.h"
+
 AVDTitleController::AVDTitleController()
 {
 	SetShowMouseCursor(true);
@@ -24,32 +25,12 @@ void AVDTitleController::BeginPlay()
 
 	if (GI)
 	{
-		UVDResourceSystem* RS = GI->GetSubsystem<UVDResourceSystem>();
-		if (RS)
-		{//
-			UVDUISubsystem* UISubsys = GI->GetSubsystem<UVDUISubsystem>();
-			TSoftClassPtr<UUserWidget> WidgetClass = UISubsys->GetUIWidgetClassPathByName(TEXT("TitlePanel"));
-
-			auto& Streamable = UAssetManager::GetStreamableManager();
-			auto World = GetWorld();
-			Streamable.RequestAsyncLoad(
-				WidgetClass.ToSoftObjectPath(),
-				FStreamableDelegate::CreateLambda([WidgetClass, World]()
-					{
-						if (UClass* Cls = WidgetClass.Get())
-						{
-							if (UVDTitlePanelUserWidget* W = CreateWidget<UVDTitlePanelUserWidget>(World, Cls))
-							{
-								W->AddToViewport();
-							}
-						}
-					})
-			);
-
-		//	TitlePanelUserWidget = CreateWidget<UVDTitlePanelUserWidget>(this, GI->GetSubsystem<UVDUISubsystem>()-> );
+		UVDUISubsystem* UISubsystem = GI->GetSubsystem<UVDUISubsystem>();
+		if (UISubsystem)
+		{
+			UISubsystem->ShowUIWidget(this, VDConstants::TitlePanel);
 		}
 	}
-
 }
 
 void AVDTitleController::AsyncLevelLoad(const FString& LevelDir, const FString& LevelName)

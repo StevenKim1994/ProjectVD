@@ -9,8 +9,8 @@ void UVDResourceSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	AssetManager = UAssetManager::GetIfInitialized();
 
-	LoadPrimaryAsset(FPrimaryAssetId("UI"));
-	LoadPrimaryAsset(FPrimaryAssetId("Movie"));
+	FPrimaryAssetId Id("UI","UIRegistry");
+	LoadPrimaryAsset(Id);
 
 	UE_LOG(LogTemp, Warning, TEXT("UVDResourceSystem Initialize"));
 }
@@ -48,9 +48,9 @@ void UVDResourceSystem::LoadPrimaryAssetAsync(const FPrimaryAssetId& AssetId, TF
 
 void UVDResourceSystem::LoadPrimaryAsset(const FPrimaryAssetId& AssetId)
 {
-	if (AssetId.IsValid())
+	//if (AssetId.IsValid())
 	{
-		UPrimaryDataAsset* LoadedAsset = AssetManager->GetPrimaryAssetObject<UPrimaryDataAsset>(AssetId);
+		UPrimaryDataAsset* LoadedAsset = AssetManager->GetPrimaryAssetObject<UPrimaryDataAsset >(AssetId);
 		if (LoadedAsset)
 		{
 			if (LoadedPrimaryAssets.Contains(AssetId) == false)
@@ -64,7 +64,6 @@ void UVDResourceSystem::LoadPrimaryAsset(const FPrimaryAssetId& AssetId)
 		}
 	}
 }
-
 
 
 void UVDResourceSystem::LoadResourceAsync(const TSoftObjectPtr<UObject>& ResourcePtr, TFunction<void(UObject*)> OnLoadedCallback)

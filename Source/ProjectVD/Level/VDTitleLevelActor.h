@@ -25,6 +25,9 @@ private:
 	void InitializeTitleLevel();
 
 	UFUNCTION(BlueprintCallable, Category = "LevelActor", meta = (AllowPrivateAccess = "true"))
+	void ShowTitleUI();
+
+	UFUNCTION(BlueprintCallable, Category = "LevelActor", meta = (AllowPrivateAccess = "true"))
 	void LoadTitleMovieResources();
 
 public:

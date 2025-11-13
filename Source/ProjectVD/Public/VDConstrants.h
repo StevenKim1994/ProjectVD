@@ -4,27 +4,9 @@
 
 namespace VDConstants
 {
-	// 경로 리터럴
-	constexpr const TCHAR* TitleMoviePath = TEXT("/Game/Movies/TitleMovie.TitleMovie");
-
 #pragma region UI_WIDGET
-	constexpr const TCHAR* TitlePanelWidgetPath = TEXT("/Game/UI/Title/WDG_TitlePanel.WDG_TitlePanel_C");
-
-	extern const FName TitleWidgetButtonsParentsBox;
-	extern const FName TitleStartButtonName;
-	extern const FName TitleOptionButtonName;
-	extern const FName TitleWidgetTitleName;
-	extern const FName TitleExitButtonName;
-	extern const FName TitleMovieSoundMuteToggleName;
-	extern const FString UIRegistryDataAssetPath;
-
-	// UI Widget Keys for UISubsystem
-	namespace UIWidgetKeys
-	{
-		constexpr const TCHAR* TitlePanel = TEXT("TitlePanel");
-	}
-#pragma endregion
-
+	// UI 위젯 이름들
+	extern const FName TitlePanel;
 #pragma region UI_TEXT
 	// 전역 프로젝트 이름 텍스트
 	extern const FText TitleProjectName;

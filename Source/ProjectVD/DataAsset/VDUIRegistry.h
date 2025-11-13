@@ -13,9 +13,10 @@ class PROJECTVD_API UVDUIRegistry : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
+
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override
 	{
-		return FPrimaryAssetId("UI", GetFName());
+		return FPrimaryAssetId(FPrimaryAssetType("UI"), GetFName());
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
