@@ -8,8 +8,12 @@ public class ProjectVDEditorTarget : TargetRules
 	public ProjectVDEditorTarget( TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V4;
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
-		ExtraModuleNames.Add("ProjectVD");
+        DefaultBuildSettings = BuildSettingsVersion.V6;
+        IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;
+
+
+
+        // DESC :: 내가 추가한 모듈들
+        ExtraModuleNames.Add("ProjectVD");
 	}
 }

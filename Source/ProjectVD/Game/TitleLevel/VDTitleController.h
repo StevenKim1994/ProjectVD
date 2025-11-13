@@ -12,8 +12,6 @@ class PROJECTVD_API AVDTitleController : public APlayerController
 	GENERATED_BODY()
 
 private:
-	UPROPERTY()
-	FSoftClassPath TitlePanelUserWidgetClass;
 
 	UPROPERTY()
 	TWeakObjectPtr<class UVDTitlePanelUserWidget> TitlePanelUserWidget;

@@ -15,7 +15,7 @@ class PROJECTVD_API UVDUIRegistry : public UPrimaryDataAsset
 public:
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override
 	{
-		return FPrimaryAssetId("UIRegistry", GetFName());
+		return FPrimaryAssetId("UI", GetFName());
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "UI")

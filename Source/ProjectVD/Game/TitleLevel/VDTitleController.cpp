@@ -19,13 +19,6 @@ void AVDTitleController::BeginPlay()
 {
 	Super::BeginPlay();
 	SetInputMode(FInputModeUIOnly());
-	TArray<AActor*> WorldActorArray;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AVDTitleMovieActor::StaticClass(), WorldActorArray);
-	TitleMovieActor = Cast<AVDTitleMovieActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AVDTitleMovieActor::StaticClass()));
-
-	ensure(TitleMovieActor);
-
-	TitlePanelUserWidgetClass = FSoftClassPath(TEXT("/Game/ProjectVD/UI/TitleUI/TitleUIPanel.TitleUIPanel_C"));
 
 	UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
 
@@ -33,7 +26,7 @@ void AVDTitleController::BeginPlay()
 	{
 		UVDResourceSystem* RS = GI->GetSubsystem<UVDResourceSystem>();
 		if (RS)
-		{
+		{//
 			UVDUISubsystem* UISubsys = GI->GetSubsystem<UVDUISubsystem>();
 			TSoftClassPtr<UUserWidget> WidgetClass = UISubsys->GetUIWidgetClassPathByName(TEXT("TitlePanel"));
 

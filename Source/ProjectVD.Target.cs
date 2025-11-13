@@ -8,8 +8,11 @@ public class ProjectVDTarget : TargetRules
 	public ProjectVDTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-		DefaultBuildSettings = BuildSettingsVersion.V4;
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
+
+		DefaultBuildSettings = BuildSettingsVersion.V6;
+		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7; 
+
+		// DESC :: 내가 추가한 모듈들
 		ExtraModuleNames.Add("ProjectVD");
-	}
+    }
 }

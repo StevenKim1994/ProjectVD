@@ -2,10 +2,15 @@
 
 
 #include "System/VDResourceSystem.h"
+#include "DataAsset/VDMovieRegistry.h"
+#include "DataAsset/VDUIRegistry.h"
 
 void UVDResourceSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	AssetManager = UAssetManager::GetIfInitialized();
+
+	LoadPrimaryAsset(FPrimaryAssetId("UI"));
+	LoadPrimaryAsset(FPrimaryAssetId("Movie"));
 
 	UE_LOG(LogTemp, Warning, TEXT("UVDResourceSystem Initialize"));
 }
@@ -14,6 +19,53 @@ void UVDResourceSystem::Deinitialize()
 {
 	UE_LOG(LogTemp, Warning, TEXT("UVDResourceSystem Deinitialize"));
 }
+
+void UVDResourceSystem::LoadPrimaryAssetAsync(const FPrimaryAssetId& AssetId, TFunction<void(UPrimaryDataAsset*)> OnLoadedCallback)
+{
+	if (AssetId.IsValid())
+	{
+		FStreamableManager& Streamable = AssetManager->GetStreamableManager();
+		AssetManager->LoadPrimaryAsset(AssetId, TArray<FName>(),
+			FStreamableDelegate::CreateLambda([this, AssetId, OnLoadedCallback]()
+				{
+					UPrimaryDataAsset* LoadedAsset = AssetManager->GetPrimaryAssetObject<UPrimaryDataAsset>(AssetId);
+					if (LoadedAsset)
+					{
+						if (LoadedPrimaryAssets.Contains(AssetId) == false)
+						{
+							LoadedPrimaryAssets.Add(AssetId, LoadedAsset);
+						}
+						else
+						{
+							UE_LOG(LogTemp, Warning, TEXT("Primary Asset %s is already loaded."), *AssetId.ToString());
+						}
+					}
+					OnLoadedCallback(LoadedAsset);
+				})
+		);
+	}
+}
+
+void UVDResourceSystem::LoadPrimaryAsset(const FPrimaryAssetId& AssetId)
+{
+	if (AssetId.IsValid())
+	{
+		UPrimaryDataAsset* LoadedAsset = AssetManager->GetPrimaryAssetObject<UPrimaryDataAsset>(AssetId);
+		if (LoadedAsset)
+		{
+			if (LoadedPrimaryAssets.Contains(AssetId) == false)
+			{
+				LoadedPrimaryAssets.Add(AssetId, LoadedAsset);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Primary Asset %s is already loaded."), *AssetId.ToString());
+			}
+		}
+	}
+}
+
+
 
 void UVDResourceSystem::LoadResourceAsync(const TSoftObjectPtr<UObject>& ResourcePtr, TFunction<void(UObject*)> OnLoadedCallback)
 {
@@ -59,6 +111,10 @@ void UVDResourceSystem::LoadResourceAsync(const FSoftObjectPath& ResourcePath, T
 		);
 	}
 }
+
+
+
+
 
 
 

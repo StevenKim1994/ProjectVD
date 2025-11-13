@@ -7,28 +7,17 @@
 AVDTitleMovieActor::AVDTitleMovieActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	static ConstructorHelpers::FObjectFinder<UMediaPlayer> MediaPlayerRef(TEXT("/Script/MediaAssets.MediaPlayer'/Game/Movies/Title_MoviePlayer.Title_MoviePlayer'"));
-	if (MediaPlayerRef.Object)
-	{
-		TitleMoviePlayer = MediaPlayerRef.Object;
-	}
 
-	static ConstructorHelpers::FObjectFinder<UMediaSource> MediaSourceRef(TEXT("/Script/MediaAssets.FileMediaSource'/Game/Movies/Title_Movie.Title_Movie'"));
-	if (MediaSourceRef.Object)
-	{
-		TitleMovieSource = MediaSourceRef.Object;
-	}
-
-	//TitleMoviePlayer->OpenSource(TitleMovieSource);
+	TitleMoviePlayer = CreateDefaultSubobject<UMediaPlayer>(TEXT("TitleMoviePlayer"));
 	TitleMovieSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("TitleMovieSound"));
+	TitleMovieSoundComponent->SetupAttachment(RootComponent);
+	TitleMovieSoundComponent->SetMediaPlayer(TitleMoviePlayer);
 }
 
 // Called when the game starts or when spawned
 void AVDTitleMovieActor::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//TitleMovieSoundComponent->SetMediaPlayer(TitleMoviePlayer);
 }
 
 void AVDTitleMovieActor::SetChangeState(bool ChangeState)
@@ -40,6 +29,24 @@ void AVDTitleMovieActor::SetChangeState(bool ChangeState)
 	else
 	{
 		TitleMovieSoundComponent->SetVolumeMultiplier(1.0f);
+	}
+}
+
+void AVDTitleMovieActor::SetPlayTitleMovie(UMediaSource* MovieMedia)
+{
+	if (TitleMoviePlayer && MovieMedia)
+	{
+		TitleMoviePlayer->OpenSource(MovieMedia);
+
+		TitleMoviePlayer->Play();
+	}
+}
+
+void AVDTitleMovieActor::SetPauseTitleMovie()
+{
+	if (TitleMoviePlayer)
+	{
+		TitleMoviePlayer->Pause();
 	}
 }
 
