@@ -13,10 +13,9 @@ class PROJECTVD_API UVDGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-#pragma region LEVEL MANAGE
-
 public:
 	void Init() override;
-#pragma endregion 
+
+	void SetFrameRate(int32 NewFrameRate);
 
 };

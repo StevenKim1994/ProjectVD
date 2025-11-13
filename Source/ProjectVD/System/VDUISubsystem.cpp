@@ -1,14 +1,13 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "System/VDUISubsystem.h"
+#include "System/VDResourceSystem.h"
 #include "Engine/AssetManager.h"
 #include "Public/VDConstrants.h"
 #include "DataAsset/VDUIRegistry.h"
 #include "Game/VDGameInstance.h"
-#include "System/VDUISubsystem.h"
-#include "System/VDResourceSystem.h"
 #include "Blueprint/UserWidget.h"
-#include "UI/Title/VDTitlePanelUserWidget.h"
 
 UVDUISubsystem::UVDUISubsystem()
 {

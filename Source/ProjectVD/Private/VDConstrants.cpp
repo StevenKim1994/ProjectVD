@@ -5,6 +5,7 @@ namespace VDConstants
 {
 #pragma region UI_WIDGET
 	const FName TitlePanel(TEXT("TitlePanel"));
+	const FName LoadingPanel(TEXT("LoadingPanel"));
 #pragma endregion
 	const FName TitleWidgetTitleName(TEXT("GameTitleName"));
 	const FName TitleWidgetButtonsParentsBox(TEXT("ButtonsParentBox"));
@@ -15,8 +16,8 @@ namespace VDConstants
 
 	const FString UIRegistryDataAssetPath(TEXT("/Game/ProjectVD/DataAsset/UIRegistry.UIRegistry"));
 
+	const FName LoadingLevel(TEXT("Loading"));
 
-	const FString InGameLevelName(TEXT("Stage"));
 
 	// 로컬라이제이션 가능한 프로젝트 이름
 	const FText TitleProjectName = NSLOCTEXT("VD.UI", "ProjectName", "ProjectVD");

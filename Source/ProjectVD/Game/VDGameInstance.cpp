@@ -9,3 +9,10 @@ void UVDGameInstance::Init()
 {
 	Super::Init();
 }
+
+void UVDGameInstance::SetFrameRate(int32 NewFrameRate)
+{
+	GEngine->SetMaxFPS(NewFrameRate);
+
+	UE_LOG(LogTemp, Log, TEXT("Frame rate set to: %d"), NewFrameRate);
+}

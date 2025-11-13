@@ -3,21 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "VDTitleGameMode.generated.h"
+#include "GameFramework/PlayerController.h"
+#include "VDLoadingController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTVD_API AVDTitleGameMode : public AGameModeBase
+class PROJECTVD_API AVDLoadingController : public APlayerController
 {
 	GENERATED_BODY()
-
-public:
-	AVDTitleGameMode();
-
+	
 private:
+
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+public:
+	AVDLoadingController();
 };

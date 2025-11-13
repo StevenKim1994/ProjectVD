@@ -16,12 +16,13 @@ class PROJECTVD_API UVDLevelSystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 private:
+	FString CurrentLevelName;
+	FString NextLevelName;
 
 public:
 	void Initialize(FSubsystemCollectionBase& Collection) override;
 	void Deinitialize() override;
 
 	void ChangeLevelByName(const FString& LevelName);
-
-	
+	void OnLevelLoaded();
 };

@@ -1,6 +1,7 @@
 #include "System/VDLevelSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
+#include "Public/VDConstrants.h"
 
 void UVDLevelSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -14,26 +15,24 @@ void UVDLevelSystem::Deinitialize()
 
 void UVDLevelSystem::ChangeLevelByName(const FString& LevelName)
 {
+	if (CurrentLevelName.Equals(LevelName))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("VDLevelSystem::ChangeLevelByName - Already in level '%s'."), *LevelName);
+        return;
+    }
+
     if (LevelName.IsEmpty())
     {
         UE_LOG(LogTemp, Warning, TEXT("VDLevelSystem::ChangeLevelByName - LevelName is empty."));
         return;
     }
 
-    UWorld* World = GetWorld();
-    if (!World)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("VDLevelSystem::ChangeLevelByName - World is null."));
-        return;
-    }
+	NextLevelName = LevelName;
+    UGameplayStatics::OpenLevel(GetWorld(), VDConstants::LoadingLevel);
+}
 
-    const FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(World, /*bRemovePrefix=*/true);
-    if (CurrentLevelName.Equals(LevelName, ESearchCase::IgnoreCase))
-    {
-        UE_LOG(LogTemp, Verbose, TEXT("VDLevelSystem::ChangeLevelByName - Already in level '%s'."), *LevelName);
-        return;
-    }
-
-    const FName TargetLevelFName(*LevelName);
-    UGameplayStatics::OpenLevel(World, TargetLevelFName);
+void UVDLevelSystem::OnLevelLoaded()
+{
+    CurrentLevelName = NextLevelName;
+    NextLevelName.Empty();
 }
