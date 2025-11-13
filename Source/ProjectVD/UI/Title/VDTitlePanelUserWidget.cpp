@@ -2,17 +2,14 @@
 
 #include "UI/Title/VDTitlePanelUserWidget.h"
 #include "Game/VDGameInstance.h"
+#include "System/VDLevelSystem.h"
 #include "Public/VDConstrants.h"
 #include "Containers/Ticker.h"        
 #include "Components/CanvasPanelSlot.h" 
 
-
 void UVDTitlePanelUserWidget::OnClickStartButton()
 {
-	if (OnClickStartButtonEvent.IsBound())
-	{
-		OnClickStartButtonEvent.Broadcast();
-	}
+	GetGameInstance()->GetSubsystem<UVDLevelSystem>()->ChangeLevelByName(TEXT("Stage"));
 }
 
 void UVDTitlePanelUserWidget::OnClickOptionButton()

@@ -17,12 +17,6 @@ class PROJECTVD_API UVDGameInstance : public UGameInstance
 
 public:
 	void Init() override;
-	void GotoInGameLevel(FName _TargetLevelName);
-	bool DoesLevelExist(FName _TargetLevelName);
-	void OnPostLoadLevel();
-
-private:
-	FName TargetLevelName;
 #pragma endregion 
 
 };

@@ -15,6 +15,9 @@ namespace VDConstants
 
 	const FString UIRegistryDataAssetPath(TEXT("/Game/ProjectVD/DataAsset/UIRegistry.UIRegistry"));
 
+
+	const FString InGameLevelName(TEXT("Stage"));
+
 	// 로컬라이제이션 가능한 프로젝트 이름
 	const FText TitleProjectName = NSLOCTEXT("VD.UI", "ProjectName", "ProjectVD");
 

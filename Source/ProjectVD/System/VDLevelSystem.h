@@ -6,12 +6,22 @@
 #include "Subsystems/Subsystem.h"
 #include "VDLevelSystem.generated.h"
 
+class UVDUISubSystem;
 /**
  * 
  */
 UCLASS()
-class PROJECTVD_API UVDLevelSystem : public USubsystem
+class PROJECTVD_API UVDLevelSystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
+
+private:
+
+public:
+	void Initialize(FSubsystemCollectionBase& Collection) override;
+	void Deinitialize() override;
+
+	void ChangeLevelByName(const FString& LevelName);
+
 	
 };

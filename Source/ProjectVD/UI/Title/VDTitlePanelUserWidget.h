@@ -13,7 +13,6 @@
 #include "MediaSoundComponent.h"
 #include "VDTitlePanelUserWidget.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnClickStartButtonEvent);
 DECLARE_MULTICAST_DELEGATE(FOnClickExitButtonEvent);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleTitleMovieMuteEvent, bool);
 
@@ -94,7 +93,6 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	FOnClickStartButtonEvent OnClickStartButtonEvent;
 	FOnClickExitButtonEvent OnClickExitButtonEvent;
 	FOnToggleTitleMovieMuteEvent OnToggleTitleMovieMuteEvent;
 
