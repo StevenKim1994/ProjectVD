@@ -19,7 +19,7 @@ void AVDLoadingLevelGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AVDLoadingLevelGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-	if (!LoadingController)
+	if (!LoadingController.IsValid())
 	{
 		LoadingController = Cast<AVDLoadingController>(NewPlayer);
 	}
@@ -27,7 +27,7 @@ void AVDLoadingLevelGameMode::PostLogin(APlayerController* NewPlayer)
 
 void AVDLoadingLevelGameMode::OnLoadingProgressUpdated(float Percent)
 {
-	if(LoadingController)
+	if(LoadingController.IsValid())
 	{
 		LoadingController->UpdateLoadingPercent(Percent);
 	}
@@ -35,7 +35,7 @@ void AVDLoadingLevelGameMode::OnLoadingProgressUpdated(float Percent)
 
 void AVDLoadingLevelGameMode::OnLoadingFinished()
 {
-	if (LoadingController)
+	if (LoadingController.IsValid())
 	{
 		LoadingController->HideLoadingPanel();
 	}
@@ -43,7 +43,7 @@ void AVDLoadingLevelGameMode::OnLoadingFinished()
 
 void AVDLoadingLevelGameMode::OnLoadingStarted()
 {
-	if (LoadingController)
+	if (LoadingController.IsValid())
 	{
 		LoadingController->ShowLoadingPanel();
 	}

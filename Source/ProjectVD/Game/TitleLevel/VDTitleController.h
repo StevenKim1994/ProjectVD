@@ -6,6 +6,11 @@
 #include "GameFramework/PlayerController.h"
 #include "VDTitleController.generated.h"
 
+class UMediaSource;
+class UMediaPlayer;
+class UMediaTexture;
+class AVDTitleMovieActor;
+class UVDTitlePanelUserWidget;
 UCLASS()
 class PROJECTVD_API AVDTitleController : public APlayerController
 {
@@ -14,13 +19,28 @@ class PROJECTVD_API AVDTitleController : public APlayerController
 private:
 
 	UPROPERTY()
-	TWeakObjectPtr<class UVDTitlePanelUserWidget> TitlePanelUserWidget;
+	TWeakObjectPtr<UVDTitlePanelUserWidget> TitlePanelUserWidget;
 
-	UPROPERTY()
-	TObjectPtr <class AVDTitleMovieActor> TitleMovieActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"))
+	UMediaSource* TitleBackgroundMediaSource;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"))
+	UMediaPlayer* TitleBackgroundMediaPlayer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"))
+	UMediaTexture* TitleBackgroundMediaTexture;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<AVDTitleMovieActor> TitleMovieActor;
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetTitleBackgroundMovie(bool Pause = false);
+
+	UFUNCTION(BlueprintCallable)
+	void SetTitleMovieSoundMute(bool bMute = false);
 
 public:
 	AVDTitleController();
 
-	virtual void BeginPlay() override;
 };

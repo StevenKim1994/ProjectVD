@@ -23,7 +23,7 @@ private:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	UPROPERTY()
-	AVDLoadingController* LoadingController;
+	TWeakObjectPtr<AVDLoadingController> LoadingController;
 
 	UFUNCTION()
 	void OnLoadingProgressUpdated(float Progress);

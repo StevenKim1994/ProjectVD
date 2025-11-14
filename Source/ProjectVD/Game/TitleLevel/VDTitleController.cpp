@@ -19,18 +19,67 @@ AVDTitleController::AVDTitleController()
 void AVDTitleController::BeginPlay()
 {
 	Super::BeginPlay();
+
 	SetInputMode(FInputModeUIOnly());
 
-	UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
-
-	if (GI)
+	if (TitleBackgroundMediaPlayer)
 	{
-		UVDUISubsystem* UISubsystem = GI->GetSubsystem<UVDUISubsystem>();
-		if (UISubsystem)
+		TitleBackgroundMediaPlayer->OpenSource(TitleBackgroundMediaSource);
+		TitleMovieActor = Cast<AVDTitleMovieActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AVDTitleMovieActor::StaticClass()));
+		if(TitleMovieActor)
 		{
-			UISubsystem->SetPlayerControllerRootUIWidget(this);
-			UISubsystem->ShowUIWidgetAsync(VDConstants::TitlePanel);
+			TitleMovieActor->SetTitleMovieMediaPlayer(TitleBackgroundMediaPlayer);
+		}
+
+		UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
+
+		if (GI)
+		{
+			UVDUISubsystem* UISubsystem = GI->GetSubsystem<UVDUISubsystem>();
+			if (UISubsystem)
+			{
+				UISubsystem->SetPlayerControllerRootUIWidget(this);
+				UISubsystem->ShowUIWidgetAsync(
+					VDConstants::TitlePanel,
+					FOnUIWidgetLoadedDelegate::CreateWeakLambda(this, [this](UUserWidget* Widget)
+					{
+						if (Widget)
+						{
+							TitlePanelUserWidget = Cast<UVDTitlePanelUserWidget>(Widget);
+							if (TitlePanelUserWidget.IsValid())
+							{
+								TitlePanelUserWidget->SetBackgroundMediaTexture(TitleBackgroundMediaTexture);
+								TitlePanelUserWidget->OnToggleTitleMovieMuteEvent.AddUObject(this, &AVDTitleController::SetTitleMovieSoundMute);
+							}
+						}
+					})
+				);
+			}
 		}
 	}
 }
+
+void AVDTitleController::SetTitleBackgroundMovie(bool Pause)
+{
+	if (TitleBackgroundMediaPlayer)
+	{
+		if (Pause)
+		{
+			TitleBackgroundMediaPlayer->Pause();
+		}
+		else
+		{
+			TitleBackgroundMediaPlayer->Play();
+		}
+	}
+}
+
+void AVDTitleController::SetTitleMovieSoundMute(bool bMute)
+{
+	if (TitleMovieActor)
+	{
+		TitleMovieActor->SetTitleMovieSoundMute(bMute);
+	}
+}
+
 

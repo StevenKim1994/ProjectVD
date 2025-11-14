@@ -8,10 +8,14 @@
 #include "Components/TextBlock.h"
 #include "Components/CheckBox.h"
 #include "Components/VerticalBox.h"
+#include "Components/Image.h"
 #include "MediaPlayer.h"
 #include "MediaSource.h"
 #include "MediaSoundComponent.h"
 #include "VDTitlePanelUserWidget.generated.h"
+
+class UMediaPlayer;
+class UMediaTexture;
 
 DECLARE_MULTICAST_DELEGATE(FOnClickExitButtonEvent);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleTitleMovieMuteEvent, bool);
@@ -24,18 +28,7 @@ class PROJECTVD_API UVDTitlePanelUserWidget : public UUserWidget
 private:
 	bool bIsMainMenuButtonToggledOn = true;
 
-	// MediaSection -> 추후 Actor로 이동시켜야함 어짜피 재생되면 알아서 Image에 그려줌.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"), meta = (ExposeOnSpawn = true))
-	UMediaPlayer* TitleBackgroundMediaPlayer;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"), meta = (ExposeOnSpawn = true))
-	UMediaSource* TitleBackgroundMediaSource;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"), meta = (ExposeOnSpawn = true))
-	UMediaSoundComponent* TitleMediaSoundComponent;
-
 	// UISection
-
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* OptionsParentBox;
 
@@ -44,7 +37,6 @@ private:
 
 	UPROPERTY(meta = (BindWidget))	
 	UTextBlock* GameTitleName;
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
 	UCheckBox* TitleMovieMuteToggle;
@@ -64,6 +56,12 @@ private:
 	UPROPERTY( meta = (BindWidget)) // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
 	UButton* ExitButton;
 
+	UPROPERTY(meta = (BindWidget))
+	UImage* MediaPlayerImage;
+
+	UPROPERTY()
+	UMediaTexture* MediaTexture;
+
 	UFUNCTION()
 	void OnClickStartButton();
 
@@ -82,6 +80,8 @@ private:
 	UFUNCTION()
 	void OnHoverExitButton();
 
+	
+
 	UFUNCTION()
 	void OnMainButtonToggle(bool IsOn);
 
@@ -96,5 +96,8 @@ public:
 	FOnClickExitButtonEvent OnClickExitButtonEvent;
 	FOnToggleTitleMovieMuteEvent OnToggleTitleMovieMuteEvent;
 
+	UFUNCTION()
 	void SetToggleBackgroundSound(bool IsOn);
+
+	void SetBackgroundMediaTexture(UMediaTexture* Texture);
 };

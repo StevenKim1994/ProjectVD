@@ -2,16 +2,16 @@
 
 
 #include "ETC/VDTitleMovieActor.h"
+#include	"MediaSoundComponent.h"
 
 // Sets default values
 AVDTitleMovieActor::AVDTitleMovieActor()
 {
-	PrimaryActorTick.bCanEverTick = false;
-
-	TitleMoviePlayer = CreateDefaultSubobject<UMediaPlayer>(TEXT("TitleMoviePlayer"));
-	TitleMovieSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("TitleMovieSound"));
+	TitleMovieSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("TitleMovieSoundComponent"));
+	TitleMovieSoundComponent->RegisterComponent();
 	TitleMovieSoundComponent->SetupAttachment(RootComponent);
-	TitleMovieSoundComponent->SetMediaPlayer(TitleMoviePlayer);
+
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 // Called when the game starts or when spawned
@@ -20,9 +20,9 @@ void AVDTitleMovieActor::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AVDTitleMovieActor::SetChangeState(bool ChangeState)
+void AVDTitleMovieActor::SetTitleMovieSoundMute(bool bMute)
 {
-	if(ChangeState)
+	if (bMute)
 	{
 		TitleMovieSoundComponent->SetVolumeMultiplier(0.0f);
 	}
@@ -32,22 +32,15 @@ void AVDTitleMovieActor::SetChangeState(bool ChangeState)
 	}
 }
 
-void AVDTitleMovieActor::SetPlayTitleMovie(UMediaSource* MovieMedia)
+void AVDTitleMovieActor::SetTitleMovieMediaPlayer(UMediaPlayer* MediaPlayer)
 {
-	if (TitleMoviePlayer && MovieMedia)
+	if (TitleMovieSoundComponent)
 	{
-		TitleMoviePlayer->OpenSource(MovieMedia);
-
-		TitleMoviePlayer->Play();
+		TitleMovieSoundComponent->SetMediaPlayer(MediaPlayer);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TitleMovieSoundComponent is nullptr"));
 	}
 }
-
-void AVDTitleMovieActor::SetPauseTitleMovie()
-{
-	if (TitleMoviePlayer)
-	{
-		TitleMoviePlayer->Pause();
-	}
-}
-
 

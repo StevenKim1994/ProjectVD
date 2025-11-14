@@ -7,6 +7,9 @@
 #include "Public/VDConstrants.h"
 #include "Containers/Ticker.h"        
 #include "Components/CanvasPanelSlot.h" 
+#include "Components/Image.h"
+#include "MediaTexture.h"
+#include "Styling/SlateBrush.h"
 
 void UVDTitlePanelUserWidget::OnClickStartButton()
 {
@@ -62,6 +65,12 @@ void UVDTitlePanelUserWidget::OnHoverExitButton()
 	UE_LOG(LogTemp, Log, TEXT("Hovered!"));
 }
 
+void UVDTitlePanelUserWidget::SetBackgroundMediaTexture(UMediaTexture* Texture)
+{
+	FSlateBrush Brush;
+	Brush.SetResourceObject(Texture);
+	MediaPlayerImage->SetBrush(Brush);
+}
 
 void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 {
@@ -145,17 +154,6 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (TitleBackgroundMediaPlayer && TitleBackgroundMediaSource)
-	{
-		TitleMediaSoundComponent = NewObject<UMediaSoundComponent>(this);
-		TitleMediaSoundComponent->SetMediaPlayer(TitleBackgroundMediaPlayer);
-		TitleMediaSoundComponent->RegisterComponentWithWorld(GetWorld());
-		if (TitleBackgroundMediaPlayer->OpenSource(TitleBackgroundMediaSource))
-		{
-			TitleBackgroundMediaPlayer->Play();
-		}
-	}
-
 	if (ButtonsParentBox)
 	{
 		bIsMainMenuButtonToggledOn = true;
@@ -223,8 +221,5 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 
 void UVDTitlePanelUserWidget::SetToggleBackgroundSound(bool IsOn)
 {
-	if (TitleMediaSoundComponent)
-	{
-		TitleMediaSoundComponent->SetVolumeMultiplier(IsOn ? 0.0f : 1.0f);
-	}
+
 }
