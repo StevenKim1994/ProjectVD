@@ -12,6 +12,8 @@ class UVDResourceSystem;
 class APlayerController; 
 class UVDLoadingPanelUserWidget;
 
+DECLARE_DELEGATE_OneParam(FOnUIWidgetLoadedDelegate, UUserWidget* /*LoadedUIWidget*/);
+
 UCLASS()
 class PROJECTVD_API UVDUISubsystem : public UGameInstanceSubsystem
 {
@@ -46,7 +48,7 @@ public:
 
 	UUserWidget* GetUIWidget(const FName& WidgetName);
 	void SetPlayerControllerRootUIWidget(APlayerController* PlayerController);
-    void ShowUIWidgetAsync(const FName& WidgetName);
+    void ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoadedDelegate OnLoadedDelegate = nullptr);
 	UUserWidget* ShowUIWidget(const FName& WidgetName);
 
 	void HideUIWidget(const FName& WidgetName);

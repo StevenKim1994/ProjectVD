@@ -7,6 +7,7 @@ void UVDLoadingPanelUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	LoadingDescTextChangeCurrentTime = 0.0f;
+	UpdateLoadingDescText(LoadingDescTextChangeCurrentTime);
 }
 
 void UVDLoadingPanelUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

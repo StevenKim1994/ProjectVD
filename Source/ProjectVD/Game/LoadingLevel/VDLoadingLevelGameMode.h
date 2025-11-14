@@ -9,12 +9,28 @@
 /**
  * 
  */
+class AVDLoadingController;
+
 UCLASS()
 class PROJECTVD_API AVDLoadingLevelGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
 private:
+
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+	UPROPERTY()
+	AVDLoadingController* LoadingController;
+
+	UFUNCTION()
+	void OnLoadingProgressUpdated(float Progress);
+
+	UFUNCTION()
+	void OnLoadingFinished();
+
+	UFUNCTION()
+	void OnLoadingStarted();
 };

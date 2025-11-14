@@ -75,7 +75,7 @@ void UVDUISubsystem::SetPlayerControllerRootUIWidget(APlayerController* PlayerCo
 	}
 }
 
-void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName)
+void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName , FOnUIWidgetLoadedDelegate OnLoadedDelegate)
 {
 	if (!ResourceSystem)
 	{
@@ -103,8 +103,12 @@ void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName)
 
 			ExistingSlot->SetAnchors(FAnchors(0.f, 0.f, 1.f, 1.f));
 			ExistingSlot->SetOffsets(FMargin(0.f));
-
 			ModalUIWidgetStack.Push(ExistingWidget);
+
+			if(OnLoadedDelegate.IsBound())
+			{
+				OnLoadedDelegate.Execute(ExistingWidget);
+			}
 		}
 		return;
 	}

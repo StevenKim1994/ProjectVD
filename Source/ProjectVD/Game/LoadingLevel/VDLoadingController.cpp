@@ -13,31 +13,57 @@ AVDLoadingController::AVDLoadingController()
 	SetShowMouseCursor(false);
 }
 
+void AVDLoadingController::ShowLoadingPanel()
+{
+	UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
+	if (GI)
+	{
+		UVDUISubsystem* UISubsystem = GI->GetSubsystem<UVDUISubsystem>();
+		if (UISubsystem)
+		{
+			UISubsystem->SetPlayerControllerRootUIWidget(this);
+			FOnUIWidgetLoadedDelegate Delegate;
+			Delegate.BindWeakLambda(this, [this](UUserWidget* LoadedUIWidget)
+			{
+				LoadingPanelWidget = Cast<UVDLoadingPanelUserWidget>(LoadedUIWidget);
+				// TODO :: 로딩 시작
+			});
+			
+			UISubsystem->ShowUIWidgetAsync(VDConstants::LoadingPanel, Delegate);
+		}
+	}
+}
+
+void AVDLoadingController::HideLoadingPanel()
+{
+	UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
+	if (GI)
+	{
+		UVDUISubsystem* UISubsystem = GI->GetSubsystem<UVDUISubsystem>();
+		if (UISubsystem)
+		{
+			UISubsystem->HideUIWidget(VDConstants::LoadingPanel);
+		}
+	}
+}
+
+void AVDLoadingController::UpdateLoadingPercent(float InPercent)
+{
+	if (LoadingPanelWidget)
+	{
+		LoadingPanelWidget->SetLoadingPercent(InPercent);
+	}
+}
+
 void AVDLoadingController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
-
-	if (GI)
-	{
-		UVDUISubsystem* UISubSystem = GI->GetSubsystem<UVDUISubsystem>();
-		if (UISubSystem)
-		{
-			UISubSystem->SetPlayerControllerRootUIWidget(this);
-			UVDLoadingPanelUserWidget* LoadingWidget = Cast<UVDLoadingPanelUserWidget>(UISubSystem->ShowUIWidget(VDConstants::LoadingPanel));
-			if (LoadingWidget)
-			{
-				LoadingWidget
-					->SetLoadingText(FText::FromString(TEXT("Loading...")))
-					->SetLoadingPercent(0.0f);
-			}
-		}
-	}
 }
 
 void AVDLoadingController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 }
+
 

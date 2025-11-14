@@ -6,9 +6,6 @@
 #include "Components/RichTextBlock.h"
 #include "VDLoadingPanelUserWidget.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE(FLoadingCompleteEvent);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FLoadingProgressEvent, float, Percent);
-
 UCLASS()
 class PROJECTVD_API UVDLoadingPanelUserWidget : public UUserWidget
 {
@@ -17,7 +14,7 @@ class PROJECTVD_API UVDLoadingPanelUserWidget : public UUserWidget
 private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* LoadingDescText;
-	
+
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* LoadingPercentText;
 
@@ -33,12 +30,6 @@ private:
 	void UpdateLoadingDescText(float DeltaTime);
 
 public:
-	UPROPERTY(BlueprintReadWrite, Category = "LoadingEventCallback")
-	FLoadingCompleteEvent LoadingCompleteEvent;
-
-	UPROPERTY(BlueprintReadWrite, Category = "LoadingEventCallback")
-	FLoadingProgressEvent LoadingProgressEvent;
-
 	UFUNCTION(BlueprintCallable)
 	UVDLoadingPanelUserWidget* SetLoadingText(const FText& InText);
 
