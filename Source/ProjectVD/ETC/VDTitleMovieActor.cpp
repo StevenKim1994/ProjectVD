@@ -1,17 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "ETC/VDTitleMovieActor.h"
-#include	"MediaSoundComponent.h"
+#include "MediaSoundComponent.h"
+#include "Components/SceneComponent.h"
 
 // Sets default values
 AVDTitleMovieActor::AVDTitleMovieActor()
 {
-	TitleMovieSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("TitleMovieSoundComponent"));
-	TitleMovieSoundComponent->RegisterComponent();
-	TitleMovieSoundComponent->SetupAttachment(RootComponent);
-
 	PrimaryActorTick.bCanEverTick = false;
+
+	USceneComponent* DefaultRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	RootComponent = DefaultRoot;
+
+	TitleMovieSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("TitleMovieSoundComponent"));
+	TitleMovieSoundComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -22,13 +24,9 @@ void AVDTitleMovieActor::BeginPlay()
 
 void AVDTitleMovieActor::SetTitleMovieSoundMute(bool bMute)
 {
-	if (bMute)
+	if (TitleMovieSoundComponent)
 	{
-		TitleMovieSoundComponent->SetVolumeMultiplier(0.0f);
-	}
-	else
-	{
-		TitleMovieSoundComponent->SetVolumeMultiplier(1.0f);
+		TitleMovieSoundComponent->SetVolumeMultiplier(bMute ? 0.0f : 1.0f);
 	}
 }
 

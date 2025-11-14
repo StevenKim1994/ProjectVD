@@ -141,10 +141,10 @@ void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName , FOnUIWidgetLoad
 
 						Slot->SetAnchors(FAnchors(0.f, 0.f, 1.f, 1.f));
 						Slot->SetOffsets(FMargin(0.f));
-
 						ModalUIWidgetStack.Push(Widget);
 					}
 				}
+
 			});
 	}
 }

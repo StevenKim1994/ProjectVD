@@ -13,7 +13,7 @@
 
 AVDTitleController::AVDTitleController()
 {
-	SetShowMouseCursor(true);
+	TitleBackgroundMediaSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("TitleBackgroundMediaSoundComponent"));
 }
 
 void AVDTitleController::BeginPlay()
@@ -25,11 +25,6 @@ void AVDTitleController::BeginPlay()
 	if (TitleBackgroundMediaPlayer)
 	{
 		TitleBackgroundMediaPlayer->OpenSource(TitleBackgroundMediaSource);
-		TitleMovieActor = Cast<AVDTitleMovieActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AVDTitleMovieActor::StaticClass()));
-		if(TitleMovieActor)
-		{
-			TitleMovieActor->SetTitleMovieMediaPlayer(TitleBackgroundMediaPlayer);
-		}
 
 		UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
 
@@ -49,6 +44,7 @@ void AVDTitleController::BeginPlay()
 							if (TitlePanelUserWidget.IsValid())
 							{
 								TitlePanelUserWidget->SetBackgroundMediaTexture(TitleBackgroundMediaTexture);
+								TitleBackgroundMediaSoundComponent->SetMediaPlayer(TitleBackgroundMediaPlayer);
 								TitlePanelUserWidget->OnToggleTitleMovieMuteEvent.AddUObject(this, &AVDTitleController::SetTitleMovieSoundMute);
 							}
 						}
@@ -76,9 +72,9 @@ void AVDTitleController::SetTitleBackgroundMovie(bool Pause)
 
 void AVDTitleController::SetTitleMovieSoundMute(bool bMute)
 {
-	if (TitleMovieActor)
+	if (TitleBackgroundMediaSoundComponent)
 	{
-		TitleMovieActor->SetTitleMovieSoundMute(bMute);
+		TitleBackgroundMediaSoundComponent->SetVolumeMultiplier(bMute ? 0.0f : 1.0f);
 	}
 }
 

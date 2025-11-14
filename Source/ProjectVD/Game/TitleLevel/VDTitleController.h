@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
@@ -9,8 +7,9 @@
 class UMediaSource;
 class UMediaPlayer;
 class UMediaTexture;
-class AVDTitleMovieActor;
+class UMediaSoundComponent;
 class UVDTitlePanelUserWidget;
+
 UCLASS()
 class PROJECTVD_API AVDTitleController : public APlayerController
 {
@@ -30,8 +29,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"))
 	UMediaTexture* TitleBackgroundMediaTexture;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<AVDTitleMovieActor> TitleMovieActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Media", meta = (AllowPrivateAccess = "true"))
+	UMediaSoundComponent* TitleBackgroundMediaSoundComponent;
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
@@ -42,5 +42,4 @@ private:
 
 public:
 	AVDTitleController();
-
 };
