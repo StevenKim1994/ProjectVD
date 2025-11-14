@@ -31,6 +31,9 @@ private:
 
 
 public:
+	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 	UPROPERTY(BlueprintAssignable, Category = "ButtonEventCallback")
 	FOnConfirmPopupResult OnClickButtonEvent;
 };

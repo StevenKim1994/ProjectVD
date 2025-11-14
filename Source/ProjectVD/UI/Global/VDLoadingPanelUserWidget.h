@@ -21,6 +21,17 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* LoadingPercentText;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loading", meta = (AllowPrivateAccess = "true"))
+	float LoadingDescTextChangeInterval = 0.5f;
+	float LoadingDescTextChangeCurrentTime = 0.0f;
+
+	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeDestruct() override;
+
+	UFUNCTION()
+	void UpdateLoadingDescText(float DeltaTime);
+
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "LoadingEventCallback")
 	FLoadingCompleteEvent LoadingCompleteEvent;

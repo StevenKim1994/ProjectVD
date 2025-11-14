@@ -3,6 +3,43 @@
 
 #include "UI/Global/VDLoadingPanelUserWidget.h"
 
+void UVDLoadingPanelUserWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+	LoadingDescTextChangeCurrentTime = 0.0f;
+}
+
+void UVDLoadingPanelUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	LoadingDescTextChangeCurrentTime += InDeltaTime;
+	if (LoadingDescTextChangeCurrentTime >= LoadingDescTextChangeInterval)
+	{
+		UpdateLoadingDescText(LoadingDescTextChangeCurrentTime);
+		LoadingDescTextChangeCurrentTime = 0.0f;
+	}
+}
+
+void UVDLoadingPanelUserWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+}
+
+void UVDLoadingPanelUserWidget::UpdateLoadingDescText(float DeltaTime)
+{
+	if (DeltaTime >= LoadingDescTextChangeInterval)
+	{
+		FString CurrentText = LoadingDescText->GetText().ToString();
+		CurrentText.Append(TEXT("."));
+		if (CurrentText.Len() > 13) // "Loading......"
+		{
+			CurrentText = TEXT("Loading");
+		}
+		LoadingDescText->SetText(FText::FromString(CurrentText));
+	}
+
+}
+
 UVDLoadingPanelUserWidget* UVDLoadingPanelUserWidget::SetLoadingText(const FText& InText)
 {
 	LoadingDescText->SetText(InText);
