@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/Subsystem.h"
+#include "UI/Global/VDLoadingPanelUserWidget.h"
 #include "VDLevelSystem.generated.h"
 
 class UVDUISubSystem;

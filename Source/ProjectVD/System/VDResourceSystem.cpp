@@ -96,6 +96,18 @@ void UVDResourceSystem::LoadResourceAsync(const FSoftClassPath& ResourcePath, TF
 	}
 }
 
+UClass* UVDResourceSystem::LoadResource(const FSoftClassPath& ResourcePath)
+{
+	if (AssetManager)
+	{
+		FStreamableManager& Streamable = AssetManager->GetStreamableManager();
+		Streamable.LoadSynchronous(ResourcePath, true /*bManageActiveHandle*/);
+		return ResourcePath.ResolveClass();
+	}
+
+	return nullptr;
+}
+
 void UVDResourceSystem::LoadResourceAsync(const FSoftObjectPath& ResourcePath, TFunction<void(UObject*)> OnLoadedCallback)
 {
 	if(ResourcePath.IsValid())

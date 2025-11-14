@@ -6,6 +6,12 @@
 #include "Game/VDGameInstance.h"
 #include "System/VDUISubsystem.h"
 #include "Public/VDConstrants.h"
+#include "UI/Global/VDLoadingPanelUserWidget.h"
+
+AVDLoadingController::AVDLoadingController()
+{
+	SetShowMouseCursor(false);
+}
 
 void AVDLoadingController::BeginPlay()
 {
@@ -18,7 +24,13 @@ void AVDLoadingController::BeginPlay()
 		UVDUISubsystem* UISubSystem = GI->GetSubsystem<UVDUISubsystem>();
 		if (UISubSystem)
 		{
-			UISubSystem->ShowUIWidget(this, VDConstants::LoadingPanel);
+			UVDLoadingPanelUserWidget* LoadingWidget = Cast<UVDLoadingPanelUserWidget>(UISubSystem->ShowUIWidget(this, VDConstants::LoadingPanel));
+			if (LoadingWidget)
+			{
+				LoadingWidget
+					->SetLoadingText(FText::FromString(TEXT("Loading...")))
+					->SetLoadingPercent(0.0f);
+			}
 		}
 	}
 }
@@ -28,7 +40,3 @@ void AVDLoadingController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-AVDLoadingController::AVDLoadingController()
-{
-
-}

@@ -4,14 +4,33 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/RichTextBlock.h"
+#include "Components/Button.h"
 #include "VDConfirmPopup.generated.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum class EConfirmPopupResult : uint8
+{
+	Confirm,
+	Cancel
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConfirmPopupResult, EConfirmPopupResult, Result);
+
 UCLASS()
 class PROJECTVD_API UVDConfirmPopup : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+private:
+	UPROPERTY(meta = (BindWidget))
+	UButton* ConfirmButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* CancelButton;
+
+
+public:
+	UPROPERTY(BlueprintAssignable, Category = "ButtonEventCallback")
+	FOnConfirmPopupResult OnClickButtonEvent;
 };

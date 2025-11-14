@@ -32,7 +32,8 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-    void ShowUIWidget(APlayerController* PlayerController, const FName& WidgetName);
+    void ShowUIWidgetAsync(APlayerController* PlayerController, const FName& WidgetName);
+	UUserWidget* ShowUIWidget(APlayerController* PlayerController, const FName& WidgetName);
 
 	TSoftClassPtr<UUserWidget> GetUIWidgetClassPathByName(const FName& WidgetName);
 

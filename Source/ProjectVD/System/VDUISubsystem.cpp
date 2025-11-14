@@ -31,7 +31,7 @@ void UVDUISubsystem::Deinitialize()
 	ResourceSystem = nullptr;
 }
 
-void UVDUISubsystem::ShowUIWidget(APlayerController* PlayerController, const FName& WidgetName)
+void UVDUISubsystem::ShowUIWidgetAsync(APlayerController* PlayerController, const FName& WidgetName)
 {
 	if (!PlayerController)
 	{
@@ -83,6 +83,47 @@ void UVDUISubsystem::ShowUIWidget(APlayerController* PlayerController, const FNa
 				}
 			});
 	}
+}
+
+UUserWidget* UVDUISubsystem::ShowUIWidget(APlayerController* PlayerController, const FName& WidgetName)
+{
+	ensure(PlayerController);
+
+	UUserWidget* Widget = nullptr;
+
+	if(!ResourceSystem)
+	{
+		if (UGameInstance* GI = GetGameInstance())
+		{
+			ResourceSystem = GI->GetSubsystem<UVDResourceSystem>();
+		}
+	}
+
+	ensure(ResourceSystem);
+
+	TSoftClassPtr<UUserWidget> WidgetClassPtr = GetUIWidgetClassPathByName(WidgetName);
+	ensure(!WidgetClassPtr.IsValid() || !WidgetClassPtr.IsNull());
+
+	if (CachedWidgetClassMap.Contains(WidgetName))
+	{
+		if (UClass* CachedClass = CachedWidgetClassMap[WidgetName].Get())
+		{
+			Widget = CreateWidget<UUserWidget>(PlayerController, CachedClass);
+			Widget->AddToViewport();
+		}
+	}
+	else
+	{
+		UClass* LoadedClass = WidgetClassPtr.LoadSynchronous();
+		if (LoadedClass)
+		{
+			Widget = CreateWidget<UUserWidget>(PlayerController, LoadedClass);
+			CachedWidgetClassMap.Add(WidgetName, TSoftClassPtr<UUserWidget>(LoadedClass));
+			Widget->AddToViewport();
+		}
+	}
+
+	return Widget;
 }
 
 TSoftClassPtr<UUserWidget> UVDUISubsystem::GetUIWidgetClassPathByName(const FName& WidgetName)

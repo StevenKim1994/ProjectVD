@@ -28,7 +28,8 @@ void AVDTitleController::BeginPlay()
 		UVDUISubsystem* UISubsystem = GI->GetSubsystem<UVDUISubsystem>();
 		if (UISubsystem)
 		{
-			UISubsystem->ShowUIWidget(this, VDConstants::TitlePanel);
+			UISubsystem->ShowUIWidgetAsync(this, VDConstants::TitlePanel);
+
 		}
 	}
 }
