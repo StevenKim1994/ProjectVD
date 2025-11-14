@@ -8,6 +8,8 @@
 #include "DataAsset/VDUIRegistry.h"
 #include "Game/VDGameInstance.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
 
 UVDUISubsystem::UVDUISubsystem()
 {
@@ -23,21 +25,58 @@ void UVDUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	ResourceSystem = Collection.InitializeDependency<UVDResourceSystem>();
+	ModalUIWidgetStack.Empty();
+	ActiveWidgetInstanceMap.Empty();
+
+	RootUIWidget = GetUIWidget(VDConstants::RootUIWidget);
 }
 
 void UVDUISubsystem::Deinitialize()
 {
 	Super::Deinitialize();
+
+	ModalUIWidgetStack.Empty();
+	ActiveWidgetInstanceMap.Empty();
 	ResourceSystem = nullptr;
 }
 
-void UVDUISubsystem::ShowUIWidgetAsync(APlayerController* PlayerController, const FName& WidgetName)
+UUserWidget* UVDUISubsystem::GetUIWidget(const FName& WidgetName)
 {
-	if (!PlayerController)
+	UUserWidget* ReturnWidget = nullptr;
+	if (ActiveWidgetInstanceMap.Contains(WidgetName))
 	{
-		return;
+		ReturnWidget = ActiveWidgetInstanceMap[WidgetName];
+	}
+	else
+	{
+		// DESC :: 만약에 위젯이 없으면 새로 생성해서 반환 PlayerController가 없으므로 생성만함.
+
+		TSoftClassPtr<UUserWidget> WidgetClassPtr = GetUIWidgetClassPathByName(WidgetName);
+		UClass* WidgetClass = ResourceSystem->LoadResource(WidgetClassPtr.ToString());
+		ReturnWidget = CreateWidget<UUserWidget>(GetWorld(), WidgetClass);
+		if (ReturnWidget)
+		{
+			ActiveWidgetInstanceMap.Add(WidgetName, ReturnWidget);
+		}
 	}
 
+	return ReturnWidget;
+}
+
+void UVDUISubsystem::SetPlayerControllerRootUIWidget(APlayerController* PlayerController)
+{
+	ensure(PlayerController);
+	CachedPlayerController = PlayerController;
+
+	if (ensure(RootUIWidget))
+	{
+		RootUIWidget->SetOwningPlayer(CachedPlayerController.Get());
+		RootUIWidget->AddToViewport();
+	}
+}
+
+void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName)
+{
 	if (!ResourceSystem)
 	{
 		if (UGameInstance* GI = GetGameInstance())
@@ -54,44 +93,63 @@ void UVDUISubsystem::ShowUIWidgetAsync(APlayerController* PlayerController, cons
 		return;
 	}
 
-	if (CachedWidgetClassMap.Contains(WidgetName))
+	if (ActiveWidgetInstanceMap.Contains(WidgetName))
 	{
-		if (UClass* CachedClass = CachedWidgetClassMap[WidgetName].Get())
+		UUserWidget* ExistingWidget = ActiveWidgetInstanceMap[WidgetName];
+		if (ModalUIWidgetStack.Contains(ExistingWidget) == false)
 		{
-			if (UUserWidget* Widget = CreateWidget<UUserWidget>(PlayerController, CachedClass))
-			{
-				Widget->AddToViewport();
-			}
+			UCanvasPanel* RootContent = Cast<UCanvasPanel>(RootUIWidget->GetRootWidget());
+			UCanvasPanelSlot* ExistingSlot = Cast<UCanvasPanelSlot>(RootContent->AddChild(ExistingWidget));
+
+			ExistingSlot->SetAnchors(FAnchors(0.f, 0.f, 1.f, 1.f));
+			ExistingSlot->SetOffsets(FMargin(0.f));
+
+			ModalUIWidgetStack.Push(ExistingWidget);
 		}
+		return;
 	}
 	else
-	{ 
+	{
 		const FSoftClassPath ClassPath(WidgetClassPtr.ToString());
 		ResourceSystem->LoadResourceAsync(
 			ClassPath,
-			[this, PlayerController, WidgetName](UClass* LoadedClass)
+			[this, WidgetName](UClass* LoadedClass)
 			{
 				if (!LoadedClass)
 				{
 					return;
 				}
 
-				if (UUserWidget* Widget = CreateWidget<UUserWidget>(PlayerController, LoadedClass))
+				if (!this->CachedPlayerController.IsValid())
 				{
-					CachedWidgetClassMap.Add(WidgetName, TSoftClassPtr<UUserWidget>(LoadedClass));
-					Widget->AddToViewport();
+					UE_LOG(LogTemp, Warning, TEXT("CachedPlayerController is invalid when creating widget: %s"), *WidgetName.ToString());
+					return;
+				}
+
+				if (UUserWidget* Widget = CreateWidget<UUserWidget>(this->CachedPlayerController.Get(), LoadedClass))
+				{
+					ActiveWidgetInstanceMap.Add(WidgetName, Widget);
+
+					if (RootUIWidget)
+					{
+						UCanvasPanel* RootContent = Cast<UCanvasPanel>(RootUIWidget->GetRootWidget());
+						UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(RootContent->AddChild(Widget));
+
+						Slot->SetAnchors(FAnchors(0.f, 0.f, 1.f, 1.f));
+						Slot->SetOffsets(FMargin(0.f));
+
+						ModalUIWidgetStack.Push(Widget);
+					}
 				}
 			});
 	}
 }
 
-UUserWidget* UVDUISubsystem::ShowUIWidget(APlayerController* PlayerController, const FName& WidgetName)
+UUserWidget* UVDUISubsystem::ShowUIWidget(const FName& WidgetName)
 {
-	ensure(PlayerController);
-
 	UUserWidget* Widget = nullptr;
 
-	if(!ResourceSystem)
+	if (!ResourceSystem)
 	{
 		if (UGameInstance* GI = GetGameInstance())
 		{
@@ -104,26 +162,57 @@ UUserWidget* UVDUISubsystem::ShowUIWidget(APlayerController* PlayerController, c
 	TSoftClassPtr<UUserWidget> WidgetClassPtr = GetUIWidgetClassPathByName(WidgetName);
 	ensure(!WidgetClassPtr.IsValid() || !WidgetClassPtr.IsNull());
 
-	if (CachedWidgetClassMap.Contains(WidgetName))
+	if (ActiveWidgetInstanceMap.Contains(WidgetName))
 	{
-		if (UClass* CachedClass = CachedWidgetClassMap[WidgetName].Get())
+		Widget = ActiveWidgetInstanceMap[WidgetName];
+		if (ModalUIWidgetStack.Contains(Widget) == false)
 		{
-			Widget = CreateWidget<UUserWidget>(PlayerController, CachedClass);
-			Widget->AddToViewport();
+			UCanvasPanel* RootContent = Cast<UCanvasPanel>(RootUIWidget->GetRootWidget());
+			UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(RootContent->AddChild(Widget));
+			Slot->SetAnchors(FAnchors(0.f, 0.f, 1.f, 1.f));
+			Slot->SetOffsets(FMargin(0.f));
+
+			ModalUIWidgetStack.Push(Widget);
 		}
 	}
 	else
 	{
-		UClass* LoadedClass = WidgetClassPtr.LoadSynchronous();
-		if (LoadedClass)
+		const FSoftClassPath ClassPath(WidgetClassPtr.ToString());
+		UClass* WidgetClass = ResourceSystem->LoadResource(ClassPath);
+
+		ensure(WidgetClass);
+		ensure(CachedPlayerController.IsValid());
+		Widget = CreateWidget<UUserWidget>(CachedPlayerController.Get(), WidgetClass);
+		if (Widget)
 		{
-			Widget = CreateWidget<UUserWidget>(PlayerController, LoadedClass);
-			CachedWidgetClassMap.Add(WidgetName, TSoftClassPtr<UUserWidget>(LoadedClass));
-			Widget->AddToViewport();
+			ActiveWidgetInstanceMap.Add(WidgetName, Widget);
+
+			if (RootUIWidget)
+			{
+				UCanvasPanel* RootContent = Cast<UCanvasPanel>(RootUIWidget->GetRootWidget());
+				UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(RootContent->AddChild(Widget));
+				Slot->SetAnchors(FAnchors(0.f, 0.f, 1.f, 1.f));
+				Slot->SetOffsets(FMargin(0.f));
+
+				ModalUIWidgetStack.Push(Widget);
+			}
 		}
 	}
 
 	return Widget;
+}
+
+void UVDUISubsystem::HideUIWidget(const FName& WidgetName)
+{
+	if (ActiveWidgetInstanceMap.Contains(WidgetName))
+	{
+		UUserWidget* Widget = ActiveWidgetInstanceMap[WidgetName];
+		Widget->RemoveFromParent();
+		if (ModalUIWidgetStack.Contains(Widget))
+		{
+			ModalUIWidgetStack.Remove(Widget);
+		}
+	}
 }
 
 TSoftClassPtr<UUserWidget> UVDUISubsystem::GetUIWidgetClassPathByName(const FName& WidgetName)
@@ -133,34 +222,4 @@ TSoftClassPtr<UUserWidget> UVDUISubsystem::GetUIWidgetClassPathByName(const FNam
 		return UIRegistry->GetWidgetClassByName(WidgetName);
 	}
 	return nullptr;
-}
-
-template<typename TWidget>
-TSubclassOf<TWidget> UVDUISubsystem::GetCachedWidgetClass(const FName& WidgetName, bool bLoadSyncIfNeeded)
-{
-	static_assert(TIsDerivedFrom<TWidget, UUserWidget>::IsDerived, "TWidget must derive from UUserWidget");
-
-	const TSoftClassPtr<UUserWidget>* Found = CachedWidgetClassMap.Find(WidgetName);
-	TSoftClassPtr<UUserWidget> SoftClass = Found ? *Found : TSoftClassPtr<UUserWidget>();
-
-	if (SoftClass.IsNull() && UIRegistry.IsValid())
-	{
-		SoftClass = UIRegistry->GetWidgetClassByName(WidgetName);
-		if (!SoftClass.IsNull())
-		{
-			CachedWidgetClassMap.Add(WidgetName, SoftClass);
-		}
-	}
-
-	UClass* RawClass = SoftClass.Get();
-	if (!RawClass && bLoadSyncIfNeeded)
-	{
-		RawClass = SoftClass.LoadSynchronous();
-		if (RawClass)
-		{
-			CachedWidgetClassMap.Add(WidgetName, TSoftClassPtr<UUserWidget>(RawClass));
-		}
-	}
-
-	return TSubclassOf<TWidget>(RawClass);
 }

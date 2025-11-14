@@ -2,6 +2,7 @@
 
 #include "UI/Title/VDTitlePanelUserWidget.h"
 #include "Game/VDGameInstance.h"
+#include "System/VDUISubsystem.h"	
 #include "System/VDLevelSystem.h"
 #include "Public/VDConstrants.h"
 #include "Containers/Ticker.h"        
@@ -9,7 +10,12 @@
 
 void UVDTitlePanelUserWidget::OnClickStartButton()
 {
-	GetGameInstance()->GetSubsystem<UVDLevelSystem>()->ChangeLevelByName(TEXT("Stage"));
+	UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
+	if (GI)
+	{
+		GI->GetSubsystem<UVDLevelSystem>()->ChangeLevelByName(TEXT("Stage")); 
+		GI->GetSubsystem<UVDUISubsystem>()->HideUIWidget(VDConstants::TitlePanel);
+	}
 }
 
 void UVDTitlePanelUserWidget::OnClickOptionButton()

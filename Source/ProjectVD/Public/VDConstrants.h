@@ -15,6 +15,8 @@ namespace VDConstants
 
 #pragma region UI_WIDGET
 	// UI 위젯 이름들
+	extern const FName RootUIWidget;
+	extern const FName ConfirmPopup;
 	extern const FName TitlePanel;
 	extern const FName LoadingPanel;
 #pragma endregion 

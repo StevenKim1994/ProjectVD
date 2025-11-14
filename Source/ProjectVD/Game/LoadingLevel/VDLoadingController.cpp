@@ -24,7 +24,8 @@ void AVDLoadingController::BeginPlay()
 		UVDUISubsystem* UISubSystem = GI->GetSubsystem<UVDUISubsystem>();
 		if (UISubSystem)
 		{
-			UVDLoadingPanelUserWidget* LoadingWidget = Cast<UVDLoadingPanelUserWidget>(UISubSystem->ShowUIWidget(this, VDConstants::LoadingPanel));
+			UISubSystem->SetPlayerControllerRootUIWidget(this);
+			UVDLoadingPanelUserWidget* LoadingWidget = Cast<UVDLoadingPanelUserWidget>(UISubSystem->ShowUIWidget(VDConstants::LoadingPanel));
 			if (LoadingWidget)
 			{
 				LoadingWidget
