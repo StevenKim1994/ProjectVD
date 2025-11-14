@@ -75,7 +75,7 @@ void UVDUISubsystem::SetPlayerControllerRootUIWidget(APlayerController* PlayerCo
 	}
 }
 
-void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName , FOnUIWidgetLoadedDelegate OnLoadedDelegate)
+void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoadedDelegate OnLoadedDelegate)
 {
 	if (!ResourceSystem)
 	{
@@ -105,7 +105,7 @@ void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName , FOnUIWidgetLoad
 			ExistingSlot->SetOffsets(FMargin(0.f));
 			ModalUIWidgetStack.Push(ExistingWidget);
 
-			if(OnLoadedDelegate.IsBound())
+			if (OnLoadedDelegate.IsBound())
 			{
 				OnLoadedDelegate.Execute(ExistingWidget);
 			}
@@ -114,38 +114,40 @@ void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName , FOnUIWidgetLoad
 	}
 	else
 	{
-		const FSoftClassPath ClassPath(WidgetClassPtr.ToString());
-		ResourceSystem->LoadResourceAsync(
-			ClassPath,
-			[this, WidgetName](UClass* LoadedClass)
+		FOnClassLoaded OnClassLoadedDelegate;
+		OnClassLoadedDelegate.BindLambda(
+			[this, WidgetName, OnLoadedDelegate](UClass* LoadedClass)
 			{
 				if (!LoadedClass)
 				{
+					UE_LOG(LogTemp, Warning, TEXT("Failed to load widget class asynchronously: %s"), *WidgetName.ToString());
 					return;
 				}
-
 				if (!this->CachedPlayerController.IsValid())
 				{
 					UE_LOG(LogTemp, Warning, TEXT("CachedPlayerController is invalid when creating widget: %s"), *WidgetName.ToString());
 					return;
 				}
-
 				if (UUserWidget* Widget = CreateWidget<UUserWidget>(this->CachedPlayerController.Get(), LoadedClass))
 				{
 					ActiveWidgetInstanceMap.Add(WidgetName, Widget);
-
 					if (RootUIWidget)
 					{
 						UCanvasPanel* RootContent = Cast<UCanvasPanel>(RootUIWidget->GetRootWidget());
 						UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(RootContent->AddChild(Widget));
-
 						Slot->SetAnchors(FAnchors(0.f, 0.f, 1.f, 1.f));
 						Slot->SetOffsets(FMargin(0.f));
 						ModalUIWidgetStack.Push(Widget);
 					}
+					if (OnLoadedDelegate.IsBound())
+					{
+						OnLoadedDelegate.Execute(Widget);
+					}
 				}
-
 			});
+
+		const FSoftClassPath ClassPath(WidgetClassPtr.ToString());
+		ResourceSystem->LoadResourceAsync(ClassPath, OnClassLoadedDelegate);
 	}
 }
 

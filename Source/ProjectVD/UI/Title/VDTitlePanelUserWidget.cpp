@@ -38,7 +38,7 @@ void UVDTitlePanelUserWidget::OnClickExitButton()
 {
 	if (OnClickExitButtonEvent.IsBound())
 	{
-		OnClickExitButtonEvent.Broadcast();
+		OnClickExitButtonEvent.Execute();
 	}
 }
 
@@ -53,10 +53,9 @@ void UVDTitlePanelUserWidget::OnClickOptionsBackButton()
 
 void UVDTitlePanelUserWidget::OnToggleTitleMovieMute(bool ChangedToggleValue)
 {
-
 	if (OnToggleTitleMovieMuteEvent.IsBound())
 	{
-		OnToggleTitleMovieMuteEvent.Broadcast(ChangedToggleValue);
+		OnToggleTitleMovieMuteEvent.Execute(ChangedToggleValue);
 	}
 }
 
@@ -215,7 +214,7 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 			ToggleText->SetText(VDConstants::GetTitleSoundMuteToggleText());
 		}
 		TitleMovieMuteToggle->OnCheckStateChanged.AddDynamic(this, &UVDTitlePanelUserWidget::OnToggleTitleMovieMute);
-		TitleMovieMuteToggle->SetCheckedState(ECheckBoxState::Checked);
+		TitleMovieMuteToggle->SetCheckedState(ECheckBoxState::Unchecked);
 	}
 }
 

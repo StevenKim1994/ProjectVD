@@ -9,9 +9,10 @@
 #include "Engine/DataAsset.h"
 #include "VDResourceSystem.generated.h"
 
-/**
- * 
- */
+DECLARE_DELEGATE_OneParam(FOnClassLoaded, UClass*);
+DECLARE_DELEGATE_OneParam(FOnUIWidgetLoaded, UObject*);
+DECLARE_DELEGATE_OneParam(FOnPrimaryAssetLoaded, UPrimaryDataAsset*);
+
 UCLASS()
 class PROJECTVD_API UVDResourceSystem : public UGameInstanceSubsystem
 {
@@ -28,14 +29,14 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	void LoadResourceAsync(const TSoftObjectPtr<UObject>& ResourcePtr, TFunction<void(UObject*)> OnLoadedCallback);
+	void LoadResourceAsync(const TSoftObjectPtr<UObject>& ResourcePtr, FOnUIWidgetLoaded OnLoadedCallback);
 
-	void LoadResourceAsync(const FSoftClassPath& ResourcePath, TFunction<void(UClass*)> OnLoadedCallback);
+	void LoadResourceAsync(const FSoftClassPath& ResourcePath, FOnClassLoaded OnLoadedCallback);
 	UClass* LoadResource(const FSoftClassPath& ResourcePath);
 
-	void LoadResourceAsync(const FSoftObjectPath& ResourcePath, TFunction<void(UObject*)> OnLoadedCallback);
+	void LoadResourceAsync(const FSoftObjectPath& ResourcePath, FOnUIWidgetLoaded OnLoadedCallback);
 
-	void LoadPrimaryAssetAsync(const FPrimaryAssetId& AssetId, TFunction<void(UPrimaryDataAsset*)> OnLoadedCallback);
+	void LoadPrimaryAssetAsync(const FPrimaryAssetId& AssetId, FOnPrimaryAssetLoaded OnLoadedCallback);
 	void LoadPrimaryAsset(const FPrimaryAssetId& AssetId);
 
 

@@ -20,7 +20,7 @@ void UVDResourceSystem::Deinitialize()
 	UE_LOG(LogTemp, Warning, TEXT("UVDResourceSystem Deinitialize"));
 }
 
-void UVDResourceSystem::LoadPrimaryAssetAsync(const FPrimaryAssetId& AssetId, TFunction<void(UPrimaryDataAsset*)> OnLoadedCallback)
+void UVDResourceSystem::LoadPrimaryAssetAsync(const FPrimaryAssetId& AssetId, FOnPrimaryAssetLoaded OnLoadedCallback)
 {
 	if (AssetId.IsValid())
 	{
@@ -40,7 +40,11 @@ void UVDResourceSystem::LoadPrimaryAssetAsync(const FPrimaryAssetId& AssetId, TF
 							UE_LOG(LogTemp, Warning, TEXT("Primary Asset %s is already loaded."), *AssetId.ToString());
 						}
 					}
-					OnLoadedCallback(LoadedAsset);
+
+					if (OnLoadedCallback.IsBound())
+					{
+						OnLoadedCallback.Execute(LoadedAsset);
+					}
 				})
 		);
 	}
@@ -66,7 +70,7 @@ void UVDResourceSystem::LoadPrimaryAsset(const FPrimaryAssetId& AssetId)
 }
 
 
-void UVDResourceSystem::LoadResourceAsync(const TSoftObjectPtr<UObject>& ResourcePtr, TFunction<void(UObject*)> OnLoadedCallback)
+void UVDResourceSystem::LoadResourceAsync(const TSoftObjectPtr<UObject>& ResourcePtr, FOnUIWidgetLoaded OnLoadedCallback)
 {
 	if (ResourcePtr.IsValid())
 	{
@@ -75,13 +79,17 @@ void UVDResourceSystem::LoadResourceAsync(const TSoftObjectPtr<UObject>& Resourc
 			FStreamableDelegate::CreateLambda([ResourcePtr, OnLoadedCallback]()
 				{
 					UObject* LoadedObject = ResourcePtr.Get();
-					OnLoadedCallback(LoadedObject);
+
+					if (OnLoadedCallback.IsBound())
+					{
+						OnLoadedCallback.Execute(LoadedObject);
+					}
 				})
 		);
 	}
 }
 
-void UVDResourceSystem::LoadResourceAsync(const FSoftClassPath& ResourcePath, TFunction<void(UClass*)> OnLoadedCallback)
+void UVDResourceSystem::LoadResourceAsync(const FSoftClassPath& ResourcePath, FOnClassLoaded OnLoadedCallback)
 {
 	if(ResourcePath.IsValid())
 	{
@@ -90,7 +98,11 @@ void UVDResourceSystem::LoadResourceAsync(const FSoftClassPath& ResourcePath, TF
 			FStreamableDelegate::CreateLambda([ResourcePath, OnLoadedCallback]()
 				{
 					UClass* LoadedClass = ResourcePath.ResolveClass();
-					OnLoadedCallback(LoadedClass);
+
+					if (OnLoadedCallback.IsBound())
+					{
+						OnLoadedCallback.Execute(LoadedClass);
+					}
 				})
 		);
 	}
@@ -108,7 +120,7 @@ UClass* UVDResourceSystem::LoadResource(const FSoftClassPath& ResourcePath)
 	return nullptr;
 }
 
-void UVDResourceSystem::LoadResourceAsync(const FSoftObjectPath& ResourcePath, TFunction<void(UObject*)> OnLoadedCallback)
+void UVDResourceSystem::LoadResourceAsync(const FSoftObjectPath& ResourcePath, FOnUIWidgetLoaded OnLoadedCallback)
 {
 	if(ResourcePath.IsValid())
 	{
@@ -117,7 +129,11 @@ void UVDResourceSystem::LoadResourceAsync(const FSoftObjectPath& ResourcePath, T
 			FStreamableDelegate::CreateLambda([ResourcePath, OnLoadedCallback]()
 				{
 					UObject* LoadedObject = ResourcePath.ResolveObject();
-					OnLoadedCallback(LoadedObject);
+
+					if (OnLoadedCallback.IsBound())
+					{
+						OnLoadedCallback.Execute(LoadedObject);
+					}
 				})
 		);
 	}

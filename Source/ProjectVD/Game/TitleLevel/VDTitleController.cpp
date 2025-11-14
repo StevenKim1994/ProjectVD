@@ -6,7 +6,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "UI/Title/VDTitlePanelUserWidget.h"
-#include "ETC/VDTitleMovieActor.h"
 #include "Game/VDGameInstance.h"
 #include "System/VDUISubsystem.h"
 #include "Public/VDConstrants.h"
@@ -14,6 +13,7 @@
 AVDTitleController::AVDTitleController()
 {
 	TitleBackgroundMediaSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("TitleBackgroundMediaSoundComponent"));
+	bShowMouseCursor = true;
 }
 
 void AVDTitleController::BeginPlay()
@@ -34,6 +34,7 @@ void AVDTitleController::BeginPlay()
 			if (UISubsystem)
 			{
 				UISubsystem->SetPlayerControllerRootUIWidget(this);
+				TWeakObjectPtr<UVDUISubsystem> WeakUISubsystem = UISubsystem;
 				UISubsystem->ShowUIWidgetAsync(
 					VDConstants::TitlePanel,
 					FOnUIWidgetLoadedDelegate::CreateWeakLambda(this, [this](UUserWidget* Widget)
@@ -45,7 +46,7 @@ void AVDTitleController::BeginPlay()
 							{
 								TitlePanelUserWidget->SetBackgroundMediaTexture(TitleBackgroundMediaTexture);
 								TitleBackgroundMediaSoundComponent->SetMediaPlayer(TitleBackgroundMediaPlayer);
-								TitlePanelUserWidget->OnToggleTitleMovieMuteEvent.AddUObject(this, &AVDTitleController::SetTitleMovieSoundMute);
+								TitlePanelUserWidget->OnToggleTitleMovieMuteEvent.BindUObject(this, &AVDTitleController::SetTitleMovieSoundMute);
 							}
 						}
 					})

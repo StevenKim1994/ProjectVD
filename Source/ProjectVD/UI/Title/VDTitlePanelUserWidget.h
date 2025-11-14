@@ -17,8 +17,8 @@
 class UMediaPlayer;
 class UMediaTexture;
 
-DECLARE_MULTICAST_DELEGATE(FOnClickExitButtonEvent);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleTitleMovieMuteEvent, bool);
+DECLARE_DELEGATE(FOnClickExitButtonEvent);
+DECLARE_DELEGATE_OneParam(FOnToggleTitleMovieMuteEvent, bool);
 
 UCLASS()
 class PROJECTVD_API UVDTitlePanelUserWidget : public UUserWidget
