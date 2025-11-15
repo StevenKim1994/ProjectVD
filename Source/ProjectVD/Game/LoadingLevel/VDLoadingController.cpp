@@ -26,7 +26,6 @@ void AVDLoadingController::ShowLoadingPanel()
 			Delegate.BindWeakLambda(this, [this](UUserWidget* LoadedUIWidget)
 			{
 				LoadingPanelWidget = Cast<UVDLoadingPanelUserWidget>(LoadedUIWidget);
-				// TODO :: 로딩 시작
 			});
 			
 			UISubsystem->ShowUIWidgetAsync(VDConstants::LoadingPanel, Delegate);
@@ -65,5 +64,6 @@ void AVDLoadingController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 }
+
 
 

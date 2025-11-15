@@ -18,7 +18,10 @@ private:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	UVDLoadingPanelUserWidget* LoadingPanelWidget;
+
+
+	UPROPERTY()
+	TObjectPtr<UVDLoadingPanelUserWidget> LoadingPanelWidget;
 
 public:
 	AVDLoadingController();
