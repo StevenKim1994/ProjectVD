@@ -17,10 +17,9 @@ AVDStageGameMode::AVDStageGameMode()
 
 }
 
-void AVDStageGameMode::StartPlay()
+void AVDStageGameMode::BeginPlay()
 {
-	Super::StartPlay();
-	
+	Super::BeginPlay();
 }
 
 

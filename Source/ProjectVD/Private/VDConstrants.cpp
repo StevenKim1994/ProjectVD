@@ -3,6 +3,8 @@
 
 namespace VDConstants
 {
+	const FName StagePlayerHUD(TEXT("StagePlayerHUD"));
+
 #pragma region UI_WIDGET
 	const FName TitlePanel(TEXT("TitlePanel"));
 	const FName LoadingPanel(TEXT("LoadingPanel"));

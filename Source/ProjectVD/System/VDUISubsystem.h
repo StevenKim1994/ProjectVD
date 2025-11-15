@@ -36,6 +36,9 @@ private:
 	TObjectPtr<UUserWidget> RootUIWidget;
 
 	UPROPERTY()
+	TObjectPtr<UUserWidget> CurrentHUDWidget; // TODO :: 추후 UUserWidget말고 별도의 인터페이스로 변경 고려
+
+	UPROPERTY()
 	TArray<TObjectPtr<UUserWidget>> ModalUIWidgetStack;
 
 	UPROPERTY()
@@ -50,6 +53,8 @@ public:
 	void SetPlayerControllerRootUIWidget(APlayerController* PlayerController);
     void ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoadedDelegate OnLoadedDelegate = nullptr);
 	UUserWidget* ShowUIWidget(const FName& WidgetName);
+	void HideCurrentHUDWidget();
+	void SetCurrentHUDWidget(const FName& HUDWidgetName);
 
 	void HideUIWidget(const FName& WidgetName);
 

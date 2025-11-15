@@ -17,5 +17,5 @@ class PROJECTVD_API AVDStageGameMode : public AGameModeBase
 public:
 	AVDStageGameMode();
 
-	virtual void StartPlay() override;
+	virtual void BeginPlay() override;
 };

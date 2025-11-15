@@ -13,6 +13,12 @@ namespace VDConstants
 	// 로딩 레벨 이름
 	extern const FName LoadingLevel;
 
+#pragma endregion
+#pragma region UI_HUD_WIDGET
+	// 로딩 레벨 에셋 경로
+	extern const FName StagePlayerHUD;
+#pragma endregion
+
 #pragma region UI_WIDGET
 	// UI 위젯 이름들
 	extern const FName RootUIWidget;

@@ -208,6 +208,51 @@ UUserWidget* UVDUISubsystem::ShowUIWidget(const FName& WidgetName)
 	return Widget;
 }
 
+void UVDUISubsystem::HideCurrentHUDWidget()
+{
+	if (CurrentHUDWidget)
+	{
+		if (CurrentHUDWidget->IsVisible())
+		{
+			CurrentHUDWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
+		else
+		{
+			CurrentHUDWidget->SetVisibility(ESlateVisibility::Visible);
+		}
+	}
+}
+
+void UVDUISubsystem::SetCurrentHUDWidget(const FName& HUDWidgetName)
+{
+	if (!ResourceSystem)
+	{
+		if (UGameInstance* GI = GetGameInstance())
+		{
+			ResourceSystem = GI->GetSubsystem<UVDResourceSystem>();
+		}
+	}
+	TSoftClassPtr<UUserWidget> WidgetClassPtr = GetUIWidgetClassPathByName(HUDWidgetName);
+	const FSoftClassPath ClassPath(WidgetClassPtr.ToString());
+	UClass* WidgetClass = ResourceSystem->LoadResource(ClassPath);
+
+	ensure(WidgetClass);
+	ensure(CachedPlayerController.IsValid());
+
+	if (CurrentHUDWidget)
+	{
+		CurrentHUDWidget->RemoveFromParent();
+		CurrentHUDWidget = nullptr;
+	}
+
+	CurrentHUDWidget = CreateWidget<UUserWidget>(CachedPlayerController.Get(), WidgetClass);
+	if (CurrentHUDWidget)
+	{
+		CurrentHUDWidget->AddToViewport();
+	}
+	
+}
+
 void UVDUISubsystem::HideUIWidget(const FName& WidgetName)
 {
 	if (ActiveWidgetInstanceMap.Contains(WidgetName))
