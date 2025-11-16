@@ -62,4 +62,7 @@ public:
 
 	UFUNCTION()
 	void PopModalUIWidget();
+
+	UFUNCTION()
+	void AllModalUIWidgetClear();
 };

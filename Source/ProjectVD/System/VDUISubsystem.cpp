@@ -287,3 +287,15 @@ void UVDUISubsystem::PopModalUIWidget()
 		}
 	}
 }
+
+void UVDUISubsystem::AllModalUIWidgetClear()
+{
+	while (ModalUIWidgetStack.Num() > 0)
+	{
+		UUserWidget* TopWidget = ModalUIWidgetStack.Pop();
+		if (TopWidget)
+		{
+			TopWidget->RemoveFromParent();
+		}
+	}
+}

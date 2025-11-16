@@ -33,6 +33,7 @@ void AVDTitleController::BeginPlay()
 			UVDUISubsystem* UISubsystem = GI->GetSubsystem<UVDUISubsystem>();
 			if (UISubsystem)
 			{
+				UISubsystem->AllModalUIWidgetClear();
 				UISubsystem->SetPlayerControllerRootUIWidget(this);
 				TWeakObjectPtr<UVDUISubsystem> WeakUISubsystem = UISubsystem;
 				UISubsystem->ShowUIWidgetAsync(
