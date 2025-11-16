@@ -266,6 +266,7 @@ void UVDUISubsystem::HideUIWidget(const FName& WidgetName)
 	}
 }
 
+
 TSoftClassPtr<UUserWidget> UVDUISubsystem::GetUIWidgetClassPathByName(const FName& WidgetName)
 {
 	if (UIRegistry.IsValid())
@@ -273,4 +274,16 @@ TSoftClassPtr<UUserWidget> UVDUISubsystem::GetUIWidgetClassPathByName(const FNam
 		return UIRegistry->GetWidgetClassByName(WidgetName);
 	}
 	return nullptr;
+}
+
+void UVDUISubsystem::PopModalUIWidget()
+{
+	if (ModalUIWidgetStack.Num() > 0)
+	{
+		UUserWidget* TopWidget = ModalUIWidgetStack.Pop();
+		if (TopWidget)
+		{
+			TopWidget->RemoveFromParent();
+		}
+	}
 }

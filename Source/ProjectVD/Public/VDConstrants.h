@@ -25,6 +25,7 @@ namespace VDConstants
 	extern const FName ConfirmPopup;
 	extern const FName TitlePanel;
 	extern const FName LoadingPanel;
+	extern const FName PauseMenuWidget;
 #pragma endregion 
 #pragma region UI_TEXT
 	// 전역 프로젝트 이름 텍스트

@@ -35,46 +35,38 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputMappingContext> DefaultMappingContext;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UInputAction> JumpAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UInputAction> MoveAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UInputAction> LookAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UInputAction> DefendAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UInputAction> DefaultAttackAction;
-
+	UFUNCTION()
 	void Move(const FInputActionValue& Value);
+
+	UFUNCTION()
 	void Look(const FInputActionValue& Value);
+
+	UFUNCTION()
 	void JumpBegin(const FInputActionValue& Value);
+
+	UFUNCTION()
 	void JumpEnd(const FInputActionValue& Value);
+
+	UFUNCTION()
 	void DefaultAttack(const FInputActionValue& Value);
+
+	UFUNCTION()
 	void DefendHold(const FInputActionValue& Value);
+
+	UFUNCTION()
 	void DefendCancel(const FInputActionValue& InputActionValue);
 
 public:
-	// Sets default values for this character's properties
 	AVDStagePlayerCharacter();
 
 public:
 	FORCEINLINE ECharacterClassType GetClassType() const { return CharacterClass; }
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:
 	virtual void PostInitializeComponents() override;
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 };

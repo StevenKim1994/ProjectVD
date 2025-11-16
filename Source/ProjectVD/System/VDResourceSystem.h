@@ -30,15 +30,11 @@ public:
 	virtual void Deinitialize() override;
 
 	void LoadResourceAsync(const TSoftObjectPtr<UObject>& ResourcePtr, FOnUIWidgetLoaded OnLoadedCallback);
-
 	void LoadResourceAsync(const FSoftClassPath& ResourcePath, FOnClassLoaded OnLoadedCallback);
 	UClass* LoadResource(const FSoftClassPath& ResourcePath);
-
 	void LoadResourceAsync(const FSoftObjectPath& ResourcePath, FOnUIWidgetLoaded OnLoadedCallback);
-
 	void LoadPrimaryAssetAsync(const FPrimaryAssetId& AssetId, FOnPrimaryAssetLoaded OnLoadedCallback);
 	void LoadPrimaryAsset(const FPrimaryAssetId& AssetId);
-
 
 	template<typename T>
 	T* GetLoadedPrimaryAsset(const FPrimaryAssetId& AssetId) const

@@ -10,7 +10,7 @@ namespace VDConstants
 	const FName LoadingPanel(TEXT("LoadingPanel"));
 	const FName RootUIWidget(TEXT("RootUIWidget"));
 	const FName ConfirmPopup(TEXT("ConfirmPopup"));
-
+	const FName PauseMenuWidget(TEXT("PauseMenuWidget"));
 #pragma endregion
 	const FName TitleWidgetTitleName(TEXT("GameTitleName"));
 	const FName TitleWidgetButtonsParentsBox(TEXT("ButtonsParentBox"));

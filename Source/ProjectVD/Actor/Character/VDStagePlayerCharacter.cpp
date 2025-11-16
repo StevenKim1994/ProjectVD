@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "InputAction.h"
 #include "Game/StageLevel/VDStagePlayerController.h"
 
 
@@ -72,41 +73,10 @@ AVDStagePlayerCharacter::AVDStagePlayerCharacter()
 	FollowCameraComponent->SetupAttachment(CameraSpringArmComponent, USpringArmComponent::SocketName);
 	FollowCameraComponent->bUsePawnControlRotation = false;
 
-	// Input init
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextRef(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/ProjectVD/Input/IMC_Default.IMC_Default'"));
 	if(InputMappingContextRef.Object != nullptr)
 	{
 		DefaultMappingContext = InputMappingContextRef.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionMoveRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Move.IA_Move'"));
-	if (InputActionMoveRef.Object != nullptr)
-	{
-		MoveAction = InputActionMoveRef.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionLookRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Look.IA_Look'"));
-	if (InputActionLookRef.Object != nullptr)
-	{
-		LookAction = InputActionLookRef.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionJumpRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Jump.IA_Jump'"));
-	if (InputActionLookRef.Object != nullptr)
-	{
-		JumpAction = InputActionJumpRef.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionDefendRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_Defend.IA_Defend'"));
-	if (InputActionDefendRef.Object != nullptr)
-	{
-		DefendAction = InputActionDefendRef.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionDefaultAttackRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectVD/Input/Actions/IA_DefaultAttack.IA_DefaultAttack'"));
-	if (InputActionDefaultAttackRef.Object != nullptr)
-	{
-		DefaultAttackAction = InputActionDefaultAttackRef.Object;
 	}
 }
 
@@ -114,12 +84,6 @@ AVDStagePlayerCharacter::AVDStagePlayerCharacter()
 void AVDStagePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	AVDStagePlayerController* PlayerController = CastChecked<AVDStagePlayerController>(GetController());
-	if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-	{
-		Subsystem->AddMappingContext(DefaultMappingContext, 0);
-	}
 }
 
 void AVDStagePlayerCharacter::PostInitializeComponents()
@@ -140,13 +104,22 @@ void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
-
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::Move);
-	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::Look);
-	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::JumpBegin);
-	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AVDStagePlayerCharacter::JumpEnd);
-	EnhancedInputComponent->BindAction(DefendAction, ETriggerEvent::Ongoing, this, &AVDStagePlayerCharacter::DefendHold);
-	EnhancedInputComponent->BindAction(DefendAction, ETriggerEvent::Canceled, this, &AVDStagePlayerCharacter::DefendCancel);
-	EnhancedInputComponent->BindAction(DefaultAttackAction, ETriggerEvent::Triggered, this, &AVDStagePlayerCharacter::DefaultAttack);
+	if (EnhancedInputComponent && DefaultMappingContext)
+	{
+		const TArray<FEnhancedActionKeyMapping>& Mappings = DefaultMappingContext->GetMappings();
+		for (const FEnhancedActionKeyMapping& Mapping : Mappings)
+		{
+			const UInputAction* Action = Mapping.Action;
+			if (Action)
+			{
+				FString ActionName = Action->GetName();
+				if (ActionName.StartsWith(TEXT("IA_")))
+				{
+					ActionName = ActionName.RightChop(3); // "IA_" 길이만큼 잘라냄
+					EnhancedInputComponent->BindAction(Action, ETriggerEvent::Triggered, this, FName(ActionName));
+				}
+			}
+		}
+	}
 }
 

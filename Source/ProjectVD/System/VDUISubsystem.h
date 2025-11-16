@@ -55,8 +55,11 @@ public:
 	UUserWidget* ShowUIWidget(const FName& WidgetName);
 	void HideCurrentHUDWidget();
 	void SetCurrentHUDWidget(const FName& HUDWidgetName);
-
 	void HideUIWidget(const FName& WidgetName);
 
+	int32 GetModalUIWidgetCount() const { return ModalUIWidgetStack.Num(); }
 	TSoftClassPtr<UUserWidget> GetUIWidgetClassPathByName(const FName& WidgetName);
+
+	UFUNCTION()
+	void PopModalUIWidget();
 };
