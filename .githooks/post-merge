@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# git pull (merge 방식) 직후에만 DVC 동작
+case "${GIT_REFLOG_ACTION}" in
+  pull*) dvc pull -q && dvc checkout -q ;;
+esac

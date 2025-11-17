@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# git pull --rebase 시에만 DVC 동작
+if [ "$1" = "rebase" ] && [[ "${GIT_REFLOG_ACTION}" == pull* ]]; then
+  dvc pull -q && dvc checkout -q
+fi
