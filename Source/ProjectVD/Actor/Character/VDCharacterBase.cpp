@@ -30,18 +30,6 @@ AVDCharacterBase::AVDCharacterBase()
 	SkeletalMesh->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, -90.0f, 0.0f));
 	SkeletalMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	SkeletalMesh->SetCollisionProfileName(TEXT("CharacterMesh"));
-
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny.SKM_Manny'"));
-	if(CharacterMeshRef.Object != nullptr)
-	{
-		SkeletalMesh->SetSkeletalMesh(CharacterMeshRef.Object);
-	}
-
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Script/Engine.AnimBlueprint'/Game/Characters/Mannequins/Animations/ABP_Manny.ABP_Manny_C'"));
-	if(AnimInstanceClassRef.Class != nullptr)
-	{
-		SkeletalMesh->SetAnimInstanceClass(AnimInstanceClassRef.Class);
-	}
 }
 
 // Called when the game starts or when spawned

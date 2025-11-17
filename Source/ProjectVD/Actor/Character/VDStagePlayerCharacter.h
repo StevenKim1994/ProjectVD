@@ -43,6 +43,9 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	UFUNCTION()
+	void Zoom(const FInputActionValue& Value);
+
+	UFUNCTION()
 	void JumpBegin(const FInputActionValue& Value);
 
 	UFUNCTION()

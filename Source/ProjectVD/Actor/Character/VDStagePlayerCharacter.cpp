@@ -42,6 +42,12 @@ void AVDStagePlayerCharacter::Look(const FInputActionValue& Value)
 	AddControllerPitchInput(LookAxisVector.Y);
 }
 
+void AVDStagePlayerCharacter::Zoom(const FInputActionValue& Value)
+{
+	float ZoomAxis = Value.Get<float>();
+	CameraSpringArmComponent->TargetArmLength = FMath::Clamp(CameraSpringArmComponent->TargetArmLength + ZoomAxis * -20.0f, 200.0f, 600.0f);
+}
+
 void AVDStagePlayerCharacter::JumpBegin(const FInputActionValue& Value)
 {
 	ACharacter::Jump();
