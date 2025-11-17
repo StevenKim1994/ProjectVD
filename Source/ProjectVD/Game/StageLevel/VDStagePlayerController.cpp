@@ -10,6 +10,8 @@
 #include "Game/VDGameInstance.h"
 #include "System/VDLevelSystem.h"
 
+
+
 AVDStagePlayerController::AVDStagePlayerController()
 {
 }
@@ -32,96 +34,138 @@ void AVDStagePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
+	InitializeInputContext();
+}
+
+void AVDStagePlayerController::InitializeInputContext()
+{
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 	UEnhancedInputLocalPlayerSubsystem* Subsystem =
 		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	if (Subsystem && DefaultMappingContext)
+	if (Subsystem)
 	{
-		Subsystem->AddMappingContext(DefaultMappingContext, 0);
-		const TArray<FEnhancedActionKeyMapping>& Mappings = DefaultMappingContext->GetMappings();
-		for (const FEnhancedActionKeyMapping& Mapping : Mappings)
+		if (CharacterControllerIMC)
 		{
-			const UInputAction* Action = Mapping.Action;
-			if (Action)
+			const TArray<FEnhancedActionKeyMapping>& Mappings = CharacterControllerIMC->GetMappings();
+			for (const FEnhancedActionKeyMapping& Mapping : Mappings)
 			{
-				FString ActionName = Action->GetName();
-				if (ActionName.StartsWith(TEXT("UI_IA_")))
+				const UInputAction* Action = Mapping.Action;
+				if (Action)
 				{
-					ActionName = ActionName.RightChop(6);
-					EnhancedInputComponent->BindAction(Action, ETriggerEvent::Triggered, this, FName(ActionName));
+					FString ActionName = Action->GetName();
+					if (ActionName.StartsWith(TEXT("UI_IA_")))
+					{
+						ActionName = ActionName.RightChop(6);
+						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Triggered, this, FName(ActionName));
+					}
 				}
 			}
+		}
+
+		if (UIControllerIMC)
+		{
+			const TArray<FEnhancedActionKeyMapping>& Mappings = UIControllerIMC->GetMappings();
+			for (const FEnhancedActionKeyMapping& Mapping : Mappings)
+			{
+				const UInputAction* Action = Mapping.Action;
+				if (Action)
+				{
+					FString ActionName = Action->GetName();
+					if (ActionName.StartsWith(TEXT("UI_IA_")))
+					{
+						ActionName = ActionName.RightChop(6);
+						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Triggered, this, FName(ActionName));
+					}
+				}
+			}
+		}
+	}
+
+	// DESC :: 기본 캐릭터 인풋컨텍스트
+	Subsystem->AddMappingContext(CharacterControllerIMC, 0);
+}
+
+void AVDStagePlayerController::ChangeToggleInputContext()
+{
+	UEnhancedInputLocalPlayerSubsystem* Subsystem =
+		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+
+	if (Subsystem)
+	{
+		if (Subsystem->HasMappingContext(CharacterControllerIMC)) // DESC :: 현재 캐릭터 인풋컨텍스트일떄
+		{
+			Subsystem->RemoveMappingContext(CharacterControllerIMC);
+			Subsystem->AddMappingContext(UIControllerIMC, 0);
+		}
+		else // DESC :: 현재 UI 인풋컨텍스트일떄
+		{
+			Subsystem->RemoveMappingContext(UIControllerIMC);
+			Subsystem->AddMappingContext(CharacterControllerIMC, 0);
 		}
 	}
 }
 
 void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 {
-	if (UVDUISubsystem* UISubsystem = GetGameInstance()->GetSubsystem<UVDUISubsystem>())
+	UEnhancedInputLocalPlayerSubsystem* Subsystem =
+		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+
+	if (Subsystem && Subsystem->HasMappingContext(CharacterControllerIMC)) // DESC :: 현재 캐릭터 인풋컨텍스트일떄
 	{
-		if (UISubsystem->GetModalUIWidgetCount() > 0)
+		if (UVDUISubsystem* UISubsystem = GetGameInstance()->GetSubsystem<UVDUISubsystem>())
 		{
-			UISubsystem->PopModalUIWidget();
-		}
-		else
-		{
-			// TODO :: 타임스케일 조정 등 게임 일시정지 처리
-			// DefaultMappingContext 비활성화
-			UEnhancedInputLocalPlayerSubsystem* Subsystem =
-				ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-			if (Subsystem && DefaultMappingContext)
+			if (UISubsystem->GetModalUIWidgetCount() > 0)
 			{
-				Subsystem->RemoveMappingContext(DefaultMappingContext);
+				UISubsystem->PopModalUIWidget();
 			}
+			else
+			{
+				// TODO :: 타임스케일 조정 등 게임 일시정지 처리
+				ChangeToggleInputContext();
 
-			UISubsystem->ShowUIWidgetAsync(VDConstants::PauseMenuWidget, FOnUIWidgetLoadedDelegate::CreateWeakLambda(this, [this](UUserWidget* LoadWidget)
-				{
-					if (LoadWidget)
+				UISubsystem->ShowUIWidgetAsync(VDConstants::PauseMenuWidget, FOnUIWidgetLoadedDelegate::CreateWeakLambda(this, [this](UUserWidget* LoadWidget)
 					{
-						UVDStagePauseWidget* PauseWidget = Cast<UVDStagePauseWidget>(LoadWidget);
-						if (PauseWidget)
+						if (LoadWidget)
 						{
-							PauseWidget->OnPauseMenuButtonClickedDelegate.BindLambda([this](PauseMenuButtonEnum ClickedButton)
-								{
-									if (ClickedButton == PauseMenuButtonEnum::Resume)
+							UVDStagePauseWidget* PauseWidget = Cast<UVDStagePauseWidget>(LoadWidget);
+							if (PauseWidget)
+							{
+								PauseWidget->OnPauseMenuButtonClickedDelegate.BindLambda([this](PauseMenuButtonEnum ClickedButton)
 									{
-										if (UVDUISubsystem* UISubsystemInner = GetGameInstance()->GetSubsystem<UVDUISubsystem>())
+										if (ClickedButton == PauseMenuButtonEnum::Resume)
 										{
-											UISubsystemInner->PopModalUIWidget();
-											bShowMouseCursor = false;
-
-											// DefaultMappingContext 다시 활성화
-											UEnhancedInputLocalPlayerSubsystem* Subsystem =
-												ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-											if (Subsystem && DefaultMappingContext)
+											if (UVDUISubsystem* UISubsystemInner = GetGameInstance()->GetSubsystem<UVDUISubsystem>())
 											{
-												Subsystem->AddMappingContext(DefaultMappingContext, 0);
+												UISubsystemInner->PopModalUIWidget();
+												bShowMouseCursor = false;
+
+												ChangeToggleInputContext();
 											}
 										}
-									}
-									else if (ClickedButton == PauseMenuButtonEnum::Options)
-									{
-										// TODO :: 옵션 메뉴 처리
-									}
-									else if (ClickedButton == PauseMenuButtonEnum::ExitToTitle)
-									{
-										// TODO :: 타이틀 화면으로 돌아가기 처리
-										UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
-										if (GI)
+										else if (ClickedButton == PauseMenuButtonEnum::Options)
 										{
-											if (UVDLevelSystem* LevelSystem = GI->GetSubsystem<UVDLevelSystem>())
+											// TODO :: 옵션 메뉴 처리
+										}
+										else if (ClickedButton == PauseMenuButtonEnum::ExitToTitle)
+										{
+											// TODO :: 타이틀 화면으로 돌아가기 처리
+											UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
+											if (GI)
 											{
-												LevelSystem->ChangeLevelByName("Title");
+												if (UVDLevelSystem* LevelSystem = GI->GetSubsystem<UVDLevelSystem>())
+												{
+													LevelSystem->ChangeLevelByName("Title");
+												}
 											}
 										}
-									}
-								});
+									});
 
-							bShowMouseCursor = true;
+								bShowMouseCursor = true;
+							}
 						}
-					}
-				})
-			);
+					})
+				);
+			}
 		}
 	}
 }

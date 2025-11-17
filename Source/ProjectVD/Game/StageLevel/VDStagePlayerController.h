@@ -15,7 +15,13 @@ class PROJECTVD_API AVDStagePlayerController : public APlayerController
 private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UInputMappingContext> DefaultMappingContext;
+	TObjectPtr<UInputMappingContext> CharacterControllerIMC;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputMappingContext> UIControllerIMC;
+
+	void InitializeInputContext();
+	void ChangeToggleInputContext();
 
 public:
 	AVDStagePlayerController();
@@ -23,6 +29,12 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+
 	UFUNCTION()
 	void OnEscape(const FInputActionValue& Value);
+
+	TObjectPtr<UInputMappingContext> GetCharacterControllerIMC() const
+	{
+		return CharacterControllerIMC;
+	}
 };

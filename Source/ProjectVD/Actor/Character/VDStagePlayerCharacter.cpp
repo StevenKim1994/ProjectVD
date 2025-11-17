@@ -11,6 +11,15 @@
 #include "Game/StageLevel/VDStagePlayerController.h"
 
 
+void AVDStagePlayerCharacter::Escape(const FInputActionValue& Value)
+{
+	AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+	if (VDPC)
+	{
+		VDPC->OnEscape(Value);
+	}
+}
+
 void AVDStagePlayerCharacter::Move(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -72,12 +81,6 @@ AVDStagePlayerCharacter::AVDStagePlayerCharacter()
 	FollowCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCameraComponent->SetupAttachment(CameraSpringArmComponent, USpringArmComponent::SocketName);
 	FollowCameraComponent->bUsePawnControlRotation = false;
-
-	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextRef(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/ProjectVD/Input/IMC_Default.IMC_Default'"));
-	if(InputMappingContextRef.Object != nullptr)
-	{
-		DefaultMappingContext = InputMappingContextRef.Object;
-	}
 }
 
 // Called when the game starts or when spawned
@@ -91,22 +94,21 @@ void AVDStagePlayerCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 }
 
-// Called every frame
 void AVDStagePlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-// Called to bind functionality to input
 void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
-	if (EnhancedInputComponent && DefaultMappingContext)
+	AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+	if (VDPC)
 	{
-		const TArray<FEnhancedActionKeyMapping>& Mappings = DefaultMappingContext->GetMappings();
+		UInputMappingContext* DefaultMappingContext = VDPC->GetCharacterControllerIMC();
+		const TArray<FEnhancedActionKeyMapping>&Mappings = DefaultMappingContext->GetMappings();
 		for (const FEnhancedActionKeyMapping& Mapping : Mappings)
 		{
 			const UInputAction* Action = Mapping.Action;

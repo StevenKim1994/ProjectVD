@@ -32,8 +32,9 @@ protected:
 
 // Input Section
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UInputMappingContext> DefaultMappingContext;
+
+	UFUNCTION()
+	void Escape(const FInputActionValue& Value);
 
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);

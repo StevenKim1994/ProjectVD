@@ -32,6 +32,7 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ExitToTitleButton;
 
+	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 

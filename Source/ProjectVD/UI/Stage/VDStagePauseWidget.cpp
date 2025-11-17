@@ -4,9 +4,10 @@
 #include "UI/Stage/VDStagePauseWidget.h"
 #include "Components/Button.h"
 
-void UVDStagePauseWidget::NativeConstruct()
+void UVDStagePauseWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
+
 	if (ResumeButton)
 	{
 		ResumeButton->OnClicked.AddDynamic(this, &UVDStagePauseWidget::OnClickResume);
@@ -21,6 +22,11 @@ void UVDStagePauseWidget::NativeConstruct()
 	{
 		ExitToTitleButton->OnClicked.AddDynamic(this, &UVDStagePauseWidget::OnClickExitToTitle);
 	}
+}
+
+void UVDStagePauseWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
 }
 
 void UVDStagePauseWidget::NativeDestruct()
