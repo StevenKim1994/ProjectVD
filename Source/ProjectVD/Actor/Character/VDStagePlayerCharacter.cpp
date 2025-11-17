@@ -85,7 +85,7 @@ void AVDStagePlayerCharacter::EquipWeapon(AVDWeapon* NewWeapon)
 	AVDStagePlayerController* VDPC = CastPlayerController.Get();
 	if (VDPC)
 	{
-		VDPC->ShowToast("알림", "무기 획득함");
+		VDPC->ShowToast(TEXT("알림"), TEXT("무기 획득함"));
 	}
 }
 
