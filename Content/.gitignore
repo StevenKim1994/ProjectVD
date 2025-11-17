@@ -1,1 +1,6 @@
 /CachedAssetRegistry_0.bin
+/ParagonGrux
+/Atris_swords
+
+# DVC로 관리되는 파일 git제외해야 올라감 프로젝트 받을때 먼저 DVC 설치후 dvc pull 해야함
+
