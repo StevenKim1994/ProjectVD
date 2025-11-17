@@ -9,6 +9,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class AVDStagePlayerController;
 
 UENUM(BlueprintType)
 enum class ECharacterClassType : uint8
@@ -26,19 +27,18 @@ private:
 	ECharacterClassType CharacterClass;
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
+	// 플레이어 전용 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraSpringArmComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCameraComponent;
 
-protected:
+	UPROPERTY()
+	TObjectPtr<AVDStagePlayerController> CastPlayerController;
 
 	UFUNCTION()
 	void Escape(const FInputActionValue& Value);
-
-	UFUNCTION()
-	void Move(const FInputActionValue& Value);
 
 	UFUNCTION()
 	void Look(const FInputActionValue& Value);
@@ -53,18 +53,18 @@ protected:
 	void JumpEnd(const FInputActionValue& Value);
 
 	UFUNCTION()
-	void DefaultAttack(const FInputActionValue& Value);
-
-	UFUNCTION()
 	void DefendHold(const FInputActionValue& Value);
 
 	UFUNCTION()
 	void DefendCancel(const FInputActionValue& InputActionValue);
 
+	virtual void Move(const FInputActionValue& Value) override;
+
+	virtual void DefaultAttack(const FInputActionValue& Value) override;
+
 public:
 	AVDStagePlayerCharacter();
 
-public:
 	FORCEINLINE ECharacterClassType GetClassType() const { return CharacterClass; }
 
 protected:

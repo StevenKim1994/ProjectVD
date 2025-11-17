@@ -1,15 +1,93 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Actor/Character/VDStagePlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
 #include "Game/StageLevel/VDStagePlayerController.h"
 
+AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
+{
+	// 플레이어 전용 회전 설정
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationRoll = false;
+
+	// 플레이어 전용 이동 설정
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+	Movement->bOrientRotationToMovement = true;
+	Movement->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+
+	// 플레이어 전용 카메라 설정
+	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
+	CameraSpringArmComponent->SetupAttachment(RootComponent);
+	CameraSpringArmComponent->TargetArmLength = 400.0f;
+	CameraSpringArmComponent->bUsePawnControlRotation = true;
+
+	FollowCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCameraComponent->SetupAttachment(CameraSpringArmComponent, USpringArmComponent::SocketName);
+	FollowCameraComponent->bUsePawnControlRotation = false;
+}
+
+void AVDStagePlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AVDStagePlayerCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+}
+
+void AVDStagePlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	CastPlayerController = Cast<AVDStagePlayerController>(GetController());
+
+	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
+	if (CastPlayerController)
+	{
+		UInputMappingContext* DefaultMappingContext = CastPlayerController->GetCharacterControllerIMC();
+		if (DefaultMappingContext)
+		{
+			const TArray<FEnhancedActionKeyMapping>& Mappings = DefaultMappingContext->GetMappings();
+			for (const FEnhancedActionKeyMapping& Mapping : Mappings)
+			{
+				const UInputAction* Action = Mapping.Action;
+				if (Action)
+				{
+					FString ActionName = Action->GetName();
+					if (ActionName.StartsWith(TEXT("IA_")))
+					{
+						ActionName = ActionName.RightChop(3);
+						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Triggered, this, FName(ActionName));
+					}
+				}
+			}
+		}
+	}
+}
+
+void AVDStagePlayerCharacter::EquipWeapon(AVDWeapon* NewWeapon)
+{
+	Super::EquipWeapon(NewWeapon);
+
+	AVDStagePlayerController* VDPC = CastPlayerController.Get();
+	if (VDPC)
+	{
+		VDPC->ShowToast("알림", "무기 획득함");
+	}
+}
 
 void AVDStagePlayerCharacter::Escape(const FInputActionValue& Value)
 {
@@ -71,69 +149,5 @@ void AVDStagePlayerCharacter::DefendHold(const FInputActionValue& Value)
 void AVDStagePlayerCharacter::DefendCancel(const FInputActionValue& InputActionValue)
 {
 	UE_LOG(LogTemp, Log, TEXT("Cancel Defend"));
-}
-
-AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
-{
-	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
-	CameraSpringArmComponent->SetupAttachment(RootComponent);
-	CameraSpringArmComponent->TargetArmLength = 400.0f;
-	CameraSpringArmComponent->bUsePawnControlRotation = true;
-
-	FollowCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCameraComponent->SetupAttachment(CameraSpringArmComponent, USpringArmComponent::SocketName);
-	FollowCameraComponent->bUsePawnControlRotation = false;
-}
-
-// Called when the game starts or when spawned
-void AVDStagePlayerCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void AVDStagePlayerCharacter::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-}
-
-void AVDStagePlayerCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
-	if (CastPlayerController)
-	{
-		UInputMappingContext* DefaultMappingContext = CastPlayerController->GetCharacterControllerIMC();
-		const TArray<FEnhancedActionKeyMapping>&Mappings = DefaultMappingContext->GetMappings();
-		for (const FEnhancedActionKeyMapping& Mapping : Mappings)
-		{
-			const UInputAction* Action = Mapping.Action;
-			if (Action)
-			{
-				FString ActionName = Action->GetName();
-				if (ActionName.StartsWith(TEXT("IA_")))
-				{
-					ActionName = ActionName.RightChop(3); // "IA_" 길이만큼 잘라냄
-					EnhancedInputComponent->BindAction(Action, ETriggerEvent::Triggered, this, FName(ActionName));
-				}
-			}
-		}
-	}
-}
-
-void AVDStagePlayerCharacter::EquipWeapon(AVDWeapon* NewWeapon)
-{
-	Super::EquipWeapon(NewWeapon);
-
-	AVDStagePlayerController* VDPC = CastPlayerController.Get();
-	if (VDPC)
-	{
-		VDPC->ShowToast("알림","무기 획득함");
-	}
 }
 

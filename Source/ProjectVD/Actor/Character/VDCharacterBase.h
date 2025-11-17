@@ -4,22 +4,28 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "VDCharacterBase.generated.h"
 
-class AVDStagePlayerController;
+class UAnimMontage;
 class AVDWeapon;
-UCLASS()
+
+UCLASS(Abstract)
 class PROJECTVD_API AVDCharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
-
 protected:
-
-	UPROPERTY()
-	TObjectPtr<AVDStagePlayerController> CastPlayerController;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> AttackMontage;
 
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	virtual void Move(const FInputActionValue& Value);
+
+	UFUNCTION()
+	virtual void DefaultAttack(const FInputActionValue& Value);
 
 public:	
 	AVDCharacterBase();
@@ -29,5 +35,4 @@ public:
 
 	UFUNCTION()
 	virtual void EquipWeapon(AVDWeapon* NewWeapon);
-
 };
