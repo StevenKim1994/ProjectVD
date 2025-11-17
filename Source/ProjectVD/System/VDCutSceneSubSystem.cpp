@@ -17,8 +17,6 @@ void UVDCutSceneSubSystem::StartCutScene(AActor* CutSceneActor, FOnCutSceneFinis
 {
 	bIsInCutScene = true;
 
-
-
 	if (OnFinishedDelegate.IsBound())
 	{
 		OnFinishedDelegate.Execute();

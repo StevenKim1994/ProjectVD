@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interface/VDIPickable.h"
+#include "Interface/VDPoolableInterface.h"
 #include "VDWeapon.generated.h"
 
 class UStaticMeshComponent;
@@ -17,7 +18,7 @@ enum class EWeaponType : uint8
 };
 
 UCLASS()
-class PROJECTVD_API AVDWeapon : public AActor, public IVDIPickable
+class PROJECTVD_API AVDWeapon : public AActor, public IVDIPickable, public IVDPoolableInterface
 {
 	GENERATED_BODY()
 	
@@ -49,4 +50,8 @@ public:
 
 	virtual bool CanBePicked() override;
 	virtual void OnPicked(AActor* Picker) override;
+
+	virtual void OnPooledActivate() override;
+	virtual void OnPooledDeactivate() override;
+	virtual void ResetForReuse() override;
 };

@@ -6,11 +6,10 @@
 #include "InputMappingContext.h"
 #include "InputAction.h"
 #include "Public/VDConstrants.h"
+#include "UI/Stage/VDStagePlayerHUDWidget.h"
 #include "UI/Stage/VDStagePauseWidget.h"
 #include "Game/VDGameInstance.h"
 #include "System/VDLevelSystem.h"
-
-
 
 AVDStagePlayerController::AVDStagePlayerController()
 {
@@ -27,6 +26,12 @@ void AVDStagePlayerController::BeginPlay()
 	{
 		UISubsystem->SetPlayerControllerRootUIWidget(this);
 		UISubsystem->SetCurrentHUDWidget(VDConstants::StagePlayerHUD);
+
+		HUDWidget = Cast<UVDStagePlayerHUDWidget>(UISubsystem->GetCurrentHUDWidget());
+		if (HUDWidget)
+		{
+			HUDWidget->HideBossStatus();
+		}
 	}
 }
 
@@ -35,6 +40,14 @@ void AVDStagePlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	InitializeInputContext();
+}
+
+void AVDStagePlayerController::ShowToast(const FString& InTitle, const FString& InMessage)
+{
+	if (HUDWidget)
+	{
+		HUDWidget->ShowToast(InTitle, InMessage);
+	}
 }
 
 void AVDStagePlayerController::InitializeInputContext()

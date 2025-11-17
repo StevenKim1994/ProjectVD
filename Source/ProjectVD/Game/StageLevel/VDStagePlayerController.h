@@ -7,12 +7,18 @@
 #include "Actor/Character/VDStagePlayerCharacter.h"
 #include "VDStagePlayerController.generated.h"
 
+class UVDStagePlayerHUDWidget;
 class UInputMappingContext;
 UCLASS()
 class PROJECTVD_API AVDStagePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 private:
+	UPROPERTY()
+	TObjectPtr<AVDStagePlayerCharacter> VDStagePlayerCharacter;
+
+	UPROPERTY()
+	TObjectPtr<UVDStagePlayerHUDWidget> HUDWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> CharacterControllerIMC;
@@ -29,11 +35,13 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	UFUNCTION()
+	void ShowToast(const FString& InTitle, const FString& InMessage);
 
 	UFUNCTION()
 	void OnEscape(const FInputActionValue& Value);
 
-	TObjectPtr<UInputMappingContext> GetCharacterControllerIMC() const
+	FORCEINLINE TObjectPtr<UInputMappingContext> GetCharacterControllerIMC() const
 	{
 		return CharacterControllerIMC;
 	}

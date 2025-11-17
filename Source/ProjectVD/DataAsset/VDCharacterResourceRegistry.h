@@ -17,9 +17,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Character")
 	TMap<FName, TSoftClassPtr<AActor>> CharacterClassMap;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	TMap<FName, TSoftClassPtr<AActor>> WeaponClassMap;
-
 	UPROPERTY(EditAnywhere, Category ="InputMappingContext")
 	TMap<FName, TSoftObjectPtr<UInputMappingContext>> InputIMCClassMap;
 

@@ -6,24 +6,28 @@
 #include "GameFramework/Character.h"
 #include "VDCharacterBase.generated.h"
 
+class AVDStagePlayerController;
+class AVDWeapon;
 UCLASS()
 class PROJECTVD_API AVDCharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this character's properties
-	AVDCharacterBase();
 
 protected:
-	// Called when the game starts or when spawned
+
+	UPROPERTY()
+	TObjectPtr<AVDStagePlayerController> CastPlayerController;
+
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	AVDCharacterBase();
 
-	// Called to bind functionality to input
+	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION()
+	virtual void EquipWeapon(AVDWeapon* NewWeapon);
 
 };

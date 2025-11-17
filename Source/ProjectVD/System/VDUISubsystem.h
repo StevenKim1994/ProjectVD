@@ -61,6 +61,9 @@ public:
 	TSoftClassPtr<UUserWidget> GetUIWidgetClassPathByName(const FName& WidgetName);
 
 	UFUNCTION()
+	UUserWidget* GetCurrentHUDWidget() const { return CurrentHUDWidget; }
+
+	UFUNCTION()
 	void PopModalUIWidget();
 
 	UFUNCTION()

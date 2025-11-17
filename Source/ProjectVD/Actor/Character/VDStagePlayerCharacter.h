@@ -7,6 +7,9 @@
 #include "InputActionValue.h"
 #include "VDStagePlayerCharacter.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+
 UENUM(BlueprintType)
 enum class ECharacterClassType : uint8
 {
@@ -22,15 +25,13 @@ class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase
 private:
 	ECharacterClassType CharacterClass;
 
-// Camera Section
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class USpringArmComponent> CameraSpringArmComponent;
+	TObjectPtr<USpringArmComponent> CameraSpringArmComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UCameraComponent> FollowCameraComponent;
+	TObjectPtr<UCameraComponent> FollowCameraComponent;
 
-// Input Section
 protected:
 
 	UFUNCTION()
@@ -73,4 +74,5 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void EquipWeapon(AVDWeapon* NewWeapon) override;
 };

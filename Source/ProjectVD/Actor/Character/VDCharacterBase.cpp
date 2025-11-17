@@ -5,7 +5,7 @@
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "Actor/Weapon/VDWeapon.h"
 // Sets default values
 AVDCharacterBase::AVDCharacterBase()
 {
@@ -50,6 +50,20 @@ void AVDCharacterBase::Tick(float DeltaTime)
 void AVDCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	CastPlayerController = Cast<AVDStagePlayerController>(GetController());
+}
 
+void AVDCharacterBase::EquipWeapon(AVDWeapon* NewWeapon)
+{
+	if(NewWeapon)
+	{
+		NewWeapon->Destroy();
+		// TODO :: 풀링처리로 변경하기
+		
+		
+		UE_LOG(LogTemp, Warning, TEXT("Equip Weapon: %s"), *NewWeapon->GetName());
+		
+
+	}
 }
 

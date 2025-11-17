@@ -75,10 +75,6 @@ void AVDStagePlayerCharacter::DefendCancel(const FInputActionValue& InputActionV
 
 AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
 {
-	// Mesh Override
-	USkeletalMeshComponent* SkeletalMesh = GetMesh();
-
-	// Camera Init
 	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
 	CameraSpringArmComponent->SetupAttachment(RootComponent);
 	CameraSpringArmComponent->TargetArmLength = 400.0f;
@@ -110,10 +106,9 @@ void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
-	AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
-	if (VDPC)
+	if (CastPlayerController)
 	{
-		UInputMappingContext* DefaultMappingContext = VDPC->GetCharacterControllerIMC();
+		UInputMappingContext* DefaultMappingContext = CastPlayerController->GetCharacterControllerIMC();
 		const TArray<FEnhancedActionKeyMapping>&Mappings = DefaultMappingContext->GetMappings();
 		for (const FEnhancedActionKeyMapping& Mapping : Mappings)
 		{
@@ -128,6 +123,17 @@ void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 				}
 			}
 		}
+	}
+}
+
+void AVDStagePlayerCharacter::EquipWeapon(AVDWeapon* NewWeapon)
+{
+	Super::EquipWeapon(NewWeapon);
+
+	AVDStagePlayerController* VDPC = CastPlayerController.Get();
+	if (VDPC)
+	{
+		VDPC->ShowToast("알림","무기 획득함");
 	}
 }
 
