@@ -162,12 +162,6 @@ void AVDStagePlayerCharacter::JumpEnd(const FInputActionValue& Value)
 
 void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
-	// 이동 잠금
-	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
-	{
-		Movement->SetMovementMode(EMovementMode::MOVE_None);
-		Movement->StopMovementImmediately();
-	}
 
 	if (GetCharacterMovement()->IsFalling())
 	{
@@ -183,21 +177,26 @@ void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 		}
 	}
 	else
-	{
-		UE_LOG(LogTemp, Log, TEXT("Attack Combo Count: %d"), CurrentAttackComboCount);
-
-		if (!DefaultAttackAM) return;
-
-		// 첫 입력: 콤보 시작
-		if (CurrentAttackComboCount == 0)
+	{	
+		if (DefaultAttackAM)
 		{
-			DefaultAttackCombo();
-			return;
-		}
+			if (UCharacterMovementComponent* Movement = GetCharacterMovement())
+			{
+				Movement->StopMovementImmediately();
+				Movement->SetMovementMode(EMovementMode::MOVE_None);
+			}
 
-		if (bIsNextComboInputOn)
-		{
-			CheckComboInput();
+			// 첫 입력: 콤보 시작
+			if (CurrentAttackComboCount == 0)
+			{
+				DefaultAttackCombo();
+				return;
+			}
+
+			if (bIsNextComboInputOn)
+			{
+				CheckComboInput();
+			}
 		}
 	}
 }
