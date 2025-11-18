@@ -2,22 +2,20 @@
 
 
 #include "Animation/VDAnimNotifyStateForComboAttack.h"
-#include "Actor/Character/VDStagePlayerCharacter.h"
+#include "Interface/VDAttackComboable.h"
 
 void UVDAnimNotifyStateForComboAttack::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
-	if (AVDStagePlayerCharacter* Player = Cast<AVDStagePlayerCharacter>(MeshComp->GetOwner()))
+	if (MeshComp->GetOwner()->Implements<UVDAttackComboable>())
 	{
-		Player->SetComboPossible(true);
-		UE_LOG(LogTemp, Log, TEXT("Combo Input On"));
+		IVDAttackComboable::Execute_SetComboInputOn(MeshComp->GetOwner(), true);
 	}
 }
 
 void UVDAnimNotifyStateForComboAttack::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-	if (AVDStagePlayerCharacter* Player = Cast<AVDStagePlayerCharacter>(MeshComp->GetOwner()))
+	if (MeshComp->GetOwner()->Implements<UVDAttackComboable>())
 	{
-		Player->SetComboPossible(false);
-		UE_LOG(LogTemp, Log, TEXT("Combo Input Off"));
+		IVDAttackComboable::Execute_SetComboInputOn(MeshComp->GetOwner(), false);
 	}
 }

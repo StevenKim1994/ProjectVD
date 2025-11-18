@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "VDIPickable.generated.h"
+#include "VDAttackComboable.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UVDIPickable : public UInterface
+class UVDAttackComboable : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,16 +16,13 @@ class UVDIPickable : public UInterface
 /**
  * 
  */
-class PROJECTVD_API IVDIPickable
+class PROJECTVD_API IVDAttackComboable
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	UFUNCTION()
-	virtual bool CanBePicked() = 0;
-
-	UFUNCTION()
-	virtual void OnPicked(AActor* Picker) = 0;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable , Category = "AttackCombo")
+	void SetComboInputOn(bool bIsOn);
 };

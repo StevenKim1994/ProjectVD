@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
 #include "Actor/Character/VDCharacterBase.h"
+#include "Interface/VDAttackComboable.h"
 #include "VDStagePlayerCharacter.generated.h"
 
 class USpringArmComponent;
@@ -14,7 +15,7 @@ class AVDStagePlayerController;
 class UVDCharacterStatsBaseComponent;
 
 UCLASS()
-class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase
+class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase, public IVDAttackComboable
 {
 	GENERATED_BODY()
 
@@ -95,6 +96,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void EquipWeapon(AVDWeapon* NewWeapon) override;
 
-	FORCEINLINE void SetComboPossible(bool bIsPossible) { bIsNextComboInputOn = bIsPossible; }
 	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent; }
+
+	void SetComboInputOn_Implementation(bool bIsOn);
 };

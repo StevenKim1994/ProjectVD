@@ -99,6 +99,11 @@ void AVDStagePlayerCharacter::EquipWeapon(AVDWeapon* NewWeapon)
 	}
 }
 
+void AVDStagePlayerCharacter::SetComboInputOn_Implementation(bool bIsOn)
+{
+	bIsNextComboInputOn = bIsOn;
+}
+
 void AVDStagePlayerCharacter::Escape(const FInputActionValue& Value)
 {
 	AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);

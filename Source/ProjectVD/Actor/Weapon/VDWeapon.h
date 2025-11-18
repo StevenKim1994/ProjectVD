@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interface/VDIPickable.h"
+#include "Interface/VDPickable.h"
 #include "Interface/VDPoolableInterface.h"
 #include "VDWeapon.generated.h"
 
@@ -18,7 +18,7 @@ enum class EWeaponType : uint8
 };
 
 UCLASS()
-class PROJECTVD_API AVDWeapon : public AActor, public IVDIPickable, public IVDPoolableInterface
+class PROJECTVD_API AVDWeapon : public AActor, public IVDPickable, public IVDPoolableInterface
 {
 	GENERATED_BODY()
 	
@@ -48,10 +48,10 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
-	virtual bool CanBePicked() override;
-	virtual void OnPicked(AActor* Picker) override;
-
 	virtual void OnPooledActivate() override;
 	virtual void OnPooledDeactivate() override;
 	virtual void ResetForReuse() override;
+
+	bool CanBePicked();
+	void OnPicked(AActor* Picker);
 };
