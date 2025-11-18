@@ -146,7 +146,7 @@ void AVDStagePlayerCharacter::Zoom(const FInputActionValue& Value)
 
 void AVDStagePlayerCharacter::JumpBegin(const FInputActionValue& Value)
 {
-
+	CurrentAttackComboCount = 0;
 	ACharacter::Jump();
 }
 
@@ -157,10 +157,6 @@ void AVDStagePlayerCharacter::JumpEnd(const FInputActionValue& Value)
 
 void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Log, TEXT("Attack Combo Count: %d"), CurrentAttackComboCount);
-
-	if (!DefaultAttackAM) return;
-
 	// 이동 잠금
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
 	{
@@ -168,16 +164,36 @@ void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 		Movement->StopMovementImmediately();
 	}
 
-	// 첫 입력: 콤보 시작
-	if (CurrentAttackComboCount == 0)
+	if (GetCharacterMovement()->IsFalling())
 	{
-		DefaultAttackCombo();
-		return;
+		bIsNextComboInputOn = false;
+		CurrentAttackComboCount = 0;
+		UE_LOG(LogTemp, Log, TEXT("Air Attack"));
+		if (AirAttackAM)
+		{
+			if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
+			{
+				UAI->Montage_Play(AirAttackAM, AttackSpeedRate);
+			}
+		}
 	}
-
-	if (bIsNextComboInputOn)
+	else
 	{
-		CheckComboInput();
+		UE_LOG(LogTemp, Log, TEXT("Attack Combo Count: %d"), CurrentAttackComboCount);
+
+		if (!DefaultAttackAM) return;
+
+		// 첫 입력: 콤보 시작
+		if (CurrentAttackComboCount == 0)
+		{
+			DefaultAttackCombo();
+			return;
+		}
+
+		if (bIsNextComboInputOn)
+		{
+			CheckComboInput();
+		}
 	}
 }
 
@@ -191,6 +207,9 @@ void AVDStagePlayerCharacter::Jump()
 		}
 	}
 	
+	bIsNextComboInputOn = false;
+	CurrentAttackComboCount = 0;
+
 	Super::Jump();
 }
 
@@ -217,8 +236,6 @@ void AVDStagePlayerCharacter::DefaultAttackCombo()
 
 			UAI->Montage_Play(DefaultAttackAM, AttackSpeedRate);
 			UAI->Montage_SetEndDelegate(EndDelegate, DefaultAttackAM);
-
-			SetComboCheckTimer();
 		}
 	}
 }
@@ -236,13 +253,9 @@ void AVDStagePlayerCharacter::DefaultAttackComboEnded(UAnimMontage* AnimMontage,
 	}
 }
 
-void AVDStagePlayerCharacter::SetComboCheckTimer()
-{
-
-}
-
 void AVDStagePlayerCharacter::CheckComboInput()
 {
+	// DESC :: 콤보가능 여부를 체크하는 bIsNextComboInputOn 변수가 true일 때만 콤보 공격을 이어감 이값은 애님노티파이스테이트에서 설정함.
 	if (bIsNextComboInputOn)
 	{
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -250,7 +263,6 @@ void AVDStagePlayerCharacter::CheckComboInput()
 		CurrentAttackComboCount = FMath::Clamp(CurrentAttackComboCount + 1, 1, DefaultAttackAM->GetNumSections() );
 		FName NextSection = *FString::Printf(TEXT("Combo%d"), CurrentAttackComboCount);
 		AnimInstance->Montage_JumpToSection(NextSection, DefaultAttackAM);
-		SetComboCheckTimer();
 		bIsNextComboInputOn = false;
 	}
 }

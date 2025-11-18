@@ -19,6 +19,9 @@ class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AirAttack", Meta =(AllowPrivateAccess ="true"))
+	TObjectPtr<UAnimMontage> AirAttackAM;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackCombo", Meta = (AllowPrivateAccess = "true"))
 	int32 MaxAttackComboCount = 3;
 
@@ -33,9 +36,6 @@ private:
 
 	UFUNCTION()
 	void DefaultAttackComboEnded(UAnimMontage* AnimMontage, bool IsEndedCombo);
-
-	UFUNCTION()
-	void SetComboCheckTimer();
 
 	UFUNCTION()
 	void CheckComboInput();

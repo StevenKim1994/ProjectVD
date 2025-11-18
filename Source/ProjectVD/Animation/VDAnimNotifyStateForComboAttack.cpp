@@ -6,8 +6,6 @@
 
 void UVDAnimNotifyStateForComboAttack::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
-	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
-
 	if (AVDStagePlayerCharacter* Player = Cast<AVDStagePlayerCharacter>(MeshComp->GetOwner()))
 	{
 		Player->SetComboPossible(true);
@@ -17,7 +15,6 @@ void UVDAnimNotifyStateForComboAttack::NotifyBegin(USkeletalMeshComponent* MeshC
 
 void UVDAnimNotifyStateForComboAttack::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-	Super::NotifyEnd(MeshComp, Animation);	
 	if (AVDStagePlayerCharacter* Player = Cast<AVDStagePlayerCharacter>(MeshComp->GetOwner()))
 	{
 		Player->SetComboPossible(false);
