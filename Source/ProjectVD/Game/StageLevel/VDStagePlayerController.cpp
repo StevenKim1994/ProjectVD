@@ -10,6 +10,7 @@
 #include "UI/Stage/VDStagePauseWidget.h"
 #include "Game/VDGameInstance.h"
 #include "System/VDLevelSystem.h"
+#include "Kismet/GameplayStatics.h"
 
 AVDStagePlayerController::AVDStagePlayerController()
 {
@@ -120,6 +121,7 @@ void AVDStagePlayerController::ChangeToggleInputContext()
 
 void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 {
+
 	UEnhancedInputLocalPlayerSubsystem* Subsystem =
 		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 
@@ -135,6 +137,7 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 			{
 				// TODO :: 타임스케일 조정 등 게임 일시정지 처리
 				ChangeToggleInputContext();
+				UGameplayStatics::SetGamePaused(this, true);
 
 				UISubsystem->ShowUIWidgetAsync(VDConstants::PauseMenuWidget, FOnUIWidgetLoadedDelegate::CreateWeakLambda(this, [this](UUserWidget* LoadWidget)
 					{
@@ -152,6 +155,7 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 												UISubsystemInner->PopModalUIWidget();
 												bShowMouseCursor = false;
 
+												UGameplayStatics::SetGamePaused(this, false);
 												ChangeToggleInputContext();
 											}
 										}
