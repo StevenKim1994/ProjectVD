@@ -175,8 +175,10 @@ void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 		return;
 	}
 
-	// 콤보 윈도우 내 추가 입력 여부 표시
-	bIsNextComboInputOn = AttackComboResetTimerHandle.IsValid();
+	if (bIsNextComboInputOn)
+	{
+		CheckComboInput();
+	}
 }
 
 void AVDStagePlayerCharacter::Jump()
@@ -213,12 +215,9 @@ void AVDStagePlayerCharacter::DefaultAttackCombo()
 			FOnMontageEnded EndDelegate;
 			EndDelegate.BindUObject(this, &AVDStagePlayerCharacter::DefaultAttackComboEnded);
 
-			// 안전한 속도
-			const float SafeRate = FMath::Max(AttackSpeedRate, 0.1f);
-			UAI->Montage_Play(DefaultAttackAM, SafeRate);
+			UAI->Montage_Play(DefaultAttackAM, AttackSpeedRate);
 			UAI->Montage_SetEndDelegate(EndDelegate, DefaultAttackAM);
 
-			AttackComboResetTimerHandle.Invalidate();
 			SetComboCheckTimer();
 		}
 	}
@@ -230,7 +229,6 @@ void AVDStagePlayerCharacter::DefaultAttackComboEnded(UAnimMontage* AnimMontage,
 
 	CurrentAttackComboCount = 0;
 	bIsNextComboInputOn = false;
-	AttackComboResetTimerHandle.Invalidate();
 
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
 	{
@@ -240,63 +238,20 @@ void AVDStagePlayerCharacter::DefaultAttackComboEnded(UAnimMontage* AnimMontage,
 
 void AVDStagePlayerCharacter::SetComboCheckTimer()
 {
-	if (!DefaultAttackAM) return;
 
-	const int32 CurrentComboIndex = FMath::Clamp(CurrentAttackComboCount - 1, 0, DefaultAttackAM->GetNumSections() - 1);
-
-	// 현재 섹션 길이 가져오기
-	const float SectionLen = DefaultAttackAM->GetSectionLength(CurrentComboIndex);
-	if (SectionLen <= 0.f) return;
-
-	const float SafeRate = FMath::Max(AttackSpeedRate, 0.1f);
-	const float EffectiveTime = SectionLen / SafeRate;
-
-	// 너무 큰 시간 방지
-	if (EffectiveTime > 0.f && EffectiveTime < 60.f)
-	{
-		GetWorld()->GetTimerManager().SetTimer(AttackComboResetTimerHandle, this, &AVDStagePlayerCharacter::CheckComboInput, EffectiveTime, false);
-	}
 }
 
 void AVDStagePlayerCharacter::CheckComboInput()
 {
-	AttackComboResetTimerHandle.Invalidate();
-
-	if (!DefaultAttackAM) return;
-	if (CurrentAttackComboCount <= 0) return;
-
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (!AnimInstance) return;
-
-	// 입력이 없으면 콤보 종료 대기
-	if (!bIsNextComboInputOn)
+	if (bIsNextComboInputOn)
 	{
-		// 입력 없을 시 다음 섹션으로 강제 점프하지 않음. 몽타주 종료 시 EndDelegate에서 상태 복구.
-		UE_LOG(LogTemp, Verbose, TEXT("No next combo input. Waiting montage to end."));
-		return;
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+		CurrentAttackComboCount = FMath::Clamp(CurrentAttackComboCount + 1, 1, DefaultAttackAM->GetNumSections() );
+		FName NextSection = *FString::Printf(TEXT("Combo%d"), CurrentAttackComboCount);
+		AnimInstance->Montage_JumpToSection(NextSection, DefaultAttackAM);
+		SetComboCheckTimer();
+		bIsNextComboInputOn = false;
 	}
-
-	// 다음 콤보로 증가(클램프)
-	CurrentAttackComboCount = FMath::Clamp(CurrentAttackComboCount + 1, 1, MaxAttackComboCount);
-
-	// 다음 섹션 인덱스
-	const int32 NextSectionIndex = FMath::Clamp(CurrentAttackComboCount - 1, 0, DefaultAttackAM->GetNumSections() - 1);
-
-	// 섹션 이름을 안전하게 가져오기(이름 포맷 실수 방지)
-	const FName NextSectionName = DefaultAttackAM->GetSectionName(NextSectionIndex);
-	if (NextSectionName.IsNone())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalid section index %d for montage %s"), NextSectionIndex, *DefaultAttackAM->GetName());
-		return;
-	}
-
-	// 명시적으로 해당 몽타주에 대해 섹션 점프
-	AnimInstance->Montage_JumpToSection(NextSectionName, DefaultAttackAM);
-
-	// 다음 입력 대기 상태 초기화
-	bIsNextComboInputOn = false;
-
-	// 다음 섹션 타이머 설정
-	SetComboCheckTimer();
 }
 

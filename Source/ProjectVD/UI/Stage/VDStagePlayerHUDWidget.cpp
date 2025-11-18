@@ -16,7 +16,6 @@ void UVDStagePlayerHUDWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-
 void UVDStagePlayerHUDWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
@@ -27,6 +26,14 @@ void UVDStagePlayerHUDWidget::InitializeWidget()
 	if(BossState)
 	{
 		BossState->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
+void UVDStagePlayerHUDWidget::ShowPerformanceTween()
+{
+	if (State)
+	{
+		State->ShowPerformanceTween();
 	}
 }
 

@@ -31,6 +31,7 @@ private:
 	virtual void NativeDestruct() override;
 
 	void InitializeWidget();
+	void ShowPerformanceTween();
 
 public:
 	void ShowToast(const FString& InTitle, const FString& InMessage);

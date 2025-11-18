@@ -35,6 +35,10 @@ private:
 	FOnSetCharacterState OnSetCharacterStateDelegate;
 
 public:
+
+	UFUNCTION()
+	void ShowPerformanceTween();
+
 	UFUNCTION()
 	void SetCharacterState(UVDCharacterStatsBaseComponent* BaseStats);
 

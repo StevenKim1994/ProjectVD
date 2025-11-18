@@ -9,6 +9,7 @@
 
 struct FActorPool;
 class AVDWeapon;
+class AVDSpawnPoint;
 
 UCLASS()
 class PROJECTVD_API UVDStageObjectSubsystem : public UWorldSubsystem
@@ -16,11 +17,19 @@ class PROJECTVD_API UVDStageObjectSubsystem : public UWorldSubsystem
 	GENERATED_BODY()
 
 private:
-    UPROPERTY() TMap<TSubclassOf<AActor>, FActorPool> Pools;
+    UPROPERTY()
+	TArray<AVDSpawnPoint*> SpawnPoints;
+
+    UPROPERTY() 
+    TMap<TSubclassOf<AActor>, FActorPool> Pools;
 
     AActor* SpawnNew(TSubclassOf<AActor> ActorClass);
     void  DeactivatePooledActor(AActor* Actor);
     void  ActivatePooledActor(AActor* Actor, const FTransform& TM, AActor* Owner, APawn* Instigator);
+
+	void FindingSpawnPoints();
+
+	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;

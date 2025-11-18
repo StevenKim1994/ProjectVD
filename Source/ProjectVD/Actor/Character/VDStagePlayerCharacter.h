@@ -26,9 +26,6 @@ private:
 	int32 CurrentAttackComboCount = 0;
 
 	UPROPERTY()
-	FTimerHandle AttackComboResetTimerHandle;
-
-	UPROPERTY()
 	bool bIsNextComboInputOn = false;
 
 	UFUNCTION()
@@ -98,5 +95,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void EquipWeapon(AVDWeapon* NewWeapon) override;
 
+	FORCEINLINE void SetComboPossible(bool bIsPossible) { bIsNextComboInputOn = bIsPossible; }
 	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent; }
 };

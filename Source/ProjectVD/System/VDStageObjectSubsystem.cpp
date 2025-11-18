@@ -3,6 +3,9 @@
 
 #include "System/VDStageObjectSubsystem.h"
 #include "Interface/VDPoolableInterface.h"
+#include "EngineUtils.h"
+#include "Actor/VDSpawnPoint.h"
+
 AActor* UVDStageObjectSubsystem::SpawnNew(TSubclassOf<AActor> ActorClass)
 {
 	return nullptr;
@@ -41,14 +44,52 @@ void UVDStageObjectSubsystem::ActivatePooledActor(AActor* Actor, const FTransfor
 {
 }
 
+void UVDStageObjectSubsystem::FindingSpawnPoints()
+{
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    for (TActorIterator<AActor> It(World); It; ++It)
+    {
+        AActor* Actor = *It;
+        if (!IsValid(Actor)) continue;
+
+        bool bIsSpawnPoint = false;
+
+        if (Actor->IsA<AVDSpawnPoint>())
+        {
+            bIsSpawnPoint = true;
+        }
+
+        if (!bIsSpawnPoint) continue;
+
+        // 중복 방지
+        if (SpawnPoints.Contains(Actor)) continue;
+
+        SpawnPoints.Add(Cast<AVDSpawnPoint>(Actor));
+
+        UE_LOG(LogTemp, Log, TEXT("UVDStageObjectSubsystem::Initialize - SpawnPoint Registered: %s"), *Actor->GetName());
+    }
+}
+
+void UVDStageObjectSubsystem::OnWorldBeginPlay(UWorld& InWorld)
+{
+    Super::OnWorldBeginPlay(InWorld);
+    FindingSpawnPoints();
+}
+
 void UVDStageObjectSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+
+    SpawnPoints.Empty();
 }
 
 void UVDStageObjectSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
+
+	SpawnPoints.Empty();
 }
 
 void UVDStageObjectSubsystem::InitPool(TSubclassOf<AActor> ActorClass, int32 PrewarmCount, int32 Capacity, bool bAutoExpand)
@@ -77,30 +118,17 @@ void UVDStageObjectSubsystem::InitPool(TSubclassOf<AActor> ActorClass, int32 Pre
 
 AActor* UVDStageObjectSubsystem::Acquire(TSubclassOf<AActor> ActorClass, const FTransform& SpawnTM, AActor* Owner, APawn* Instigator)
 {
-    FTransform IdentityTM = FTransform::Identity;
+    if (!*ActorClass) return nullptr;
 
-    // BeginPlay 전 초기 상태 세팅을 위해 지연 스폰
-    AActor* NewActor = GetWorld()->SpawnActorDeferred<AActor>(*ActorClass, IdentityTM, nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-    if (!NewActor) return nullptr;
+    UWorld* World = GetWorld();
+    if (!World) return nullptr;
 
-    // 초기 상태: 숨김/충돌/틱 Off (BeginPlay 전에 보장)
-    NewActor->SetActorHiddenInGame(true);
-    NewActor->SetActorEnableCollision(false);
-    NewActor->SetActorTickEnabled(false);
+    FActorSpawnParameters Params;
+    Params.Owner = Owner;
+    Params.Instigator = Instigator;
+    Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-    // 컴포넌트들도 안전하게 비활성
-    TArray<UActorComponent*> Components;
-    NewActor->GetComponents(Components);
-    for (UActorComponent* C : Components)
-    {
-        if (C)
-        {
-            C->Deactivate();
-            C->SetComponentTickEnabled(false);
-        }
-    }
-
-    NewActor->FinishSpawning(IdentityTM);
+    AActor* NewActor = World->SpawnActor<AActor>(*ActorClass, SpawnTM, Params);
     return NewActor;
 }
 
