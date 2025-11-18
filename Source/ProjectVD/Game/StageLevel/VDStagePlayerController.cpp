@@ -30,7 +30,7 @@ void AVDStagePlayerController::BeginPlay()
 		HUDWidget = Cast<UVDStagePlayerHUDWidget>(UISubsystem->GetCurrentHUDWidget());
 		if (HUDWidget)
 		{
-			HUDWidget->HideBossStatus();
+			HUDWidget->SetCharacterState(Cast<AVDStagePlayerCharacter>(GetCharacter())->GetBaseStatsComponent());
 		}
 	}
 }

@@ -8,6 +8,7 @@
 void UVDStagePlayerHUDWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+	InitializeWidget();
 }
 
 void UVDStagePlayerHUDWidget::NativeConstruct()
@@ -15,9 +16,18 @@ void UVDStagePlayerHUDWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
+
 void UVDStagePlayerHUDWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
+}
+
+void UVDStagePlayerHUDWidget::InitializeWidget()
+{
+	if(BossState)
+	{
+		BossState->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void UVDStagePlayerHUDWidget::ShowToast(const FString& InTitle, const FString& InMessage)
@@ -34,6 +44,14 @@ void UVDStagePlayerHUDWidget::ShowBossStatus(AActor* Boss)
 	{
 		BossState->SetBossActor(Boss);
 		BossState->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UVDStagePlayerHUDWidget::SetCharacterState(UVDCharacterStatsBaseComponent* StatsBaseComponent)
+{
+	if(State)
+	{
+		State->SetCharacterState(StatsBaseComponent);
 	}
 }
 

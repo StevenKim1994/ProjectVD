@@ -17,7 +17,7 @@ class PROJECTVD_API AVDCharacterBase : public ACharacter
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackSpeed", Meta = (AllowPrivateAccess ="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackCombo", Meta = (AllowPrivateAccess = "true", ClampMin = "0.1"))
 	float AttackSpeedRate = 1.0f;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))

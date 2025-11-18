@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actor/Character/VDCharacterBase.h"
 #include "InputActionValue.h"
+#include "Actor/Character/VDCharacterBase.h"
 #include "VDStagePlayerCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
-class AVDStagePlayerController;
 class UAnimMontage;
+class AVDStagePlayerController;
+class UVDCharacterStatsBaseComponent;
 
 UCLASS()
 class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase
@@ -24,6 +25,24 @@ private:
 	UPROPERTY()
 	int32 CurrentAttackComboCount = 0;
 
+	UPROPERTY()
+	FTimerHandle AttackComboResetTimerHandle;
+
+	UPROPERTY()
+	bool bIsNextComboInputOn = false;
+
+	UFUNCTION()
+	void DefaultAttackCombo();
+
+	UFUNCTION()
+	void DefaultAttackComboEnded(UAnimMontage* AnimMontage, bool IsEndedCombo);
+
+	UFUNCTION()
+	void SetComboCheckTimer();
+
+	UFUNCTION()
+	void CheckComboInput();
+
 protected:
 	// 플레이어 전용 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
@@ -31,6 +50,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCameraComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UVDCharacterStatsBaseComponent> BaseStatsComponent;
 
 	UPROPERTY()
 	TObjectPtr<AVDStagePlayerController> CastPlayerController;
@@ -56,11 +78,6 @@ protected:
 	UFUNCTION()
 	void DefendCancel(const FInputActionValue& InputActionValue);
 
-	UFUNCTION()
-	void DefaultAttackCombo();
-	
-	UFUNCTION()
-	void DefaultAttackComboEnded(UAnimMontage* AnimMontage, bool IsEndedCombo);
 
 	virtual void DefaultAttack(const FInputActionValue& Value) override;
 
@@ -80,4 +97,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void EquipWeapon(AVDWeapon* NewWeapon) override;
+
+	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent; }
 };

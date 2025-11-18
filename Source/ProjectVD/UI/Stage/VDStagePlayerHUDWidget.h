@@ -8,6 +8,9 @@
 
 class UVDPlayerHUDEnemyStatusWidget;
 class UVDStagePlayerHUDToastWidget;
+class UVDPlayerHUDStateWidget;
+class UVDCharacterStatsBaseComponent;
+
 UCLASS()
 class PROJECTVD_API UVDStagePlayerHUDWidget : public UUserWidget
 {
@@ -20,12 +23,18 @@ private:
 	UPROPERTY(meta =(BindWidget))
 	TObjectPtr<UVDStagePlayerHUDToastWidget> Toast;
 
+	UPROPERTY(meta = (BineWidget))
+	TObjectPtr<UVDPlayerHUDStateWidget> State;
+
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
+	void InitializeWidget();
+
 public:
 	void ShowToast(const FString& InTitle, const FString& InMessage);
 	void ShowBossStatus(AActor* Boss);
+	void SetCharacterState(UVDCharacterStatsBaseComponent* StatsBaseComponent);
 	void HideBossStatus();
 };
