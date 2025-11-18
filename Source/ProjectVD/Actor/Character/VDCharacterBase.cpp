@@ -63,6 +63,14 @@ void AVDCharacterBase::Move(const FInputActionValue& Value)
 
 void AVDCharacterBase::DefaultAttack(const FInputActionValue& Value)
 {
-	// 기본 구현 없음 - 자식 클래스에서 구현
+	if (DefaultAttackAM)
+	{
+		GetCharacterMovement()->StopMovementImmediately();
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(DefaultAttackAM);
+		}
+	}
 }
 

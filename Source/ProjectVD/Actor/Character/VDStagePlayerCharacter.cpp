@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Actor/Character/VDStagePlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -8,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
+#include "Actor/Character/VDStagePlayerCharacter.h"
 #include "Game/StageLevel/VDStagePlayerController.h"
 
 AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
@@ -36,6 +36,7 @@ AVDStagePlayerCharacter::AVDStagePlayerCharacter()
 void AVDStagePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	CurrentAttackComboCount = 0;
 }
 
 void AVDStagePlayerCharacter::PostInitializeComponents()
@@ -100,6 +101,14 @@ void AVDStagePlayerCharacter::Escape(const FInputActionValue& Value)
 
 void AVDStagePlayerCharacter::Move(const FInputActionValue& Value)
 {
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		if (AnimInstance->IsAnyMontagePlaying())
+		{
+			return;
+		}
+	}
+
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator Rotation = Controller->GetControlRotation();
@@ -128,6 +137,7 @@ void AVDStagePlayerCharacter::Zoom(const FInputActionValue& Value)
 
 void AVDStagePlayerCharacter::JumpBegin(const FInputActionValue& Value)
 {
+
 	ACharacter::Jump();
 }
 
@@ -138,7 +148,37 @@ void AVDStagePlayerCharacter::JumpEnd(const FInputActionValue& Value)
 
 void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Log, TEXT("Press Default Attack"));
+	//Super::DefaultAttack(Value);
+	UE_LOG(LogTemp, Log, TEXT("Attack Combo Count: %d"), CurrentAttackComboCount);
+
+	if (DefaultAttackAM)
+	{
+		UCharacterMovementComponent* Movement = GetCharacterMovement();
+		if (Movement)
+		{
+			Movement->SetMovementMode(EMovementMode::MOVE_None);
+			Movement->StopMovementImmediately();
+		}
+
+		if (CurrentAttackComboCount == 0)
+		{
+			DefaultAttackCombo();
+		}
+		
+	}
+}
+
+void AVDStagePlayerCharacter::Jump()
+{
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		if (AnimInstance->IsAnyMontagePlaying())
+		{
+			return;
+		}
+	}
+	
+	Super::Jump();
 }
 
 void AVDStagePlayerCharacter::DefendHold(const FInputActionValue& Value)
@@ -149,5 +189,32 @@ void AVDStagePlayerCharacter::DefendHold(const FInputActionValue& Value)
 void AVDStagePlayerCharacter::DefendCancel(const FInputActionValue& InputActionValue)
 {
 	UE_LOG(LogTemp, Log, TEXT("Cancel Defend"));
+}
+
+void AVDStagePlayerCharacter::DefaultAttackCombo()
+{
+	CurrentAttackComboCount = 1;
+	UAnimInstance* UAI = GetMesh()->GetAnimInstance();
+	if (UAI && DefaultAttackAM)
+	{
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUObject(this, &AVDStagePlayerCharacter::DefaultAttackComboEnded);
+		UAI->Montage_SetEndDelegate(EndDelegate, DefaultAttackAM);
+		UAI->Montage_Play(DefaultAttackAM, AttackSpeedRate);
+	}
+}
+
+void AVDStagePlayerCharacter::DefaultAttackComboEnded(UAnimMontage* AnimMontage, bool IsEndedCombo)
+{
+	if (AnimMontage)
+	{
+		CurrentAttackComboCount = 0;
+
+		UCharacterMovementComponent* Movement = GetCharacterMovement();
+		if (Movement)
+		{
+			Movement->SetMovementMode(EMovementMode::MOVE_Walking);
+		}
+	}
 }
 

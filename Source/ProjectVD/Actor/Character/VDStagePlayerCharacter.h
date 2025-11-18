@@ -10,13 +10,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class AVDStagePlayerController;
-
-UENUM(BlueprintType)
-enum class ECharacterClassType : uint8
-{
-	None = 0, // Need Select 
-	Knight,
-};
+class UAnimMontage;
 
 UCLASS()
 class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase
@@ -24,7 +18,11 @@ class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase
 	GENERATED_BODY()
 
 private:
-	ECharacterClassType CharacterClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackCombo", Meta = (AllowPrivateAccess = "true"))
+	int32 MaxAttackComboCount = 3;
+
+	UPROPERTY()
+	int32 CurrentAttackComboCount = 0;
 
 protected:
 	// 플레이어 전용 컴포넌트
@@ -58,14 +56,21 @@ protected:
 	UFUNCTION()
 	void DefendCancel(const FInputActionValue& InputActionValue);
 
-	virtual void Move(const FInputActionValue& Value) override;
+	UFUNCTION()
+	void DefaultAttackCombo();
+	
+	UFUNCTION()
+	void DefaultAttackComboEnded(UAnimMontage* AnimMontage, bool IsEndedCombo);
 
 	virtual void DefaultAttack(const FInputActionValue& Value) override;
 
+	virtual void Jump() override;
+
+	virtual void Move(const FInputActionValue& Value) override;
+
+
 public:
 	AVDStagePlayerCharacter();
-
-	FORCEINLINE ECharacterClassType GetClassType() const { return CharacterClass; }
 
 protected:
 	virtual void BeginPlay() override;

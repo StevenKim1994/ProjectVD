@@ -16,8 +16,12 @@ class PROJECTVD_API AVDCharacterBase : public ACharacter
 	GENERATED_BODY()
 
 protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackSpeed", Meta = (AllowPrivateAccess ="true"))
+	float AttackSpeedRate = 1.0f;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> AttackMontage;
+	TObjectPtr<UAnimMontage> DefaultAttackAM;
 
 	virtual void BeginPlay() override;
 
