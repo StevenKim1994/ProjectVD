@@ -76,6 +76,8 @@ protected:
 	UFUNCTION()
 	void DefendCancel(const FInputActionValue& InputActionValue);
 
+	bool IsAirAttack();
+	bool bHasAirAttacked;
 
 	virtual void DefaultAttack(const FInputActionValue& Value) override;
 

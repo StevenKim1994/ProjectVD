@@ -56,6 +56,11 @@ void AVDStagePlayerCharacter::PostInitializeComponents()
 void AVDStagePlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (!GetCharacterMovement()->IsFalling())
+	{
+		bHasAirAttacked = false;
+	}
 }
 
 void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -163,7 +168,7 @@ void AVDStagePlayerCharacter::JumpEnd(const FInputActionValue& Value)
 void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
 
-	if (GetCharacterMovement()->IsFalling())
+	if (IsAirAttack())
 	{
 		bIsNextComboInputOn = false;
 		CurrentAttackComboCount = 0;
@@ -173,10 +178,11 @@ void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 			if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
 			{
 				UAI->Montage_Play(AirAttackAM, AttackSpeedRate);
+				bHasAirAttacked = true; // 공중공격 플래그 설정
 			}
 		}
 	}
-	else
+	else if(!GetCharacterMovement()->IsFalling())
 	{	
 		if (DefaultAttackAM)
 		{
@@ -225,6 +231,29 @@ void AVDStagePlayerCharacter::DefendHold(const FInputActionValue& Value)
 void AVDStagePlayerCharacter::DefendCancel(const FInputActionValue& InputActionValue)
 {
 	UE_LOG(LogTemp, Log, TEXT("Cancel Defend"));
+}
+
+bool AVDStagePlayerCharacter::IsAirAttack()
+{
+	bool bIsFalling = GetCharacterMovement()->IsFalling();
+	bool bHasAirAttackAM = (AirAttackAM != nullptr);
+	bool bIsNotPlayingMontage = (GetMesh()->GetAnimInstance()->Montage_IsPlaying(AirAttackAM) == false);
+	bool bIsNearGround = false;
+	if (bIsFalling)
+	{
+		FVector ActorLocation = GetActorLocation();
+		FHitResult HitResult;
+		FVector Start = ActorLocation;
+		FVector End = ActorLocation - FVector(0, 0, 30.0f); // 30cm 아래로 레이캐스트
+
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this);
+
+		bIsNearGround = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
+	}
+
+	// 공중에서 한번만 공격 가능
+	return bIsFalling && bHasAirAttackAM && bIsNotPlayingMontage && !bIsNearGround && !bHasAirAttacked;
 }
 
 void AVDStagePlayerCharacter::DefaultAttackCombo()
