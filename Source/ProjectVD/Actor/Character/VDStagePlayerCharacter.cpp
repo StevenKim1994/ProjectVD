@@ -163,21 +163,11 @@ void AVDStagePlayerCharacter::DefaultAttackHit_Implementation()
 								VDPC->ShowBossStateBar(HitEnemy);
 							}
 						}
-						if (UAI->Montage_IsPlaying(AirAttackAM))
-						{
-						}
-						else
-						{
-							TakeDamage = HitEnemy->TakeDamage(AttackDamage, DamageEvent, Controller, this);
-							UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),  AttackHitEffect, HitResult.ImpactPoint, FRotator::ZeroRotator,FVector::OneVector, true, true,
-								ENCPoolMethod::AutoRelease, true);
-						}
+						
+						TakeDamage = HitEnemy->TakeDamage(AttackDamage, DamageEvent, Controller, this);
 
-						if (TakeDamage > 0.0f)
-						{
-							UE_LOG(LogTemp, Log, TEXT("Dealt Damage: %f"), TakeDamage);
-							// TODO :: 플로팅 ? 추가하나
-						}
+						UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),  AttackHitEffect, HitResult.ImpactPoint, FRotator::ZeroRotator,FVector::OneVector, true, true,
+							ENCPoolMethod::AutoRelease, true);
 					}
 				}
 			}
