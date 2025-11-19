@@ -9,6 +9,7 @@
 
 void UVDPlayerHUDStateWidget::ShowPerformanceTween()
 {
+	/*
 	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this](float DeltaTime)
 	{
 		float CurrentHPPercent = HPBar->GetPercent();
@@ -23,11 +24,13 @@ void UVDPlayerHUDStateWidget::ShowPerformanceTween()
 		bool bIsMPFinished = FMath::IsNearlyEqual(NewMPPercent, TargetMPPercent, KINDA_SMALL_NUMBER);
 		return !(bIsHPFinished && bIsMPFinished);
 	}), 0.0f);
+	*/
 }
 
 void UVDPlayerHUDStateWidget::SetCharacterState(UVDCharacterStatsBaseComponent* BaseStats)
 {
-	PlayerName->SetText(FText::FromString(BaseStats->GetOwner()->GetName()));
+	//PlayerName->SetText(FText::FromString(BaseStats->GetOwner()->GetName()));
+	PlayerName->SetVisibility(ESlateVisibility::Collapsed); // 임시로 이름 숨김
 
 	HPBar->SetPercent(BaseStats->GetHealth() / BaseStats->GetMaxHealth());
 	HPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), BaseStats->GetHealth(), BaseStats->GetMaxHealth())));
