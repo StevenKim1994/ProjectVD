@@ -2,6 +2,7 @@
 
 
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
+#include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AIController.h"
@@ -37,7 +38,20 @@ AVDEnemyCharacterBase::AVDEnemyCharacterBase()
 
 float AVDEnemyCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	return 0.0f;
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if(BaseStatsComponent)
+	{
+		float NewHealth = BaseStatsComponent->GetHealth() - DamageAmount;
+		BaseStatsComponent->SetHealth(FMath::Clamp(NewHealth, 0.0f, BaseStatsComponent->GetMaxHealth()));
+		UE_LOG(LogTemp, Warning, TEXT("Enemy Health: %f / %f"), BaseStatsComponent->GetHealth(), BaseStatsComponent->GetMaxHealth());
+		if (BaseStatsComponent->GetHealth() <= 0.0f)
+		{
+			Die();
+		}
+	}
+
+	return DamageAmount;
 }
 
 void AVDEnemyCharacterBase::FindPlayer()
@@ -56,6 +70,19 @@ void AVDEnemyCharacterBase::FindPlayer()
 void AVDEnemyCharacterBase::Move(const FVector& Direction, float Value)
 {
 
+}
+
+void AVDEnemyCharacterBase::Die()
+{
+	if (DeathAM)
+	{
+		GetCharacterMovement()->StopMovementImmediately();
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(DeathAM);
+		}
+	}
 }
 
 void AVDEnemyCharacterBase::DefaultAttack()

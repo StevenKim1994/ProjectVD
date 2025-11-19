@@ -26,6 +26,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DefaultAttackAM;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> DeathAM;
+
 	UPROPERTY()
 	TObjectPtr<UVDCharacterStatsBaseComponent> BaseStatsComponent;
 
@@ -34,6 +37,9 @@ protected:
 
 	UFUNCTION()
 	virtual void Move(const FVector& Direction, float Value);
+
+	UFUNCTION()
+	virtual void Die();
 
 	UFUNCTION()
 	virtual void DefaultAttack();

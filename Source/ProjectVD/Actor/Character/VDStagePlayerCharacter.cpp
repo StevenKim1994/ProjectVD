@@ -4,6 +4,7 @@
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Engine/World.h"
+#include "Engine/DamageEvents.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -99,6 +100,13 @@ void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	}
 }
 
+float AVDStagePlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	return DamageAmount;
+}
+
 void AVDStagePlayerCharacter::SetComboInputOn_Implementation(bool bIsOn)
 {
 	bIsNextComboInputOn = bIsOn;
@@ -142,6 +150,9 @@ void AVDStagePlayerCharacter::DefaultAttackHit_Implementation()
 					{ 
 						UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
 
+						FDamageEvent DamageEvent;
+						float TakeDamage = 0.0f;
+
 						if (HitEnemy->IsBossEnemy())
 						{
 							AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
@@ -152,13 +163,16 @@ void AVDStagePlayerCharacter::DefaultAttackHit_Implementation()
 						}
 						if (UAI->Montage_IsPlaying(AirAttackAM))
 						{
-							// 공중 공격 히트 처리
-							//HitEnemy->TakeDamage(AttackDamage, );
 						}
 						else
 						{
-							//HitEnemy->TakeDamage(AttackDamage);
-							// 지상 공격 히트 처리
+							TakeDamage = HitEnemy->TakeDamage(AttackDamage, DamageEvent, Controller, this);
+						}
+
+						if (TakeDamage > 0.0f)
+						{
+							UE_LOG(LogTemp, Log, TEXT("Dealt Damage: %f"), TakeDamage);
+							// TODO :: 플로팅 ? 추가하나
 						}
 					}
 				}
@@ -225,7 +239,7 @@ void AVDStagePlayerCharacter::JumpEnd(const FInputActionValue& Value)
 
 void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
-
+	//Super::DefaultAttack(Value); DESC :: 부모함수 호출하지 않음.
 	if (IsAirAttack())
 	{
 		bIsNextComboInputOn = false;

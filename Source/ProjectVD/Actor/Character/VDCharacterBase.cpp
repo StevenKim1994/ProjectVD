@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Actor/Character/VDCharacterBase.h"
+#include "Engine/DamageEvents.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -47,7 +48,8 @@ void AVDCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 float AVDCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	return 0.0f;
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	return DamageAmount;
 }
 
 void AVDCharacterBase::Move(const FInputActionValue& Value)

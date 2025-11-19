@@ -2,6 +2,7 @@
 
 
 #include "Actor/Enemy/VDEnemyGrux.h"
+#include "Engine/DamageEvents.h"
 
 AVDEnemyGrux::AVDEnemyGrux()
 {
@@ -17,4 +18,22 @@ AVDEnemyGrux::AVDEnemyGrux()
 		->SetMaxMana(50.f)
 		->SetHealth(1100.f)
 		->SetMana(50.f);
+}
+
+void AVDEnemyGrux::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AVDEnemyGrux::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+void AVDEnemyGrux::SetComboInputOn_Implementation(bool bIsOn)
+{
+}
+
+void AVDEnemyGrux::DefaultAttackHit_Implementation()
+{
 }

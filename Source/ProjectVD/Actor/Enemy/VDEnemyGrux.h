@@ -16,11 +16,13 @@ class PROJECTVD_API AVDEnemyGrux : public AVDEnemyCharacterBase, public IVDAttac
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> HeavyAttackAM;
 
 protected:
-
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 public:
 	AVDEnemyGrux();
+
+	virtual void SetComboInputOn_Implementation(bool bIsOn) override;
+	virtual void DefaultAttackHit_Implementation() override;
 };

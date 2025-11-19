@@ -23,12 +23,15 @@ private:
 	TObjectPtr<UProgressBar> BossHealthBar;
 	
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr < UTextBlock> BossHealthBarText;
+	TObjectPtr <UTextBlock> BossHealthBarText;
 
 	UPROPERTY()
 	TWeakObjectPtr<AVDEnemyCharacterBase> BossActor;
 
+	UFUNCTION()
+	void UpdateBossHealthBar(UVDBaseStatsComponent* BossStats);
 public:
+	UFUNCTION()
 	void SetBossActor(AVDEnemyCharacterBase* Boss);
 	
 	virtual void NativeOnInitialized() override;
