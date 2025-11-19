@@ -18,6 +18,7 @@
 #include "TimerManager.h"                    
 #include "Public/VDPhysicInfo.h"
 #include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
 
 AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
 {
@@ -168,6 +169,7 @@ void AVDStagePlayerCharacter::DefaultAttackHit_Implementation()
 						else
 						{
 							TakeDamage = HitEnemy->TakeDamage(AttackDamage, DamageEvent, Controller, this);
+							UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),  AttackHitEffect, HitResult.ImpactPoint, FRotator::ZeroRotator);
 						}
 
 						if (TakeDamage > 0.0f)

@@ -13,6 +13,8 @@ class UCameraComponent;
 class UAnimMontage;
 class AVDStagePlayerController;
 class UVDCharacterStatsBaseComponent;
+class UNiagaraSystem;
+class UNiagaraComponent;
 
 UCLASS()
 class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase, public IVDAttackable
@@ -20,6 +22,9 @@ class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase, public IV
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackParticle", Meta = (AllowPrivateAccess ="true"))
+	TObjectPtr<UNiagaraSystem> AttackHitEffect;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AirAttack", Meta =(AllowPrivateAccess ="true"))
 	TObjectPtr<UAnimMontage> AirAttackAM;
 
