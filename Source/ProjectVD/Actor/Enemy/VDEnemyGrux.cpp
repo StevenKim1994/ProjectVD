@@ -14,10 +14,30 @@ AVDEnemyGrux::AVDEnemyGrux()
 		->SetAttackRange(100.f)
 		->SetAttackSpeed(1.0f)
 		->SetAttackPower(15.f)
-		->SetMaxHealth(1100.f)
+		->SetMaxHealth(110.f)
 		->SetMaxMana(50.f)
-		->SetHealth(1100.f)
+		->SetHealth(110.f)
 		->SetMana(50.f);
+}
+
+void AVDEnemyGrux::FindPlayer()
+{
+	Super::FindPlayer();
+}
+
+void AVDEnemyGrux::Move(const FVector& Direction, float Value)
+{
+	Super::Move(Direction, Value);
+}
+
+void AVDEnemyGrux::Die()
+{
+	Super::Die();
+}
+
+void AVDEnemyGrux::DefaultAttack()
+{
+	Super::DefaultAttack();
 }
 
 void AVDEnemyGrux::BeginPlay()

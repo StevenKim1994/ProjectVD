@@ -76,7 +76,9 @@ void AVDEnemyCharacterBase::Die()
 {
 	if (DeathAM)
 	{
-		GetCharacterMovement()->StopMovementImmediately();
+		UCharacterMovementComponent* Movement = GetCharacterMovement();
+		Movement->StopMovementImmediately();
+
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		if (AnimInstance)
 		{

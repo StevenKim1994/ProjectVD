@@ -17,6 +17,7 @@
 #include "Animation/AnimInstance.h"          
 #include "TimerManager.h"                    
 #include "Public/VDPhysicInfo.h"
+#include "NiagaraFunctionLibrary.h"
 
 AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
 {

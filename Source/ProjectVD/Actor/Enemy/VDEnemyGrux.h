@@ -18,6 +18,11 @@ class PROJECTVD_API AVDEnemyGrux : public AVDEnemyCharacterBase, public IVDAttac
 private:
 
 protected:
+	virtual void FindPlayer() override;
+	virtual void Move(const FVector& Direction, float Value) override;
+	virtual void Die() override;
+	virtual void DefaultAttack() override;
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 public:

@@ -136,7 +136,7 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 			}
 			else
 			{
-				// TODO :: 타임스케일 조정 등 게임 일시정지 처리
+				UISubsystem->HideCurrentHUDWidget();
 				ChangeToggleInputContext();
 				UGameplayStatics::SetGamePaused(this, true);
 
@@ -158,6 +158,7 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 
 												UGameplayStatics::SetGamePaused(this, false);
 												ChangeToggleInputContext();
+												UISubsystemInner->HideCurrentHUDWidget();
 											}
 										}
 										else if (ClickedButton == PauseMenuButtonEnum::Options)
