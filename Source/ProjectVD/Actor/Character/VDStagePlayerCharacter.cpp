@@ -169,7 +169,8 @@ void AVDStagePlayerCharacter::DefaultAttackHit_Implementation()
 						else
 						{
 							TakeDamage = HitEnemy->TakeDamage(AttackDamage, DamageEvent, Controller, this);
-							UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),  AttackHitEffect, HitResult.ImpactPoint, FRotator::ZeroRotator);
+							UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),  AttackHitEffect, HitResult.ImpactPoint, FRotator::ZeroRotator,FVector::OneVector, true, true,
+								ENCPoolMethod::AutoRelease, true);
 						}
 
 						if (TakeDamage > 0.0f)
