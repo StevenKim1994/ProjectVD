@@ -12,7 +12,7 @@ public class ProjectVD : ModuleRules
 
         PublicDependencyModuleNames.AddRange(new string[] {
             "Core", "CoreUObject", "Engine", "InputCore", "UMG", "MediaAssets", "AudioMixer",
-            "EnhancedInput", "NavigationSystem", "AIModule"
+            "EnhancedInput", "NavigationSystem", "AIModule" , "Niagara"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
