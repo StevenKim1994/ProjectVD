@@ -223,12 +223,42 @@ void AVDStagePlayerCharacter::Zoom(const FInputActionValue& Value)
 void AVDStagePlayerCharacter::JumpBegin(const FInputActionValue& Value)
 {
 	CurrentAttackComboCount = 0;
-	ACharacter::Jump();
+	Super::Jump();
 }
 
 void AVDStagePlayerCharacter::JumpEnd(const FInputActionValue& Value)
 {
-	ACharacter::StopJumping();
+	Super::StopJumping();
+}
+
+void AVDStagePlayerCharacter::RollLeft(const FInputActionValue& Value)
+{
+	if (RollLeftAM)
+	{
+		if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
+		{
+			UAI->Montage_Play(RollLeftAM, 1.0f);
+		}
+
+		FVector DodgeVelocity = -GetActorRightVector() * 1000.f;
+		GetCharacterMovement()->BrakingFrictionFactor = 0.f;
+		GetCharacterMovement()->Velocity = DodgeVelocity;
+	}
+}
+
+void AVDStagePlayerCharacter::RollRight(const FInputActionValue& Value)
+{
+	if (RollRightAM)
+	{
+		if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
+		{
+			UAI->Montage_Play(RollRightAM, 1.0f);
+		}
+
+		FVector DodgeVelocity = GetActorRightVector() * 1000.f;
+		GetCharacterMovement()->BrakingFrictionFactor = 0.f;
+		GetCharacterMovement()->Velocity = DodgeVelocity;
+	}
 }
 
 void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)

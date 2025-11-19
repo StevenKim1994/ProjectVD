@@ -22,6 +22,13 @@ class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase, public IV
 	GENERATED_BODY()
 
 private:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> RollLeftAM;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> RollRightAM;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackParticle", Meta = (AllowPrivateAccess ="true"))
 	TObjectPtr<UNiagaraSystem> AttackHitEffect;
 
@@ -73,6 +80,12 @@ protected:
 
 	UFUNCTION()
 	void JumpEnd(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void RollLeft(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void RollRight(const FInputActionValue& Value);
 
 	UFUNCTION()
 	void DefendHold(const FInputActionValue& Value);
