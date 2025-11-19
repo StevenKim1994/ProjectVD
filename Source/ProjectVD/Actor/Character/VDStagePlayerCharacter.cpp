@@ -1,18 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "Actor/Character/VDStagePlayerCharacter.h"
 #include "Engine/World.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
-#include "Actor/Character/VDStagePlayerCharacter.h"
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Game/StageLevel/VDStagePlayerController.h"
 #include "Animation/AnimInstance.h"          
 #include "TimerManager.h"                    
+#include "Public/VDPhysicInfo.h"
 
 AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
 {
@@ -107,6 +109,51 @@ void AVDStagePlayerCharacter::EquipWeapon(AVDWeapon* NewWeapon)
 void AVDStagePlayerCharacter::SetComboInputOn_Implementation(bool bIsOn)
 {
 	bIsNextComboInputOn = bIsOn;
+}
+
+void AVDStagePlayerCharacter::DefaultAttackHit_Implementation()
+{
+	if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
+	{
+		UWorld* World = GetWorld();
+		FHitResult HitResult;
+		FCollisionQueryParams CollisionParams(SCENE_QUERY_STAT(DefaultAttack), false, this);
+
+		// TODO :: 추후 별도로 스탯정보로 뻄
+		const float AttackRange = 70.0f; 
+		const float AttackRadius = 50.0f;
+		const float AttackDamage = 10.0f;
+		const FVector Start = GetActorLocation() + (GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius() );
+		const FVector End = Start + (GetActorForwardVector() * AttackRange);
+
+		if (World)
+		{
+			bool bIsHitCheck = World->SweepSingleByChannel(HitResult,
+				Start,
+				End,
+				FQuat::Identity,
+				CCHANNEL_PROFILE_CHACRACTER_ACTION,
+				FCollisionShape::MakeSphere(50.0f), CollisionParams);
+
+			FVector DebugDrawLocation = Start + (End - Start) * 0.5f;
+			float DebugCapsuleHeight = AttackRange * 0.5f;
+			FColor DebugColor = bIsHitCheck ? FColor::Red : FColor::Green;
+
+			DrawDebugCapsule(World, DebugDrawLocation, DebugCapsuleHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DebugColor, false, 2.0f);
+
+			if (bIsHitCheck)
+			{
+				if (UAI->Montage_IsPlaying(AirAttackAM))
+				{
+					// 공중 공격 히트 처리
+				}
+				else
+				{
+					// 지상 공격 히트 처리
+				}
+			}
+		}
+	}
 }
 
 void AVDStagePlayerCharacter::Escape(const FInputActionValue& Value)

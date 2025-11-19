@@ -2,20 +2,22 @@
 
 
 #include "Animation/VDAnimNotifyStateForComboAttack.h"
-#include "Interface/VDAttackComboable.h"
+#include "Interface/VDAttackable.h"
 
-void UVDAnimNotifyStateForComboAttack::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
+void UVDAnimNotifyStateForComboAttack::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
-	if (MeshComp->GetOwner()->Implements<UVDAttackComboable>())
+	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
+	if (MeshComp->GetOwner()->Implements<UVDAttackable>())
 	{
-		IVDAttackComboable::Execute_SetComboInputOn(MeshComp->GetOwner(), true);
+		IVDAttackable::Execute_SetComboInputOn(MeshComp->GetOwner(), true);
 	}
 }
 
-void UVDAnimNotifyStateForComboAttack::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
+void UVDAnimNotifyStateForComboAttack::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
-	if (MeshComp->GetOwner()->Implements<UVDAttackComboable>())
+	Super::NotifyEnd(MeshComp, Animation, EventReference);
+	if (MeshComp->GetOwner()->Implements<UVDAttackable>())
 	{
-		IVDAttackComboable::Execute_SetComboInputOn(MeshComp->GetOwner(), false);
+		IVDAttackable::Execute_SetComboInputOn(MeshComp->GetOwner(), false);
 	}
 }

@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "UI/Stage/VDPlayerHUDStateWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-#include "UI/Stage/VDPlayerHUDStateWidget.h"
 #include "Actor/Character/VDStagePlayerCharacter.h"
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 

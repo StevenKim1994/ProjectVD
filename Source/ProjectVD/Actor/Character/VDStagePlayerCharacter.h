@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
 #include "Actor/Character/VDCharacterBase.h"
-#include "Interface/VDAttackComboable.h"
+#include "Interface/VDAttackable.h"
 #include "VDStagePlayerCharacter.generated.h"
 
 class USpringArmComponent;
@@ -15,7 +15,7 @@ class AVDStagePlayerController;
 class UVDCharacterStatsBaseComponent;
 
 UCLASS()
-class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase, public IVDAttackComboable
+class PROJECTVD_API AVDStagePlayerCharacter : public AVDCharacterBase, public IVDAttackable
 {
 	GENERATED_BODY()
 
@@ -40,7 +40,6 @@ private:
 
 	UFUNCTION()
 	void CheckComboInput();
-
 protected:
 	// 플레이어 전용 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
@@ -101,4 +100,5 @@ public:
 	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent; }
 
 	void SetComboInputOn_Implementation(bool bIsOn);
+	void DefaultAttackHit_Implementation() override;
 };

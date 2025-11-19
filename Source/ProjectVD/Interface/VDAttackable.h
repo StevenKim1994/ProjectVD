@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "VDAttackComboable.generated.h"
+#include "VDAttackable.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UVDAttackComboable : public UInterface
+class UVDAttackable : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,7 +16,7 @@ class UVDAttackComboable : public UInterface
 /**
  * 
  */
-class PROJECTVD_API IVDAttackComboable
+class PROJECTVD_API IVDAttackable
 {
 	GENERATED_BODY()
 
@@ -25,4 +25,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable , Category = "AttackCombo")
 	void SetComboInputOn(bool bIsOn);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AttackCombo")
+	void DefaultAttackHit();
 };

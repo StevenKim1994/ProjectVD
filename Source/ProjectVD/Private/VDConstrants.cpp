@@ -1,4 +1,4 @@
-﻿#include "VDConstrants.h"
+#include "VDConstrants.h"
 #include "Internationalization/Text.h"
 
 namespace VDConstants
