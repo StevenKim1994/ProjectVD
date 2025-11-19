@@ -8,7 +8,6 @@
 #include "VDCharacterBase.generated.h"
 
 class UAnimMontage;
-class AVDWeapon;
 
 UCLASS(Abstract)
 class PROJECTVD_API AVDCharacterBase : public ACharacter
@@ -16,10 +15,6 @@ class PROJECTVD_API AVDCharacterBase : public ACharacter
 	GENERATED_BODY()
 
 protected:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackCombo", Meta = (AllowPrivateAccess = "true", ClampMin = "0.1"))
-	float AttackSpeedRate = 1.0f;
-
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DefaultAttackAM;
 
@@ -36,7 +31,5 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UFUNCTION()
-	virtual void EquipWeapon(AVDWeapon* NewWeapon);
+	virtual float TakeDamage(float DamageAmount,struct FDamageEvent const& DamageEvent,class AController* EventInstigator, AActor* DamageCauser) override;
 };

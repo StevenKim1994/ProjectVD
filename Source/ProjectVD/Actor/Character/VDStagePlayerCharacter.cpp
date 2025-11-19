@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Actor/Character/VDStagePlayerCharacter.h"
+#include "Actor/Enemy/VDEnemyCharacterBase.h"
+#include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Engine/World.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -10,7 +12,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
-#include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Game/StageLevel/VDStagePlayerController.h"
 #include "Animation/AnimInstance.h"          
 #include "TimerManager.h"                    
@@ -38,6 +39,9 @@ AVDStagePlayerCharacter::AVDStagePlayerCharacter()
 	BaseStatsComponent = CreateDefaultSubobject<UVDCharacterStatsBaseComponent>(TEXT("BaseStatsComponent"));
 	BaseStatsComponent->RegisterComponent();
 	BaseStatsComponent
+		->SetAttackRange(70.0f)
+		->SetAttackSpeed(1.0f)
+		->SetAttackPower(10.0f)
 		->SetMaxHealth(100.0f)
 		->SetMaxMana(100.0f)
 		->SetHealth(100.0f)
@@ -95,17 +99,6 @@ void AVDStagePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	}
 }
 
-void AVDStagePlayerCharacter::EquipWeapon(AVDWeapon* NewWeapon)
-{
-	Super::EquipWeapon(NewWeapon);
-
-	AVDStagePlayerController* VDPC = CastPlayerController.Get();
-	if (VDPC)
-	{
-		VDPC->ShowToast(TEXT("알림"), TEXT("무기 획득함"));
-	}
-}
-
 void AVDStagePlayerCharacter::SetComboInputOn_Implementation(bool bIsOn)
 {
 	bIsNextComboInputOn = bIsOn;
@@ -120,9 +113,9 @@ void AVDStagePlayerCharacter::DefaultAttackHit_Implementation()
 		FCollisionQueryParams CollisionParams(SCENE_QUERY_STAT(DefaultAttack), false, this);
 
 		// TODO :: 추후 별도로 스탯정보로 뻄
-		const float AttackRange = 70.0f; 
+		const float AttackRange = BaseStatsComponent->GetAttackRange();
 		const float AttackRadius = 50.0f;
-		const float AttackDamage = 10.0f;
+		const float AttackDamage = BaseStatsComponent->GetAttackPower();
 		const FVector Start = GetActorLocation() + (GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius() );
 		const FVector End = Start + (GetActorForwardVector() * AttackRange);
 
@@ -143,13 +136,31 @@ void AVDStagePlayerCharacter::DefaultAttackHit_Implementation()
 
 			if (bIsHitCheck)
 			{
-				if (UAI->Montage_IsPlaying(AirAttackAM))
+				if (HitResult.GetActor())
 				{
-					// 공중 공격 히트 처리
-				}
-				else
-				{
-					// 지상 공격 히트 처리
+					if(AVDEnemyCharacterBase* HitEnemy = Cast<AVDEnemyCharacterBase>(HitResult.GetActor()))
+					{ 
+						UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
+
+						if (HitEnemy->IsBossEnemy())
+						{
+							AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+							if (VDPC)
+							{
+								VDPC->ShowBossStateBar(HitEnemy);
+							}
+						}
+						if (UAI->Montage_IsPlaying(AirAttackAM))
+						{
+							// 공중 공격 히트 처리
+							//HitEnemy->TakeDamage(AttackDamage, );
+						}
+						else
+						{
+							//HitEnemy->TakeDamage(AttackDamage);
+							// 지상 공격 히트 처리
+						}
+					}
 				}
 			}
 		}
@@ -224,7 +235,7 @@ void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 		{
 			if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
 			{
-				UAI->Montage_Play(AirAttackAM, AttackSpeedRate);
+				UAI->Montage_Play(AirAttackAM, BaseStatsComponent->GetAttackSpeed());
 				bHasAirAttacked = true; // 공중공격 플래그 설정
 			}
 		}
@@ -314,7 +325,7 @@ void AVDStagePlayerCharacter::DefaultAttackCombo()
 			FOnMontageEnded EndDelegate;
 			EndDelegate.BindUObject(this, &AVDStagePlayerCharacter::DefaultAttackComboEnded);
 
-			UAI->Montage_Play(DefaultAttackAM, AttackSpeedRate);
+			UAI->Montage_Play(DefaultAttackAM, BaseStatsComponent->GetAttackSpeed());
 			UAI->Montage_SetEndDelegate(EndDelegate, DefaultAttackAM);
 		}
 	}

@@ -2,20 +2,41 @@
 
 
 #include "UI/Stage/VDPlayerHUDEnemyStatusWidget.h"
+#include "Actor/Enemy/VDEnemyCharacterBase.h"
+#include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 
-void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AActor* Boss)
+void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
 {
 	BossActor = Boss;
-	if (BossActor.IsValid())
+
+	if (BossNameText)
 	{
-		// TODO :: 보스인지 캐스팅해서 처리해야함
-		BossNameText->SetText(FText::FromString(BossActor->GetName()));
+		if (BossActor.IsValid())
+		{
+			BossNameText->SetText(FText::FromName(BossActor->GetEnemyName()));
+		}
+		else
+		{
+			SetVisibility(ESlateVisibility::Collapsed);
+		}
 	}
-	else
+
+	if (BossHealthBar)
 	{
-		SetVisibility(ESlateVisibility::Collapsed);
+		UVDCharacterStatsBaseComponent* StatsComp = BossActor->GetBaseStatsComponent();
+		if (StatsComp)
+		{
+		   BossHealthBar->SetPercent(StatsComp->GetHealth() / StatsComp->GetMaxHealth());
+
+			if (BossHealthBarText)
+			{
+				BossHealthBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), 
+					StatsComp->GetHealth(), 
+					StatsComp->GetMaxHealth())));
+			}
+		}
 	}
 }
 

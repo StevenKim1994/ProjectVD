@@ -57,6 +57,27 @@ UVDCharacterStatsBaseComponent* UVDCharacterStatsBaseComponent::SetMaxHealth(flo
 	return this;	
 }
 
+UVDCharacterStatsBaseComponent* UVDCharacterStatsBaseComponent::SetAttackPower(float InAttackPower)
+{
+	AttackPower = FMath::Max(0.f, InAttackPower);
+
+	return this;
+}
+
+UVDCharacterStatsBaseComponent* UVDCharacterStatsBaseComponent::SetAttackRange(float InAttackRange)
+{
+	AttackRange = FMath::Max(0.f, InAttackRange);
+
+	return this;
+}
+
+UVDCharacterStatsBaseComponent* UVDCharacterStatsBaseComponent::SetAttackSpeed(float InAttackSpeed)
+{
+	AttackSpeed = FMath::Max(0.f, InAttackSpeed);
+
+	return this;
+}
+
 void UVDCharacterStatsBaseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

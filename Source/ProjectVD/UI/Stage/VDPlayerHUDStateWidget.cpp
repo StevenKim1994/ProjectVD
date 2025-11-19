@@ -35,6 +35,9 @@ void UVDPlayerHUDStateWidget::SetCharacterState(UVDCharacterStatsBaseComponent* 
 	HPBar->SetPercent(BaseStats->GetHealth() / BaseStats->GetMaxHealth());
 	HPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), BaseStats->GetHealth(), BaseStats->GetMaxHealth())));
 
-	MPBar->SetPercent(Cast<UVDCharacterStatsBaseComponent>(BaseStats)->GetMana() / Cast<UVDCharacterStatsBaseComponent>(BaseStats)->GetMaxMana());
-	MPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), Cast<UVDCharacterStatsBaseComponent>(BaseStats)->GetMana(), Cast<UVDCharacterStatsBaseComponent>(BaseStats)->GetMaxMana())));
+	if (UVDCharacterStatsBaseComponent* CastStats = Cast<UVDCharacterStatsBaseComponent>(BaseStats))
+	{
+		MPBar->SetPercent(CastStats->GetMana() / CastStats->GetMaxMana());
+		MPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CastStats->GetMana(), CastStats->GetMaxMana())));
+	}
 }

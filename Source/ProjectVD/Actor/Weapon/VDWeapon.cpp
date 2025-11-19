@@ -101,7 +101,7 @@ void AVDWeapon::OnPicked(AActor* Picker)
 
 			HitBox->SetGenerateOverlapEvents(false);
 			HitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			Character->EquipWeapon(this);
+			//Character->EquipWeapon(this);
 		}
 	}
 }

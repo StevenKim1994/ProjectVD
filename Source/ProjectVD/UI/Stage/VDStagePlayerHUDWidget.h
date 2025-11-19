@@ -10,6 +10,7 @@ class UVDPlayerHUDEnemyStatusWidget;
 class UVDStagePlayerHUDToastWidget;
 class UVDPlayerHUDStateWidget;
 class UVDCharacterStatsBaseComponent;
+class AVDEnemyCharacterBase;
 
 UCLASS()
 class PROJECTVD_API UVDStagePlayerHUDWidget : public UUserWidget
@@ -35,7 +36,7 @@ private:
 
 public:
 	void ShowToast(const FString& InTitle, const FString& InMessage);
-	void ShowBossStatus(AActor* Boss);
+	void ShowBossStatus(AVDEnemyCharacterBase* Boss);
 	void SetCharacterState(UVDCharacterStatsBaseComponent* StatsBaseComponent);
 	void HideBossStatus();
 };

@@ -9,6 +9,7 @@
 
 class UVDStagePlayerHUDWidget;
 class UInputMappingContext;
+class AVDEnemyCharacterBase;
 UCLASS()
 class PROJECTVD_API AVDStagePlayerController : public APlayerController
 {
@@ -40,6 +41,12 @@ public:
 
 	UFUNCTION()
 	void OnEscape(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void ShowBossStateBar(AVDEnemyCharacterBase* Boss);
+
+	UFUNCTION()
+	void HideBossStateBar();
 
 	FORCEINLINE TObjectPtr<UInputMappingContext> GetCharacterControllerIMC() const
 	{

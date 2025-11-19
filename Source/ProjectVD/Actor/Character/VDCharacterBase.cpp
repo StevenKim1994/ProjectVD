@@ -4,7 +4,7 @@
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Actor/Weapon/VDWeapon.h"
+#include "Public/VDPhysicInfo.h"
 
 AVDCharacterBase::AVDCharacterBase()
 {
@@ -13,13 +13,13 @@ AVDCharacterBase::AVDCharacterBase()
 	// 캡슐 컴포넌트 설정
 	UCapsuleComponent* Capsule = GetCapsuleComponent();
 	Capsule->InitCapsuleSize(42.0f, 96.0f);
-	Capsule->SetCollisionProfileName(TEXT("Pawn"));
+	Capsule->SetCollisionProfileName(CPROFILE_CHARACTER_CAPSULE);
 
 	// 메시 설정
 	USkeletalMeshComponent* SkeletalMesh = GetMesh();
 	SkeletalMesh->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, -90.0f, 0.0f));
 	SkeletalMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	SkeletalMesh->SetCollisionProfileName(TEXT("CharacterMesh"));
+	SkeletalMesh->SetCollisionProfileName(CPROFILE_NO_COLLISION);
 
 	// Movement 기본 설정
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
@@ -45,15 +45,9 @@ void AVDCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AVDCharacterBase::EquipWeapon(AVDWeapon* NewWeapon)
+float AVDCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (NewWeapon)
-	{
-		NewWeapon->Destroy();
-		// TODO :: 풀링처리로 변경하기
-		
-		UE_LOG(LogTemp, Warning, TEXT("Equip Weapon: %s"), *NewWeapon->GetName());
-	}
+	return 0.0f;
 }
 
 void AVDCharacterBase::Move(const FInputActionValue& Value)

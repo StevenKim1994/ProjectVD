@@ -45,7 +45,7 @@ void UVDStagePlayerHUDWidget::ShowToast(const FString& InTitle, const FString& I
 	}
 }
 
-void UVDStagePlayerHUDWidget::ShowBossStatus(AActor* Boss)
+void UVDStagePlayerHUDWidget::ShowBossStatus(AVDEnemyCharacterBase* Boss)
 {
 	if(BossState)
 	{

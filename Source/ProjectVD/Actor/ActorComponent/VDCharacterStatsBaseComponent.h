@@ -20,6 +20,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float MaxMana;
 
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float AttackPower;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float AttackRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float AttackSpeed;
+
 	virtual void BeginPlay() override;
 	virtual void InitializeComponent() override;
 
@@ -36,6 +45,9 @@ public:
 	virtual UVDCharacterStatsBaseComponent* AddHealth(float Delta) override;
 	virtual UVDCharacterStatsBaseComponent* SetHealth(float InHealth) override;
 	virtual UVDCharacterStatsBaseComponent* SetMaxHealth(float InMaxHealth, bool bClampCurrent = true) override;
+	virtual UVDCharacterStatsBaseComponent* SetAttackPower(float InAttackPower);
+	virtual UVDCharacterStatsBaseComponent* SetAttackRange(float InAttackRange);
+	virtual UVDCharacterStatsBaseComponent* SetAttackSpeed(float InAttackSpeed);
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintPure, Category = "Stats")
@@ -43,5 +55,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Stats")
 	FORCEINLINE float GetMaxMana() const { return MaxMana; }
+
+	UFUNCTION(BlueprintPure, Category = "Stats")
+	FORCEINLINE float GetAttackPower() const { return AttackPower; }
+
+	UFUNCTION(BlueprintPure, Category = "Stats")
+	FORCEINLINE float GetAttackRange() const { return AttackRange; }
+
+	UFUNCTION(BlueprintPure, Category = "Stats")
+	FORCEINLINE float GetAttackSpeed() const { return AttackSpeed; }
+
 
 };

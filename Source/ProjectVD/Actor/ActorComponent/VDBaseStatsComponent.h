@@ -27,8 +27,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitializeComponent() override;
 
-public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
 
 	UFUNCTION(BlueprintCallable, Category="Stats")
 	virtual UVDBaseStatsComponent* SetHealth(float InHealth);
@@ -44,4 +43,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="Stats")
 	virtual FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 };

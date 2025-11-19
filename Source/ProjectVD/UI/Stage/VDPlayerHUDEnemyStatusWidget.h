@@ -8,6 +8,7 @@
 
 class UTextBlock;
 class UProgressBar;
+class AVDEnemyCharacterBase;
 
 UCLASS()
 class PROJECTVD_API UVDPlayerHUDEnemyStatusWidget : public UUserWidget
@@ -15,17 +16,20 @@ class PROJECTVD_API UVDPlayerHUDEnemyStatusWidget : public UUserWidget
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(meta =(BindWidget))
 	TObjectPtr<UTextBlock> BossNameText;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UProgressBar> BossHealthBar;
 	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr < UTextBlock> BossHealthBarText;
+
 	UPROPERTY()
-	TWeakObjectPtr<AActor> BossActor;
+	TWeakObjectPtr<AVDEnemyCharacterBase> BossActor;
 
 public:
-	void SetBossActor(AActor* Boss);
+	void SetBossActor(AVDEnemyCharacterBase* Boss);
 	
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;

@@ -5,38 +5,70 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AIController.h"
+#include "Public/VDPhysicInfo.h"
 
 AVDEnemyCharacterBase::AVDEnemyCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// AI 컨트롤러 자동 할당
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AAIController::StaticClass();
 
-	// 적 전용 회전 설정 (AI 제어)
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 
-	// 캡슐 설정
 	UCapsuleComponent* Capsule = GetCapsuleComponent();
 	Capsule->InitCapsuleSize(42.0f, 96.0f);
-	Capsule->SetCollisionProfileName(TEXT("Pawn"));
+	Capsule->SetCollisionProfileName(CPROFILE_CHARACTER_CAPSULE);
 
-	// 메시 설정
 	USkeletalMeshComponent* SkeletalMesh = GetMesh();
 	SkeletalMesh->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, -90.0f, 0.0f));
 	SkeletalMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	SkeletalMesh->SetCollisionProfileName(TEXT("CharacterMesh"));
+	SkeletalMesh->SetCollisionProfileName(CPROFILE_NO_COLLISION);
 
-	// 적 전용 이동 설정
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	Movement->bOrientRotationToMovement = true;
-	Movement->RotationRate = FRotator(0.0f, 360.0f, 0.0f); // 적은 더 빠르게 회전
-	Movement->MaxWalkSpeed = 300.0f; // 적은 조금 느리게
+	Movement->RotationRate = FRotator(0.0f, 360.0f, 0.0f); 
+	Movement->MaxWalkSpeed = 300.0f; 
 	Movement->MinAnalogWalkSpeed = 20.0f;
 	Movement->BrakingDecelerationWalking = 2000.0f;
+}
+
+float AVDEnemyCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	return 0.0f;
+}
+
+void AVDEnemyCharacterBase::FindPlayer()
+{
+	if (FindPlayerAM)
+	{
+		GetCharacterMovement()->StopMovementImmediately();
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(FindPlayerAM);
+		}
+	}
+}
+
+void AVDEnemyCharacterBase::Move(const FVector& Direction, float Value)
+{
+
+}
+
+void AVDEnemyCharacterBase::DefaultAttack()
+{
+	if (DefaultAttackAM)
+	{
+		GetCharacterMovement()->StopMovementImmediately();
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(DefaultAttackAM);
+		}
+	}
 }
 
 void AVDEnemyCharacterBase::BeginPlay()

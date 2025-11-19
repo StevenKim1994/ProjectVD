@@ -1,5 +1,6 @@
 #include "Game/StageLevel/VDStagePlayerController.h"
 #include "Actor/Character/VDStagePlayerCharacter.h"
+#include "Actor/Enemy/VDEnemyCharacterBase.h"
 #include "System/VDUISubsystem.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -184,5 +185,21 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 				);
 			}
 		}
+	}
+}
+
+void AVDStagePlayerController::ShowBossStateBar(AVDEnemyCharacterBase* Boss)
+{
+	if (HUDWidget)
+	{
+		HUDWidget->ShowBossStatus(Boss);
+	}
+}
+
+void AVDStagePlayerController::HideBossStateBar()
+{
+	if(HUDWidget)
+	{
+		HUDWidget->HideBossStatus();
 	}
 }
