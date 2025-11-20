@@ -33,12 +33,10 @@ void AVDEnemyAIController::RunAI()
 			{
 				if (!BlackboardPtr->GetValueAsBool(VDBB_KEY_IS_SPAWNED))
 				{
-					BlackboardPtr->SetValueAsVector(VDBB_KEY_SPAWN_POS, GetPawn()->GetActorLocation());
 					BlackboardPtr->SetValueAsFloat(VDBB_KEY_FIND_PLAYER_RANGE, EnemyInterface->GetFindingRange());
 					BlackboardPtr->SetValueAsFloat(VDBB_KEY_PATROL_WAIT_TIME, EnemyInterface->GetPatrolWaitTime());
 					BlackboardPtr->SetValueAsFloat(VDBB_KEY_TURN_SPEED, EnemyInterface->GetTurnSpeed());
 					BlackboardPtr->SetValueAsFloat(VDBB_KEY_PARTOL_RANGE, EnemyInterface->GetPatrolRadius());
-					BlackboardPtr->SetValueAsBool(VDBB_KEY_IS_SPAWNED, true);
 				}
 
 				BlackboardPtr->SetValueAsVector(VDBB_KEY_PATROL_START_POS, GetPawn()->GetActorLocation());

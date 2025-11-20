@@ -15,7 +15,7 @@ AVDEnemyGrux::AVDEnemyGrux()
 
 	BaseStatsComponent
 		->SetFindPlayerRange(100.f)
-		->SetPatrolRange(50.f)
+		->SetPatrolRange(500.f)
 		->SetPatrolWaitTime(2.f)
 		->SetTurnSpeed(5.f)
 		->SetAttackRange(100.f)
