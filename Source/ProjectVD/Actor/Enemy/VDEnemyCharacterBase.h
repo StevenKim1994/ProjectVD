@@ -67,7 +67,7 @@ public:
 	// IVDEnemyInterface을(를) 통해 상속됨
 	float GetPatrolRadius() const override;
 	float GetPatrolWaitTime() const override;
-	float GetChaseRadius() const override;
+	float GetFindingRange() const override;
 	float GetTurnSpeed() const override;
 	float GetAttackRadius() const override;
 };

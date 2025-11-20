@@ -65,7 +65,7 @@ float AVDEnemyCharacterBase::GetPatrolWaitTime() const
 	return BaseStatsComponent->GetPatrolWaitTime();
 }
 
-float AVDEnemyCharacterBase::GetChaseRadius() const
+float AVDEnemyCharacterBase::GetFindingRange() const
 {
 	return BaseStatsComponent->GetFindPlayerRange();
 }

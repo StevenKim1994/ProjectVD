@@ -24,7 +24,7 @@ class PROJECTVD_API IVDEnemyInterface
 public:
 	virtual float GetPatrolRadius() const = 0;
 	virtual float GetPatrolWaitTime() const = 0;
-	virtual float GetChaseRadius() const = 0;
+	virtual float GetFindingRange() const = 0;
 	virtual float GetTurnSpeed() const = 0;
 	virtual float GetAttackRadius() const = 0;
 };
