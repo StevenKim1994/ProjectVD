@@ -2,6 +2,7 @@
 
 
 #include "AI/BTServiceNode/BTService_DetectTarget.h"
+#include "AIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardData.h"
@@ -18,17 +19,17 @@ UBTService_DetectTarget::UBTService_DetectTarget()
 	Interval = 1.f;
 }
 
-APawn* UBTService_DetectTarget::DetectedTargetActor(UBehaviorTreeComponent& OwnerComp, const TArray<FOverlapResult>& OverlapResult)
+APawn* UBTService_DetectTarget::DetectedTargetActor(UBehaviorTreeComponent& OwnerComp, const TArray<FOverlapResult>& InOverlapResults)
 {
 	APawn* Result = nullptr;
 
-	for (auto const& OverlapResult : OverlapResult)
+	for (auto const& OverlapResult : InOverlapResults)
 	{
 		Result = Cast<APawn>(OverlapResult.GetActor());
 		if (Result->GetController()->IsPlayerController())
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsObject(VDBB_KEY_TARGET, Result);
-			DrawDebugSphere(Result->GetWorld(), Result->GetActorLocation(), 10.f, FColor::Blue, false, 0.2f);
+			DrawDebugSphere(Result->GetWorld(), Result->GetActorLocation(), 3,10.f, FColor::Blue, false, 0.2f);
 			DrawDebugLine(Result->GetWorld(), OwnerComp.GetOwner()->GetActorLocation(), Result->GetActorLocation(), FColor::Blue, false, 0.2f);
 			break;
 		}
@@ -71,6 +72,7 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		FCollisionShape::MakeSphere(DetectRadius),
 		CollisionQueryParam
 	);
+	DrawDebugSphere(ControllingPawn->GetWorld(), ControllingPawn->GetActorLocation(), DetectRadius, 1, FColor::Blue, false);
 
 	if (bResult)
 	{
