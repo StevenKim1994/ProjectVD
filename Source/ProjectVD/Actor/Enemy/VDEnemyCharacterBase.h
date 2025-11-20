@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
+#include "Actor/ActorComponent/VDEnemyStatsBaseComponent.h"
+#include "Interface/VDEnemyInterface.h"
 #include "VDEnemyCharacterBase.generated.h"
 
 class UAnimMontage;
 UCLASS(Abstract)
-class PROJECTVD_API AVDEnemyCharacterBase : public ACharacter
+class PROJECTVD_API AVDEnemyCharacterBase : public ACharacter, public IVDEnemyInterface
 {
 	GENERATED_BODY()
 
@@ -30,7 +31,10 @@ protected:
 	TObjectPtr<UAnimMontage> DeathAM;
 
 	UPROPERTY()
-	TObjectPtr<UVDCharacterStatsBaseComponent> BaseStatsComponent;
+	bool bIsDead = false;
+
+	UPROPERTY()
+	TObjectPtr<UVDEnemyStatsBaseComponent> BaseStatsComponent;
 
 	UFUNCTION()
 	virtual void FindPlayer();
@@ -58,5 +62,12 @@ public:
 	UFUNCTION()
 	FORCEINLINE FName GetEnemyName() const { return EnemyName; }
 	
-	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent.Get(); }
+	FORCEINLINE UVDEnemyStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent.Get(); }
+
+	// IVDEnemyInterface을(를) 통해 상속됨
+	float GetPatrolRadius() const override;
+	float GetPatrolWaitTime() const override;
+	float GetChaseRadius() const override;
+	float GetTurnSpeed() const override;
+	float GetAttackRadius() const override;
 };

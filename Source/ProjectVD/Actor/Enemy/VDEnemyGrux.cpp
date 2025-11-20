@@ -7,7 +7,7 @@
 AVDEnemyGrux::AVDEnemyGrux()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	BaseStatsComponent = CreateDefaultSubobject<UVDCharacterStatsBaseComponent>(TEXT("BaseStatsComponent"));
+	BaseStatsComponent = CreateDefaultSubobject<UVDEnemyStatsBaseComponent>(TEXT("BaseStatsComponent"));
 	BaseStatsComponent->RegisterComponent();
 
 	BaseStatsComponent
@@ -15,9 +15,7 @@ AVDEnemyGrux::AVDEnemyGrux()
 		->SetAttackSpeed(1.0f)
 		->SetAttackPower(15.f)
 		->SetMaxHealth(110.f)
-		->SetMaxMana(50.f)
-		->SetHealth(110.f)
-		->SetMana(50.f);
+		->SetHealth(110.f);
 }
 
 void AVDEnemyGrux::FindPlayer()

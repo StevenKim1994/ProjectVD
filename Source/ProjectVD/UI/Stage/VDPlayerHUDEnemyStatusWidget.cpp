@@ -32,9 +32,8 @@ void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
 
 	if (BossActor.IsValid())
 	{
-		if (UVDCharacterStatsBaseComponent* PrevStats = BossActor->GetBaseStatsComponent())
+		if (UVDEnemyStatsBaseComponent* PrevStats = BossActor->GetBaseStatsComponent())
 		{
-			// 참조 반환이므로 '->'가 아니라 '.'
 			PrevStats->GetOnChangeHealth().RemoveDynamic(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar);
 		}
 	}
@@ -51,7 +50,7 @@ void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
 		return;
 	}
 
-	if (UVDCharacterStatsBaseComponent* NewStats = BossActor->GetBaseStatsComponent())
+	if (UVDEnemyStatsBaseComponent* NewStats = BossActor->GetBaseStatsComponent())
 	{
 		// 중복 바인딩 방지
 		NewStats->GetOnChangeHealth().RemoveDynamic(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar);
@@ -72,7 +71,7 @@ void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
 
 	if (BossHealthBar)
 	{
-		if (UVDCharacterStatsBaseComponent* StatsComp = BossActor->GetBaseStatsComponent())
+		if (UVDEnemyStatsBaseComponent* StatsComp = BossActor->GetBaseStatsComponent())
 		{
 			if (StatsComp->GetMaxHealth() > 0.f)
 			{

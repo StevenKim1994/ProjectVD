@@ -55,8 +55,38 @@ float AVDEnemyCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& 
 	return DamageAmount;
 }
 
+float AVDEnemyCharacterBase::GetPatrolRadius() const
+{
+	return BaseStatsComponent->GetPatrolRange();
+}
+
+float AVDEnemyCharacterBase::GetPatrolWaitTime() const
+{
+	return BaseStatsComponent->GetPatrolWaitTime();
+}
+
+float AVDEnemyCharacterBase::GetChaseRadius() const
+{
+	return BaseStatsComponent->GetFindPlayerRange();
+}
+
+float AVDEnemyCharacterBase::GetTurnSpeed() const
+{
+	return BaseStatsComponent->GetTurnSpeed();
+}
+
+float AVDEnemyCharacterBase::GetAttackRadius() const
+{
+	return BaseStatsComponent->GetAttackRange();
+}
+
 void AVDEnemyCharacterBase::FindPlayer()
 {
+	if(bIsDead)
+	{
+		return;
+	}
+
 	if (FindPlayerAM)
 	{
 		GetCharacterMovement()->StopMovementImmediately();
@@ -75,6 +105,7 @@ void AVDEnemyCharacterBase::Move(const FVector& Direction, float Value)
 
 void AVDEnemyCharacterBase::Die()
 {
+	bIsDead = true;
 	if (DeathAM)
 	{
 		UCharacterMovementComponent* Movement = GetCharacterMovement();
@@ -86,10 +117,17 @@ void AVDEnemyCharacterBase::Die()
 			AnimInstance->Montage_Play(DeathAM);
 		}
 	}
+
+	// TODO :: 죽음처리를 위해 컴포넌트 비활성화 등 추가 작업 필요
 }
 
 void AVDEnemyCharacterBase::DefaultAttack()
 {
+	if (bIsDead)
+	{
+		return;
+	}
+
 	if (DefaultAttackAM)
 	{
 		GetCharacterMovement()->StopMovementImmediately();
@@ -104,6 +142,7 @@ void AVDEnemyCharacterBase::DefaultAttack()
 void AVDEnemyCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+	bIsDead = false;
 }
 
 void AVDEnemyCharacterBase::Tick(float DeltaTime)

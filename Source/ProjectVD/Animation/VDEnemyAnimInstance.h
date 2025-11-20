@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "VDEnemyAnimInstance.generated.h"
 
+class ACharacter;
+class UCharacterMovementComponent;
 /**
  * 
  */
@@ -13,5 +15,29 @@ UCLASS()
 class PROJECTVD_API UVDEnemyAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
-	
+
+public:
+	UVDEnemyAnimInstance();
+
+protected:
+	virtual void NativeInitializeAnimation() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character");
+	TObjectPtr<ACharacter> OwnerCharacter;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character");
+	TObjectPtr<UCharacterMovementComponent> OwnerCharacterMovement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
+	FVector Velocity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
+	float GroundSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
+	uint8 bIsIdle : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
+	float MovingThreshold;
 };
