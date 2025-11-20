@@ -80,6 +80,11 @@ float AVDEnemyCharacterBase::GetAttackRadius() const
 	return BaseStatsComponent->GetAttackRange();
 }
 
+float AVDEnemyCharacterBase::GetAttackRange() const
+{
+	return BaseStatsComponent->GetAttackRange();
+}
+
 void AVDEnemyCharacterBase::FindPlayer()
 {
 	if(bIsDead)
@@ -106,6 +111,11 @@ void AVDEnemyCharacterBase::Move(const FVector& Direction, float Value)
 void AVDEnemyCharacterBase::Die()
 {
 	bIsDead = true;
+	AVDEnemyAIController * AICon = Cast<AVDEnemyAIController>(GetController());
+	if (AICon)
+	{
+		AICon->StopAI();
+	}
 	if (DeathAM)
 	{
 		UCharacterMovementComponent* Movement = GetCharacterMovement();

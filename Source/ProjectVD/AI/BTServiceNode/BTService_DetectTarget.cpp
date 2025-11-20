@@ -29,8 +29,8 @@ APawn* UBTService_DetectTarget::DetectedTargetActor(UBehaviorTreeComponent& Owne
 		if (Result->GetController()->IsPlayerController())
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsObject(VDBB_KEY_TARGET, Result);
-			DrawDebugSphere(Result->GetWorld(), Result->GetActorLocation(), 3,10.f, FColor::Blue, false, 0.2f);
-			DrawDebugLine(Result->GetWorld(), OwnerComp.GetOwner()->GetActorLocation(), Result->GetActorLocation(), FColor::Blue, false, 0.2f);
+			DrawDebugSphere(Result->GetWorld(), Result->GetActorLocation(), 3,10.f, FColor::Blue, false);
+			DrawDebugLine(Result->GetWorld(), OwnerComp.GetOwner()->GetActorLocation(), Result->GetActorLocation(), FColor::Blue, false);
 			break;
 		}
 	}
@@ -61,7 +61,7 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		return;
 	}
 
-	float DetectRadius = EnemyPawn->GetFindingRange() / 2.f;
+	float DetectRadius = EnemyPawn->GetFindingRange();
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams CollisionQueryParam(SCENE_QUERY_STAT(DetectRange), false, ControllingPawn);
 	bool bResult = World->OverlapMultiByChannel(

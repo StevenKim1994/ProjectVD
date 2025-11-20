@@ -70,4 +70,5 @@ public:
 	float GetFindingRange() const override;
 	float GetTurnSpeed() const override;
 	float GetAttackRadius() const override;
+	float GetAttackRange() const override;
 };

@@ -39,6 +39,7 @@ void AVDEnemyAIController::RunAI()
 					BlackboardPtr->SetValueAsFloat(VDBB_KEY_PARTOL_RANGE, EnemyInterface->GetPatrolRadius());
 				}
 
+				BlackboardPtr->SetValueAsFloat(VDBB_KEY_ATTACK_RANGE, EnemyInterface->GetAttackRange());
 				BlackboardPtr->SetValueAsVector(VDBB_KEY_PATROL_START_POS, GetPawn()->GetActorLocation());
 
 				RunBehaviorTree(BTAsset);

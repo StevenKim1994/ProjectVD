@@ -14,7 +14,7 @@ AVDEnemyGrux::AVDEnemyGrux()
 	// TODO :: 테이블 로드 기능 추가시 수정 필요
 
 	BaseStatsComponent
-		->SetFindPlayerRange(100.f)
+		->SetFindPlayerRange(1250.f)
 		->SetPatrolRange(500.f)
 		->SetPatrolWaitTime(2.f)
 		->SetTurnSpeed(5.f)
