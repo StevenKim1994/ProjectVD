@@ -7,6 +7,7 @@
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Public/VDBlackboardInfo.h"
+#include "Interface/VDEnemyInterface.h"
 
 AVDEnemyAIController::AVDEnemyAIController()
 {
@@ -25,18 +26,25 @@ void AVDEnemyAIController::RunAI()
 {
 	if(BTAsset)
 	{
-		UBlackboardComponent* BlackboardPtr = Blackboard.Get();
-		if (UseBlackboard(BBAsset, BlackboardPtr))
+		if (IVDEnemyInterface* EnemyInterface = Cast<IVDEnemyInterface>(GetPawn()))
 		{
-			if (!BlackboardPtr->GetValueAsBool(VVBB_KEY_IS_SPAWNED))
+			UBlackboardComponent* BlackboardPtr = Blackboard.Get();
+			if (UseBlackboard(BBAsset, BlackboardPtr))
 			{
-				BlackboardPtr->SetValueAsVector(VDBB_KEY_SPAWN_POS, GetPawn()->GetActorLocation());
-				BlackboardPtr->SetValueAsBool(VVBB_KEY_IS_SPAWNED, true);
+				if (!BlackboardPtr->GetValueAsBool(VDBB_KEY_IS_SPAWNED))
+				{
+					BlackboardPtr->SetValueAsVector(VDBB_KEY_SPAWN_POS, GetPawn()->GetActorLocation());
+					BlackboardPtr->SetValueAsFloat(VDBB_KEY_FIND_PLAYER_RANGE, EnemyInterface->GetChaseRadius());
+					BlackboardPtr->SetValueAsFloat(VDBB_KEY_PATROL_WAIT_TIME, EnemyInterface->GetPatrolWaitTime());
+					BlackboardPtr->SetValueAsFloat(VDBB_KEY_TURN_SPEED, EnemyInterface->GetTurnSpeed());
+					BlackboardPtr->SetValueAsFloat(VDBB_KEY_PARTOL_RANGE, EnemyInterface->GetPatrolRadius());
+					BlackboardPtr->SetValueAsBool(VDBB_KEY_IS_SPAWNED, true);
+				}
+
+				BlackboardPtr->SetValueAsVector(VDBB_KEY_PATROL_START_POS, GetPawn()->GetActorLocation());
+
+				RunBehaviorTree(BTAsset);
 			}
-
-			BlackboardPtr->SetValueAsVector(VVBB_KEY_PATROL_START_POS, GetPawn()->GetActorLocation());
-
-			RunBehaviorTree(BTAsset);
 		}
 	}
 }

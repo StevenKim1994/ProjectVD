@@ -31,7 +31,7 @@ EBTNodeResult::Type UBTTask_FindPatrolPos::ExecuteTask(UBehaviorTreeComponent& O
 		return EBTNodeResult::Failed;
 	}
 
-	FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector(VVBB_KEY_PATROL_START_POS);
+	FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector(VDBB_KEY_PATROL_START_POS);
 	FNavLocation NextPatrolPos;
 
 	if (NS->GetRandomPointInNavigableRadius(Origin, 500.f, NextPatrolPos))

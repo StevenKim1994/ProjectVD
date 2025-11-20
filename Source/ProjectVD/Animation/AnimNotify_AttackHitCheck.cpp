@@ -7,8 +7,8 @@
 void UAnimNotify_AttackHitCheck::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::Notify(MeshComp, Animation, EventReference);
-	if (MeshComp->GetOwner()->Implements<UVDAttackable>())
+	if (IVDAttackable* AttackAble = Cast<IVDAttackable>(MeshComp->GetOwner()))
 	{
-		IVDAttackable::Execute_DefaultAttackHit(MeshComp->GetOwner());
+		AttackAble->DefaultAttackHit_Implementation();
 	}
 }
