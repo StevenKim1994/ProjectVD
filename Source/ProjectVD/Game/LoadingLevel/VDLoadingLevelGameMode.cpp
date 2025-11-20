@@ -5,6 +5,7 @@
 #include "Game/LoadingLevel/VDLoadingController.h"
 #include "System/VDLevelSystem.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/AssetManager.h"
 
 void AVDLoadingLevelGameMode::BeginPlay()
 {
@@ -51,7 +52,7 @@ void AVDLoadingLevelGameMode::OnLoadingStarted()
 	if (LoadingController.IsValid())
 	{
 		LoadingController->ShowLoadingPanel();
-
+		
 		// TODO :: DataAsset , StreamableManager로 다음 레벨에서 사용하는 에셋정보 미리 로드 한다음 OpenLevel 진행하기 .. 퍼센트 보이게 하려면 이방법을 써야할듯 추후 추가필요
 		// 지금은 페이크 퍼센트이후 OpenLevel 호출
 		GetWorldTimerManager().SetTimer(

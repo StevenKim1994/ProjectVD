@@ -4,11 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
+#include "Struct/ActorPool.h"
 #include "VDStageObjectSubsystem.generated.h"
 
-
-struct FActorPool;
-class AVDWeapon;
 class AVDSpawnPoint;
 
 UCLASS()

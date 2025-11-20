@@ -2,6 +2,7 @@
 
 
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
+#include "Actor/Enemy/AIController/VDEnermyAIController.h"
 #include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -13,7 +14,7 @@ AVDEnemyCharacterBase::AVDEnemyCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	AIControllerClass = AAIController::StaticClass();
+	AIControllerClass = AVDEnermyAIController::StaticClass();
 
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
