@@ -9,6 +9,7 @@
 #include "VDEnemyCharacterBase.generated.h"
 
 class UAnimMontage;
+class UVDEnemyAnimInstance;
 UCLASS(Abstract)
 class PROJECTVD_API AVDEnemyCharacterBase : public ACharacter, public IVDEnemyInterface
 {
@@ -65,6 +66,8 @@ public:
 	FORCEINLINE UVDEnemyStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent.Get(); }
 
 	// IVDEnemyInterface을(를) 통해 상속됨
+	virtual UVDEnemyAnimInstance* PrepareAnimMontagePlay() override;
+	virtual UAnimMontage* GetFindPlayerAnimMontage() const override;
 	float GetPatrolRadius() const override;
 	float GetPatrolWaitTime() const override;
 	float GetFindingRange() const override;

@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "VDEnemyInterface.generated.h"
 
+class UVDEnemyAnimInstance;
+class UAnimMontage;
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UVDEnemyInterface : public UInterface
@@ -22,6 +24,9 @@ class PROJECTVD_API IVDEnemyInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	virtual UVDEnemyAnimInstance* PrepareAnimMontagePlay();
+	virtual UAnimMontage* GetFindPlayerAnimMontage() const;
+
 	virtual float GetPatrolRadius() const = 0;
 	virtual float GetPatrolWaitTime() const = 0;
 	virtual float GetFindingRange() const = 0;

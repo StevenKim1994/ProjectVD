@@ -2,11 +2,11 @@
 
 
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
-#include "Actor/Enemy/AIController/VDEnemyAIController.h"
 #include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "AIController.h"
+#include "Actor/Enemy/AIController/VDEnemyAIController.h"
+#include "Animation/VDEnemyAnimInstance.h"
 #include "Public/VDPhysicInfo.h"
 
 AVDEnemyCharacterBase::AVDEnemyCharacterBase()
@@ -35,6 +35,27 @@ AVDEnemyCharacterBase::AVDEnemyCharacterBase()
 	Movement->MaxWalkSpeed = 300.0f; 
 	Movement->MinAnalogWalkSpeed = 20.0f;
 	Movement->BrakingDecelerationWalking = 2000.0f;
+}
+
+UVDEnemyAnimInstance* AVDEnemyCharacterBase::PrepareAnimMontagePlay()
+{
+	if (FindPlayerAM)
+	{
+		GetCharacterMovement()->StopMovementImmediately();
+		UVDEnemyAnimInstance* AnimInstance = Cast<UVDEnemyAnimInstance>(GetMesh()->GetAnimInstance());
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(FindPlayerAM);
+			return AnimInstance;
+		}
+	}
+
+	return nullptr;
+}
+
+UAnimMontage* AVDEnemyCharacterBase::GetFindPlayerAnimMontage() const
+{
+	return FindPlayerAM;
 }
 
 float AVDEnemyCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
