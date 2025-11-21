@@ -37,11 +37,30 @@ EBTNodeResult::Type UBTTask_FindPatrolPos::ExecuteTask(UBehaviorTreeComponent& O
 	{
 		return EBTNodeResult::Failed;
 	}
-
+	
+	FVector SpawnPos = OwnerComp.GetBlackboardComponent()->GetValueAsVector(VDBB_KEY_SPAWN_POS);
 	FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector(VDBB_KEY_PATROL_START_POS);
+	float PatrolRadius = EnemyInterface->GetPatrolRadius();
 	FNavLocation NextPatrolPos;
 
-	if (NS->GetRandomPointInNavigableRadius(Origin, EnemyInterface->GetPatrolRadius(), NextPatrolPos))
+	// 최대 시도 횟수 설정 (무한 루프 방지)
+	const int32 MaxAttempts = 10;
+	for (int32 Attempt = 0; Attempt < MaxAttempts; ++Attempt)
+	{
+		if (NS->GetRandomPointInNavigableRadius(Origin, PatrolRadius, NextPatrolPos))
+		{
+			// 스폰 위치와의 거리 검사
+			float DistanceFromSpawn = FVector::Dist(NextPatrolPos.Location, SpawnPos);
+			if (DistanceFromSpawn <= PatrolRadius)
+			{
+				OwnerComp.GetBlackboardComponent()->SetValueAsVector(VDBB_KEY_PATROL_END_POS, NextPatrolPos.Location);
+				return EBTNodeResult::Succeeded;
+			}
+		}
+	}
+
+	// 모든 시도가 실패한 경우, 스폰 위치를 기준으로 한 번 더 시도
+	if (NS->GetRandomPointInNavigableRadius(SpawnPos, PatrolRadius, NextPatrolPos))
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector(VDBB_KEY_PATROL_END_POS, NextPatrolPos.Location);
 		return EBTNodeResult::Succeeded;

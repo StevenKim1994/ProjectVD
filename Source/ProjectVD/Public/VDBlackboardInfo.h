@@ -11,3 +11,4 @@
 #define VDBB_KEY_TURN_SPEED TEXT("TurnSpeed")
 #define VDBB_KEY_FIND_PLAYER_RANGE TEXT("FindPlayerRange")
 #define	VDBB_KEY_ATTACK_RANGE TEXT("AttackRange")
+#define VDBB_KEY_RETURN_TO_SPAWNPOS TEXT("ReturnSpawnPos")
