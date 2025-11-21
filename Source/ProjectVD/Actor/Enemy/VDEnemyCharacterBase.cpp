@@ -145,6 +145,9 @@ void AVDEnemyCharacterBase::Die()
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		if (AnimInstance)
 		{
+			FOnMontageEnded EndDelegate;
+			EndDelegate.BindUObject(this, &AVDEnemyCharacterBase::EndDieAM);
+			AnimInstance->Montage_SetEndDelegate(EndDelegate, DeathAM);
 			AnimInstance->Montage_Play(DeathAM);
 		}
 	}
@@ -168,6 +171,22 @@ void AVDEnemyCharacterBase::DefaultAttack()
 			AnimInstance->Montage_Play(DefaultAttackAM);
 		}
 	}
+}
+
+void AVDEnemyCharacterBase::HitReact(const FVector& HitPos)
+{
+	if (bIsDead)
+	{
+		return;
+	}
+
+	// TODO :: 히트 리액트 애니메이션은 자식에서 처리함. 공통으로 필요시 ( 방향 애니메이션이 다 존재하지 않으면 ) 여기에 구현 필요
+}
+
+void AVDEnemyCharacterBase::EndDieAM(UAnimMontage* AnimMontage, bool bInterept)
+{
+	// TODO :: 죽음 애니메이션 종료 후 처리 (액터 제거 등)
+	Destroy();
 }
 
 void AVDEnemyCharacterBase::BeginPlay()

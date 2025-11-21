@@ -296,7 +296,7 @@ void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
 	//Super::DefaultAttack(Value); DESC :: 부모함수 호출하지 않음.
 	
-	const float StaminaCost = 15.0f;
+	const float StaminaCost = 0.0f;//15.0f;
 	if (!StaminaComponent->HasStamina(StaminaCost))
 	{
 		return;

@@ -41,7 +41,8 @@ protected:
 	virtual void Move(const FVector& Direction, float Value);
 	virtual void Die();
 	virtual void DefaultAttack();
-
+	virtual void HitReact(const FVector& HitPos);
+	virtual void EndDieAM(UAnimMontage* AnimMontage, bool bInterept);
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
