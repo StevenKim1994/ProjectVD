@@ -7,17 +7,19 @@
 void UVDAnimNotifyStateForComboAttack::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
-	if (MeshComp->GetOwner()->Implements<UVDAttackable>())
+
+	if (IVDAttackable* Attackable = Cast<IVDAttackable>(MeshComp->GetOwner()))
 	{
-		IVDAttackable::Execute_SetComboInputOn(MeshComp->GetOwner(), true);
+		Attackable->SetComboInputOn(true);
 	}
 }
 
 void UVDAnimNotifyStateForComboAttack::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
-	if (MeshComp->GetOwner()->Implements<UVDAttackable>())
+
+	if (IVDAttackable* Attackable = Cast<IVDAttackable>(MeshComp->GetOwner()))
 	{
-		IVDAttackable::Execute_SetComboInputOn(MeshComp->GetOwner(), false);
+		Attackable->SetComboInputOn(false);
 	}
 }

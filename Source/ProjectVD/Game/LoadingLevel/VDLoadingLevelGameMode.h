@@ -18,19 +18,14 @@ class PROJECTVD_API AVDLoadingLevelGameMode : public AGameModeBase
 	
 private:
 
+	UPROPERTY()
+	TWeakObjectPtr<AVDLoadingController> LoadingController;
+
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
-	UPROPERTY()
-	TWeakObjectPtr<AVDLoadingController> LoadingController;
-
-	UFUNCTION()
 	void OnLoadingProgressUpdated(float Progress);
-
-	UFUNCTION()
 	void OnLoadingFinished();
-
-	UFUNCTION()
 	void OnLoadingStarted();
 };

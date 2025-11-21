@@ -36,11 +36,8 @@ private:
 
 public:
 
-	UFUNCTION()
 	void ShowPerformanceTween();
-
-	UFUNCTION()
 	void SetCharacterState(UVDCharacterStatsBaseComponent* BaseStats);
 
-	FOnSetCharacterState& GetOnSetCharacterStateDelegate() { return OnSetCharacterStateDelegate; }
+	FORCEINLINE FOnSetCharacterState& GetOnSetCharacterStateDelegate() { return OnSetCharacterStateDelegate; }
 };

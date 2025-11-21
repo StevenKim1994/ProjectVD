@@ -9,6 +9,6 @@ void UAnimNotify_AttackHitCheck::Notify(USkeletalMeshComponent* MeshComp, UAnimS
 	Super::Notify(MeshComp, Animation, EventReference);
 	if (IVDAttackable* AttackAble = Cast<IVDAttackable>(MeshComp->GetOwner()))
 	{
-		AttackAble->DefaultAttackHit_Implementation();
+		AttackAble->DefaultAttackHit();
 	}
 }

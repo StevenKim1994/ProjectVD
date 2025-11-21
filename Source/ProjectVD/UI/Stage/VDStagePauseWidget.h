@@ -36,15 +36,9 @@ private:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
-	UFUNCTION()
 	void OnClickResume();
-
-	UFUNCTION()
 	void OnClickOptions();
-
-	UFUNCTION()
 	void OnClickExitToTitle();
-
 
 public:
 	FOnPauseMenuButtonClicked OnPauseMenuButtonClickedDelegate;

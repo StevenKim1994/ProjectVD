@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -80,24 +80,18 @@ private:
 	UFUNCTION()
 	void OnHoverExitButton();
 
-	
-
 	UFUNCTION()
 	void OnMainButtonToggle(bool IsOn);
 
-	UFUNCTION()
 	void OnChangedMenuStateTweenComplete(bool IsOn); // 트윈 완료시 콜백
 
 protected:
-	UFUNCTION()
 	virtual void NativeConstruct() override;
 
 public:
 	FOnClickExitButtonEvent OnClickExitButtonEvent;
 	FOnToggleTitleMovieMuteEvent OnToggleTitleMovieMuteEvent;
 
-	UFUNCTION()
 	void SetToggleBackgroundSound(bool IsOn);
-
 	void SetBackgroundMediaTexture(UMediaTexture* Texture);
 };

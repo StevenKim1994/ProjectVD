@@ -36,20 +36,12 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
-	UFUNCTION()
 	void ShowToast(const FString& InTitle, const FString& InMessage);
-
-	UFUNCTION()
-	void OnEscape(const FInputActionValue& Value);
-
-	UFUNCTION()
 	void ShowBossStateBar(AVDEnemyCharacterBase* Boss);
-
-	UFUNCTION()
 	void HideBossStateBar();
 
-	FORCEINLINE TObjectPtr<UInputMappingContext> GetCharacterControllerIMC() const
-	{
-		return CharacterControllerIMC;
-	}
+	UFUNCTION() 
+	void OnEscape(const FInputActionValue& Value);
+
+	FORCEINLINE TObjectPtr<UInputMappingContext> GetCharacterControllerIMC() const { return CharacterControllerIMC; }
 };

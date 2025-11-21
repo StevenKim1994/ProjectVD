@@ -19,13 +19,9 @@ private:
 	UPROPERTY()
 	TMap<FName, TObjectPtr<UDataTable>> LoadedDataTables;	
 
-
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
 public:
-
-	UFUNCTION()
 	void RegisterTable(FName TableName, UDataTable* DataTable);
-
 };

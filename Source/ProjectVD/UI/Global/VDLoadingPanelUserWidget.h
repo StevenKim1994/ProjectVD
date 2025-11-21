@@ -26,13 +26,9 @@ private:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual void NativeDestruct() override;
 
-	UFUNCTION()
 	void UpdateLoadingDescText(float DeltaTime);
 
 public:
-	UFUNCTION(BlueprintCallable)
 	UVDLoadingPanelUserWidget* SetLoadingText(const FText& InText);
-
-	UFUNCTION(BlueprintCallable)
 	UVDLoadingPanelUserWidget* SetLoadingPercent(float InPercent);
 };

@@ -19,8 +19,6 @@ private:
 	virtual void Deinitialize() override;
 
 public:
-	bool IsInCutScene() const { return bIsInCutScene; }
-
 	void StartCutScene(AActor* CutSceneActor, FOnCutSceneFinishedDelegate OnFinishedDelegate = nullptr);
-
+	FORCEINLINE bool IsInCutScene() const { return bIsInCutScene; }
 };

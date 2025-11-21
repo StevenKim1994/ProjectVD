@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -57,15 +57,10 @@ public:
 	void SetCurrentHUDWidget(const FName& HUDWidgetName);
 	void HideUIWidget(const FName& WidgetName);
 
-	int32 GetModalUIWidgetCount() const { return ModalUIWidgetStack.Num(); }
-	TSoftClassPtr<UUserWidget> GetUIWidgetClassPathByName(const FName& WidgetName);
-
-	UFUNCTION()
-	UUserWidget* GetCurrentHUDWidget() const { return CurrentHUDWidget; }
-
-	UFUNCTION()
 	void PopModalUIWidget();
-
-	UFUNCTION()
 	void AllModalUIWidgetClear();
+
+	FORCEINLINE TSoftClassPtr<UUserWidget> GetUIWidgetClassPathByName(const FName& WidgetName);
+	FORCEINLINE int GetModalUIWidgetCount() const { return ModalUIWidgetStack.Num(); }
+	FORCEINLINE UUserWidget* GetCurrentHUDWidget() const { return CurrentHUDWidget; }
 };

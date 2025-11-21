@@ -33,13 +33,8 @@ protected:
 	virtual void InitializeComponent() override;
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Stats")
 	UVDCharacterStatsBaseComponent* SetMana(float InMana);
-
-	UFUNCTION(BlueprintCallable, Category = "Stats")
 	UVDCharacterStatsBaseComponent* SetMaxMana(float InMaxMana, bool bClampCurrent = true);
-
-	UFUNCTION(BlueprintCallable, Category = "Stats")
 	UVDCharacterStatsBaseComponent* AddMana(float Delta);
 	
 	virtual UVDCharacterStatsBaseComponent* AddHealth(float Delta) override;
@@ -50,20 +45,9 @@ public:
 	virtual UVDCharacterStatsBaseComponent* SetAttackSpeed(float InAttackSpeed);
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(BlueprintPure, Category = "Stats")
 	FORCEINLINE float GetMana() const { return Mana; }
-
-	UFUNCTION(BlueprintPure, Category = "Stats")
 	FORCEINLINE float GetMaxMana() const { return MaxMana; }
-
-	UFUNCTION(BlueprintPure, Category = "Stats")
 	FORCEINLINE float GetAttackPower() const { return AttackPower; }
-
-	UFUNCTION(BlueprintPure, Category = "Stats")
 	FORCEINLINE float GetAttackRange() const { return AttackRange; }
-
-	UFUNCTION(BlueprintPure, Category = "Stats")
 	FORCEINLINE float GetAttackSpeed() const { return AttackSpeed; }
-
-
 };

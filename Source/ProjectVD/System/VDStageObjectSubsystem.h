@@ -33,18 +33,9 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	UFUNCTION()
     void InitPool(TSubclassOf<AActor> ActorClass, int32 PrewarmCount = 0, int32 Capacity = 32, bool bAutoExpand = true);
-
-    UFUNCTION()
     AActor* Acquire(TSubclassOf<AActor> ActorClass, const FTransform& SpawnTM, AActor* Owner = nullptr, APawn* Instigator = nullptr);
-
-    UFUNCTION()
     void Release(AActor* Actor);
-
-    UFUNCTION()
     void ReleaseAll(TSubclassOf<AActor> ActorClass);
-
-    UFUNCTION()
     void Shrink(TSubclassOf<AActor> ActorClass, int32 KeepInactive = 0);
 };

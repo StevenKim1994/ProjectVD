@@ -36,9 +36,6 @@ protected:
 public:	
 	AVDSpawnPoint();
 
-	UFUNCTION()
 	FTransform GetSpawnTransform() const { return GetActorTransform(); }
-
-	UFUNCTION()
 	void SpawnEnemy();
 };

@@ -13,6 +13,7 @@ class UCameraComponent;
 class UAnimMontage;
 class AVDStagePlayerController;
 class UVDCharacterStatsBaseComponent;
+class UVDBaseStaminaComponent;
 class UNiagaraSystem;
 class UNiagaraComponent;
 
@@ -53,15 +54,9 @@ private:
 	UFUNCTION()
 	void CheckComboInput();
 protected:
-	// 플레이어 전용 컴포넌트
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USpringArmComponent> CameraSpringArmComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UCameraComponent> FollowCameraComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats", Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UVDCharacterStatsBaseComponent> BaseStatsComponent;
+	bool IsAirAttack();
+	bool bHasAirAttacked;
 
 	UPROPERTY()
 	TObjectPtr<AVDStagePlayerController> CastPlayerController;
@@ -93,9 +88,6 @@ protected:
 	UFUNCTION()
 	void DefendCancel(const FInputActionValue& InputActionValue);
 
-	bool IsAirAttack();
-	bool bHasAirAttacked;
-
 	virtual void DefaultAttack(const FInputActionValue& Value) override;
 
 	virtual void Jump() override;
@@ -114,8 +106,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent; }
+	
 
-	void SetComboInputOn_Implementation(bool bIsOn);
-	void DefaultAttackHit_Implementation() override;
+	void SetComboInputOn(bool bIsOn);
+	void DefaultAttackHit() override;
 };

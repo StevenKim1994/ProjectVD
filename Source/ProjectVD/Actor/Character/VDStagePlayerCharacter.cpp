@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Actor/Character/VDStagePlayerCharacter.h"
-#include "Actor/Enemy/VDEnemyCharacterBase.h"
-#include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
+#include "ProjectVD/Actor/Character/VDStagePlayerCharacter.h"
+#include "ProjectVD/Actor/Enemy/VDEnemyCharacterBase.h"
+#include "ProjectVD/Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
+#include "ProjectVD/Actor/ActorComponent/VDBaseStaminaComponent.h"
 #include "Engine/World.h"
 #include "Engine/DamageEvents.h"
 #include "Camera/CameraComponent.h"
@@ -38,6 +39,12 @@ AVDStagePlayerCharacter::AVDStagePlayerCharacter()
 	FollowCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCameraComponent->SetupAttachment(CameraSpringArmComponent, USpringArmComponent::SocketName);
 	FollowCameraComponent->bUsePawnControlRotation = false;
+
+	StaminaComponent = CreateDefaultSubobject<UVDBaseStaminaComponent>(TEXT("StaminaComponent"));
+	StaminaComponent->RegisterComponent();
+	StaminaComponent->SetMaxStamina(100.0f);
+	StaminaComponent->SetCurrentStamina(100.0f);
+	StaminaComponent->SetStaminaRecovery(true);
 
 	BaseStatsComponent = CreateDefaultSubobject<UVDCharacterStatsBaseComponent>(TEXT("BaseStatsComponent"));
 	BaseStatsComponent->RegisterComponent();
@@ -109,12 +116,12 @@ float AVDStagePlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const
 	return DamageAmount;
 }
 
-void AVDStagePlayerCharacter::SetComboInputOn_Implementation(bool bIsOn)
+void AVDStagePlayerCharacter::SetComboInputOn(bool bIsOn)
 {
 	bIsNextComboInputOn = bIsOn;
 }
 
-void AVDStagePlayerCharacter::DefaultAttackHit_Implementation()
+void AVDStagePlayerCharacter::DefaultAttackHit()
 {
 	if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
 	{
@@ -222,6 +229,7 @@ void AVDStagePlayerCharacter::Zoom(const FInputActionValue& Value)
 
 void AVDStagePlayerCharacter::JumpBegin(const FInputActionValue& Value)
 {
+	StaminaComponent->ConsumeStamina(20.0f);
 	CurrentAttackComboCount = 0;
 	Super::Jump();
 }
@@ -235,6 +243,7 @@ void AVDStagePlayerCharacter::RollLeft(const FInputActionValue& Value)
 {
 	if (RollLeftAM)
 	{
+		StaminaComponent->ConsumeStamina(20.0f);
 		if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
 		{
 			UAI->Montage_Play(RollLeftAM, 1.0f);
@@ -250,6 +259,7 @@ void AVDStagePlayerCharacter::RollRight(const FInputActionValue& Value)
 {
 	if (RollRightAM)
 	{
+		StaminaComponent->ConsumeStamina(20.0f);
 		if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
 		{
 			UAI->Montage_Play(RollRightAM, 1.0f);
@@ -266,6 +276,7 @@ void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 	//Super::DefaultAttack(Value); DESC :: 부모함수 호출하지 않음.
 	if (IsAirAttack())
 	{
+		StaminaComponent->ConsumeStamina(15.0f);
 		bIsNextComboInputOn = false;
 		CurrentAttackComboCount = 0;
 		UE_LOG(LogTemp, Log, TEXT("Air Attack"));

@@ -15,7 +15,7 @@ enum class EConfirmPopupResult : uint8
 	Cancel
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConfirmPopupResult, EConfirmPopupResult, Result);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnConfirmPopupResult, EConfirmPopupResult);
 
 UCLASS()
 class PROJECTVD_API UVDConfirmPopup : public UUserWidget
@@ -34,6 +34,5 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-	UPROPERTY(BlueprintAssignable, Category = "ButtonEventCallback")
 	FOnConfirmPopupResult OnClickButtonEvent;
 };

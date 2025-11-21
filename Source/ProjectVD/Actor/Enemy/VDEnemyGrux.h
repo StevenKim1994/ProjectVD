@@ -28,6 +28,6 @@ protected:
 public:
 	AVDEnemyGrux();
 
-	virtual void SetComboInputOn_Implementation(bool bIsOn) override;
-	virtual void DefaultAttackHit_Implementation() override;
+	virtual void SetComboInputOn(bool bIsOn) override;
+	virtual void DefaultAttackHit() override;
 };

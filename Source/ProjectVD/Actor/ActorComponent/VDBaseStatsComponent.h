@@ -23,7 +23,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess ="true"))
 	float MaxHealth;
 
-	// 동적 멀티캐스트는 UPROPERTY로 보관 권장
 	UPROPERTY(BlueprintAssignable, Category="Stats")
 	FOnChangeStateStats OnChangeHealth;
 
@@ -31,23 +30,12 @@ protected:
 	virtual void InitializeComponent() override;
 
 public:
-	UFUNCTION(BlueprintCallable, Category="Stats")
+	
 	virtual UVDBaseStatsComponent* SetHealth(float InHealth);
-
-	UFUNCTION(BlueprintCallable, Category="Stats")
 	virtual UVDBaseStatsComponent* SetMaxHealth(float InMaxHealth, bool bClampCurrent = true);
-
-	UFUNCTION(BlueprintCallable, Category = "Stats")
 	virtual UVDBaseStatsComponent* AddHealth(float Delta);
-
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	UFUNCTION(BlueprintPure, Category="Stats")
 	virtual FORCEINLINE float GetHealth() const { return Health; }
-
-	UFUNCTION(BlueprintPure, Category="Stats")
 	virtual FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
-
-	// 참조 반환은 유지
 	virtual FORCEINLINE FOnChangeStateStats& GetOnChangeHealth() { return OnChangeHealth; }
 };

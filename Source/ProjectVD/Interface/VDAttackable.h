@@ -23,9 +23,6 @@ class PROJECTVD_API IVDAttackable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable , Category = "AttackCombo")
-	void SetComboInputOn(bool bIsOn);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AttackCombo")
-	void DefaultAttackHit();
+	virtual void SetComboInputOn(bool bIsOn);
+	virtual void DefaultAttackHit();
 };

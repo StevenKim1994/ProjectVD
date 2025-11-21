@@ -23,9 +23,6 @@ class PROJECTVD_API IVDPickable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool CanBePicked();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnPicked(AActor* Picker);
 };

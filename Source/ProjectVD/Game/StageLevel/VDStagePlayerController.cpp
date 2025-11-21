@@ -32,7 +32,7 @@ void AVDStagePlayerController::BeginPlay()
 		HUDWidget = Cast<UVDStagePlayerHUDWidget>(UISubsystem->GetCurrentHUDWidget());
 		if (HUDWidget)
 		{
-			HUDWidget->SetCharacterState(Cast<AVDStagePlayerCharacter>(GetCharacter())->GetBaseStatsComponent());
+			HUDWidget->SetCharacter(Cast<AVDCharacterBase>(GetCharacter()));
 		}
 	}
 }

@@ -55,10 +55,10 @@ void AVDEnemyGrux::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AVDEnemyGrux::SetComboInputOn_Implementation(bool bIsOn)
+void AVDEnemyGrux::SetComboInputOn(bool bIsOn)
 {
 }
 
-void AVDEnemyGrux::DefaultAttackHit_Implementation()
+void AVDEnemyGrux::DefaultAttackHit()
 {
 }

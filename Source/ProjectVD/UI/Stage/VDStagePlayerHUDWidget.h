@@ -9,7 +9,8 @@
 class UVDPlayerHUDEnemyStatusWidget;
 class UVDStagePlayerHUDToastWidget;
 class UVDPlayerHUDStateWidget;
-class UVDCharacterStatsBaseComponent;
+class UVDHUDStaminaWidget;
+class AVDCharacterBase;
 class AVDEnemyCharacterBase;
 
 UCLASS()
@@ -27,16 +28,18 @@ private:
 	UPROPERTY(meta = (BineWidget))
 	TObjectPtr<UVDPlayerHUDStateWidget> State;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UVDHUDStaminaWidget> StaminaIndicator;
+
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
 	void InitializeWidget();
-	void ShowPerformanceTween();
 
 public:
 	void ShowToast(const FString& InTitle, const FString& InMessage);
 	void ShowBossStatus(AVDEnemyCharacterBase* Boss);
-	void SetCharacterState(UVDCharacterStatsBaseComponent* StatsBaseComponent);
+	void SetCharacter(AVDCharacterBase* Character);
 	void HideBossStatus();
 };

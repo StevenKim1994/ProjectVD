@@ -37,16 +37,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UVDEnemyStatsBaseComponent> BaseStatsComponent;
 
-	UFUNCTION()
 	virtual void FindPlayer();
-
-	UFUNCTION()
 	virtual void Move(const FVector& Direction, float Value);
-
-	UFUNCTION()
 	virtual void Die();
-
-	UFUNCTION()
 	virtual void DefaultAttack();
 
 	virtual void BeginPlay() override;
@@ -57,12 +50,8 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
-	UFUNCTION()
 	FORCEINLINE bool IsBossEnemy() const { return bIsBossEnemy; }
-
-	UFUNCTION()
 	FORCEINLINE FName GetEnemyName() const { return EnemyName; }
-	
 	FORCEINLINE UVDEnemyStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent.Get(); }
 
 	// IVDEnemyInterface을(를) 통해 상속됨
