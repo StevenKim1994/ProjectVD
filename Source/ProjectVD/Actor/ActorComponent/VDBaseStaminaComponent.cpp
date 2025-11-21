@@ -5,28 +5,33 @@
 
 UVDBaseStaminaComponent::UVDBaseStaminaComponent()
 {
-	bIsStaminaRecovery = true; // DESC :: 스태미나 회복가능 기본값 
+	bIsStaminaRecovery = true; // DESC :: 스태미나 회복가능 기본값
 	PrimaryComponentTick.bCanEverTick = true;
-}
-
-void UVDBaseStaminaComponent::ConsumeStamina(float StaminaCost)
-{
-	if (CurrentStamina - StaminaCost >= 0.0f)
-	{
-		CurrentStamina -= StaminaCost;
-
-		OnChangedStamina.Broadcast(CurrentStamina / MaxStamina);
-	}
-}
-
-bool UVDBaseStaminaComponent::CanConsumeStamina(float StaminaCost) const
-{
-	return (CurrentStamina - StaminaCost) >= 0.0f;
 }
 
 void UVDBaseStaminaComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 초기 스태미나 비율 브로드캐스트 (0~1)
+	const float StaminaRatio = FMath::Clamp(MaxStamina > 0.f ? CurrentStamina / MaxStamina : 0.f, 0.f, 1.f);
+	OnChangedStamina.Broadcast(StaminaRatio);
+}
+
+void UVDBaseStaminaComponent::ConsumeStamina(float StaminaCost)
+{
+	if (StaminaCost <= 0.f || MaxStamina <= 0.f)
+	{
+		return;
+	}
+
+	const float NewStamina = FMath::Clamp(CurrentStamina - StaminaCost, 0.f, MaxStamina);
+	if (!FMath::IsNearlyEqual(NewStamina, CurrentStamina))
+	{
+		CurrentStamina = NewStamina;
+		const float StaminaRatio = FMath::Clamp(MaxStamina > 0.f ? CurrentStamina / MaxStamina : 0.f, 0.f, 1.f);
+		OnChangedStamina.Broadcast(StaminaRatio);
+	}
 }
 
 void UVDBaseStaminaComponent::SetStaminaRecovery(bool bCanRecover)
@@ -38,13 +43,14 @@ void UVDBaseStaminaComponent::TickComponent(float DeltaTime, ELevelTick TickType
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (bIsStaminaRecovery)
+	if (bIsStaminaRecovery && MaxStamina > 0.f)
 	{
 		if (CurrentStamina < MaxStamina)
 		{
 			CurrentStamina += DeltaTime;
-
-			OnChangedStamina.Broadcast(CurrentStamina/MaxStamina);
+			CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, MaxStamina);
+			const float StaminaRatio = FMath::Clamp(CurrentStamina / MaxStamina, 0.f, 1.f);
+			OnChangedStamina.Broadcast(StaminaRatio);
 		}
 	}
 }

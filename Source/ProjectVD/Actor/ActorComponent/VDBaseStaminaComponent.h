@@ -31,12 +31,12 @@ public:
 	void SetMaxStamina(float NewMaxStamina) { MaxStamina = NewMaxStamina; }
 	void SetCurrentStamina(float NewCurrentStamina) { CurrentStamina = NewCurrentStamina; }
 	void ConsumeStamina(float StaminaCost);
-	bool CanConsumeStamina(float StaminaCost) const;
 	
 	FORCEINLINE float GetCurrentStamina() const { return CurrentStamina; }
 	FORCEINLINE float GetMaxStamina() const { return MaxStamina; }
 	FORCEINLINE bool IsStaminaRecovery() const { return bIsStaminaRecovery; }
 	FORCEINLINE FOnChangedStamina& GetOnChangedStamina() { return OnChangedStamina; }
+	FORCEINLINE bool HasStamina(float NeedStamina ) const { return CurrentStamina > NeedStamina; }
 	
 protected:
 	virtual void BeginPlay() override;

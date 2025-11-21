@@ -229,7 +229,13 @@ void AVDStagePlayerCharacter::Zoom(const FInputActionValue& Value)
 
 void AVDStagePlayerCharacter::JumpBegin(const FInputActionValue& Value)
 {
-	StaminaComponent->ConsumeStamina(20.0f);
+	const float StaminaCost = 20.0f;
+	if (!StaminaComponent->HasStamina(StaminaCost))
+	{
+		return;
+	}
+
+	StaminaComponent->ConsumeStamina(StaminaCost);
 	CurrentAttackComboCount = 0;
 	Super::Jump();
 }
@@ -243,7 +249,14 @@ void AVDStagePlayerCharacter::RollLeft(const FInputActionValue& Value)
 {
 	if (RollLeftAM)
 	{
-		StaminaComponent->ConsumeStamina(20.0f);
+		const float StaminaCost = 20.0f;
+
+		if (!StaminaComponent->HasStamina(StaminaCost))
+		{
+			return;
+		}
+
+		StaminaComponent->ConsumeStamina(StaminaCost);
 		if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
 		{
 			UAI->Montage_Play(RollLeftAM, 1.0f);
@@ -259,7 +272,13 @@ void AVDStagePlayerCharacter::RollRight(const FInputActionValue& Value)
 {
 	if (RollRightAM)
 	{
-		StaminaComponent->ConsumeStamina(20.0f);
+		const float StaminaCost = 20.0f;
+		if (!StaminaComponent->HasStamina(StaminaCost))
+		{
+			return;
+		}
+
+		StaminaComponent->ConsumeStamina(StaminaCost);
 		if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
 		{
 			UAI->Montage_Play(RollRightAM, 1.0f);
@@ -276,7 +295,13 @@ void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 	//Super::DefaultAttack(Value); DESC :: 부모함수 호출하지 않음.
 	if (IsAirAttack())
 	{
-		StaminaComponent->ConsumeStamina(15.0f);
+		const float StaminaCost = 15.0f;
+		if (!StaminaComponent->HasStamina(StaminaCost))
+		{
+			return;
+		}
+
+		StaminaComponent->ConsumeStamina(StaminaCost);
 		bIsNextComboInputOn = false;
 		CurrentAttackComboCount = 0;
 		UE_LOG(LogTemp, Log, TEXT("Air Attack"));

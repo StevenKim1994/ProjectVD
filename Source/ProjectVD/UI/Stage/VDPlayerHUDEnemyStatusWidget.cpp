@@ -34,7 +34,7 @@ void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
 	{
 		if (UVDEnemyStatsBaseComponent* PrevStats = BossActor->GetBaseStatsComponent())
 		{
-			PrevStats->GetOnChangeHealth().RemoveDynamic(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar);
+			PrevStats->GetOnChangeHealth().RemoveAll(this);
 		}
 	}
 
@@ -52,9 +52,8 @@ void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
 
 	if (UVDEnemyStatsBaseComponent* NewStats = BossActor->GetBaseStatsComponent())
 	{
-		// 중복 바인딩 방지
-		NewStats->GetOnChangeHealth().RemoveDynamic(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar);
-		NewStats->GetOnChangeHealth().AddDynamic(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar);
+		NewStats->GetOnChangeHealth().RemoveAll(this);
+		NewStats->GetOnChangeHealth().AddUObject(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar);
 	}
 
 	if (BossNameText)
@@ -65,7 +64,7 @@ void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
 		}
 		else
 		{
-			SetVisibility(ESlateVisibility::Collapsed);
+			SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 
@@ -84,6 +83,10 @@ void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
 						StatsComp->GetMaxHealth())));
 				}
 			}
+			else
+			{
+				SetVisibility(ESlateVisibility::Hidden);
+			}
 		}
 	}
 }
@@ -100,5 +103,13 @@ void UVDPlayerHUDEnemyStatusWidget::NativeConstruct()
 
 void UVDPlayerHUDEnemyStatusWidget::NativeDestruct()
 {
+	// 위젯 파괴 시 바인딩 정리
+	if (BossActor.IsValid())
+	{
+		if (UVDEnemyStatsBaseComponent* Stats = BossActor->GetBaseStatsComponent())
+		{
+			Stats->GetOnChangeHealth().RemoveAll(this);
+		}
+	}
 	Super::NativeDestruct();
 }

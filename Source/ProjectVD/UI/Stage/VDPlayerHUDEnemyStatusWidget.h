@@ -9,6 +9,7 @@
 class UTextBlock;
 class UProgressBar;
 class AVDEnemyCharacterBase;
+class UVDBaseStatsComponent;
 
 UCLASS()
 class PROJECTVD_API UVDPlayerHUDEnemyStatusWidget : public UUserWidget
@@ -29,6 +30,7 @@ private:
 	TWeakObjectPtr<AVDEnemyCharacterBase> BossActor;
 
 	void UpdateBossHealthBar(UVDBaseStatsComponent* BossStats);
+
 public:
 	void SetBossActor(AVDEnemyCharacterBase* Boss);
 	

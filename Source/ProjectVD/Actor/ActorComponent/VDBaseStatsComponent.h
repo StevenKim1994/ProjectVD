@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "VDBaseStatsComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeStateStats, UVDBaseStatsComponent*, Stats);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnChangeStateStats, UVDBaseStatsComponent*);
 
 UCLASS(Abstract , ClassGroup=("Stats"))
 class PROJECTVD_API UVDBaseStatsComponent : public UActorComponent
@@ -23,7 +23,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess ="true"))
 	float MaxHealth;
 
-	UPROPERTY(BlueprintAssignable, Category="Stats")
 	FOnChangeStateStats OnChangeHealth;
 
 	virtual void BeginPlay() override;
