@@ -39,7 +39,6 @@ void UVDHUDStaminaWidget::UpdateStamina(float CurrentStamina)
 			return;
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %f"), CurrentStamina);
 		StaminaProgressBar->SetPercent(CurrentStamina);
 	}
 

@@ -173,6 +173,7 @@ void AVDStagePlayerCharacter::DefaultAttackHit()
 						
 						TakeDamage = HitEnemy->TakeDamage(AttackDamage, DamageEvent, Controller, this);
 
+						// TODO :: 나이아가라 이펙트 별도 월드 서브시스템으로 분리시켜아함
 						UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),  AttackHitEffect, HitResult.ImpactPoint, FRotator::ZeroRotator,FVector::OneVector, true, true,
 							ENCPoolMethod::AutoRelease, true);
 					}
@@ -293,15 +294,16 @@ void AVDStagePlayerCharacter::RollRight(const FInputActionValue& Value)
 void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
 	//Super::DefaultAttack(Value); DESC :: 부모함수 호출하지 않음.
+	
+	const float StaminaCost = 15.0f;
+	if (!StaminaComponent->HasStamina(StaminaCost))
+	{
+		return;
+	}
+	StaminaComponent->ConsumeStamina(StaminaCost);
 	if (IsAirAttack())
 	{
-		const float StaminaCost = 15.0f;
-		if (!StaminaComponent->HasStamina(StaminaCost))
-		{
-			return;
-		}
 
-		StaminaComponent->ConsumeStamina(StaminaCost);
 		bIsNextComboInputOn = false;
 		CurrentAttackComboCount = 0;
 		UE_LOG(LogTemp, Log, TEXT("Air Attack"));
