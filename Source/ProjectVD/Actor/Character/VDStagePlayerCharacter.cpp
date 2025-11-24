@@ -217,14 +217,12 @@ void AVDStagePlayerCharacter::Move(const FInputActionValue& Value)
 
 void AVDStagePlayerCharacter::Look(const FInputActionValue& Value)
 {
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	AddControllerYawInput(-LookAxisVector.X);
-	AddControllerPitchInput(LookAxisVector.Y);
+	Super::Look(Value);
 }
 
 void AVDStagePlayerCharacter::Zoom(const FInputActionValue& Value)
 {
+	Super::Zoom(Value);
 	float ZoomAxis = Value.Get<float>();
 	CameraSpringArmComponent->TargetArmLength = FMath::Clamp(CameraSpringArmComponent->TargetArmLength + ZoomAxis * -20.0f, 200.0f, 600.0f);
 }

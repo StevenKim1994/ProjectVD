@@ -54,7 +54,25 @@ float AVDCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 
 void AVDCharacterBase::Move(const FInputActionValue& Value)
 {
-	// 기본 구현 없음 - 자식 클래스에서 구현
+	FVector2D MovementVector = Value.Get<FVector2D>();
+
+	const FRotator Rotation = Controller->GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(ForwardDirection, MovementVector.X);
+	AddMovementInput(RightDirection, MovementVector.Y);
+}
+
+void AVDCharacterBase::Look(const FInputActionValue& Value)
+{
+
+}
+
+void AVDCharacterBase::Zoom(const FInputActionValue& Value)
+{
 }
 
 void AVDCharacterBase::DefaultAttack(const FInputActionValue& Value)

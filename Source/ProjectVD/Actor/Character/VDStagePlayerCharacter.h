@@ -65,12 +65,6 @@ protected:
 	void Escape(const FInputActionValue& Value);
 
 	UFUNCTION()
-	void Look(const FInputActionValue& Value);
-
-	UFUNCTION()
-	void Zoom(const FInputActionValue& Value);
-
-	UFUNCTION()
 	void JumpBegin(const FInputActionValue& Value);
 
 	UFUNCTION()
@@ -87,6 +81,10 @@ protected:
 
 	UFUNCTION()
 	void DefendCancel(const FInputActionValue& InputActionValue);
+
+	virtual void Look(const FInputActionValue& Value) override;
+
+	virtual void Zoom(const FInputActionValue& Value) override;
 
 	virtual void DefaultAttack(const FInputActionValue& Value) override;
 

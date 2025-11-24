@@ -40,6 +40,12 @@ protected:
 	virtual void Move(const FInputActionValue& Value);
 
 	UFUNCTION()
+	virtual void Look(const FInputActionValue& Value);
+
+	UFUNCTION()
+	virtual void Zoom(const FInputActionValue& Value);
+
+	UFUNCTION()
 	virtual void DefaultAttack(const FInputActionValue& Value);
 
 public:	
