@@ -23,6 +23,6 @@ class PROJECTVD_API IVDPickable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	bool CanBePicked();
-	void OnPicked(AActor* Picker);
+	virtual bool CanBePicked() = 0;
+	virtual void OnPicked(AActor* Picker) = 0;
 };

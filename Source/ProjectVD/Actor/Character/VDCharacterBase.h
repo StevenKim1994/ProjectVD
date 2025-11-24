@@ -12,6 +12,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UVDCharacterStatsBaseComponent;
 class UVDBaseStaminaComponent;
+class AVDItemPropActorBase;
 
 UCLASS(Abstract)
 class PROJECTVD_API AVDCharacterBase : public ACharacter
@@ -51,10 +52,13 @@ protected:
 	UFUNCTION()
 	virtual void DefaultAttack(const FInputActionValue& Value);
 
+	virtual void Tick(float DeltaTime) override;
+
 public:	
 	AVDCharacterBase();
 
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION()
+	virtual void PickItem(AVDItemPropActorBase* Item);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount,struct FDamageEvent const& DamageEvent,class AController* EventInstigator, AActor* DamageCauser) override;
 	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent; }

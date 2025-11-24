@@ -2,6 +2,7 @@
 
 #include "Actor/Character/VDCharacterBase.h"
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
+#include "Actor/ItemProp/VDItemPropActorBase.h"
 #include "Engine/DamageEvents.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
@@ -62,6 +63,15 @@ void AVDCharacterBase::BeginPlay()
 void AVDCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
+{
+	if (nullptr == Item)
+	{
+		return;
+	}
+
 }
 
 void AVDCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

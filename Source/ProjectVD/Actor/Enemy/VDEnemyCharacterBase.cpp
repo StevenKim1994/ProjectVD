@@ -137,6 +137,7 @@ void AVDEnemyCharacterBase::Die()
 	{
 		AICon->StopAI();
 	}
+
 	if (DeathAM)
 	{
 		UCharacterMovementComponent* Movement = GetCharacterMovement();
@@ -152,6 +153,8 @@ void AVDEnemyCharacterBase::Die()
 		}
 	}
 
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	SetActorEnableCollision(false);
 	// TODO :: 죽음처리를 위해 컴포넌트 비활성화 등 추가 작업 필요
 }
 
@@ -185,8 +188,8 @@ void AVDEnemyCharacterBase::HitReact(const FVector& HitPos)
 
 void AVDEnemyCharacterBase::EndDieAM(UAnimMontage* AnimMontage, bool bInterept)
 {
-	// TODO :: 죽음 애니메이션 종료 후 처리 (액터 제거 등)
-	Destroy();
+	FTimerHandle DeathTimerHandle;
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AVDEnemyCharacterBase::K2_DestroyActor, 3.0f, false);
 }
 
 void AVDEnemyCharacterBase::BeginPlay()
