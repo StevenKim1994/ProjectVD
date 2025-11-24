@@ -43,5 +43,8 @@ public:
 	UFUNCTION() 
 	void OnEscape(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void OnInventory(const FInputActionValue& Value);
+
 	FORCEINLINE TObjectPtr<UInputMappingContext> GetCharacterControllerIMC() const { return CharacterControllerIMC; }
 };

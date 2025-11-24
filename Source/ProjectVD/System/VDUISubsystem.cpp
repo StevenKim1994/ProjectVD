@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "System/VDUISubsystem.h"
@@ -220,6 +220,14 @@ void UVDUISubsystem::HideCurrentHUDWidget()
 		{
 			CurrentHUDWidget->SetVisibility(ESlateVisibility::Visible);
 		}
+	}
+}
+
+void UVDUISubsystem::ShowCurrentHUDWidget()
+{
+	if (CurrentHUDWidget)
+	{
+		CurrentHUDWidget->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 

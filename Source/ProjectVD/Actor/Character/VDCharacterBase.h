@@ -52,6 +52,9 @@ protected:
 	UFUNCTION()
 	virtual void DefaultAttack(const FInputActionValue& Value);
 
+	UFUNCTION()
+	virtual void Inventory(const FInputActionValue& Value);
+
 	virtual void Tick(float DeltaTime) override;
 
 public:	

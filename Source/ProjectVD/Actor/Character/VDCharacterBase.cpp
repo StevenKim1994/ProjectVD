@@ -135,3 +135,12 @@ void AVDCharacterBase::DefaultAttack(const FInputActionValue& Value)
 	}
 }
 
+void AVDCharacterBase::Inventory(const FInputActionValue& Value)
+{
+	AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+	if (VDPC)
+	{
+		VDPC->OnInventory(Value);
+	}
+}
+

@@ -7,5 +7,9 @@
 
 void UVDInventorySlotWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
+	if (nullptr == ListItemObject)
+	{
+		return;
+	}
 
 }

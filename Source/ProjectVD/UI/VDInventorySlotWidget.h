@@ -17,9 +17,6 @@ class PROJECTVD_API UVDInventorySlotWidget : public UUserWidget, public IUserObj
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ItemNameText;
-
-	UPROPERTY(meta = (BindWidget))
 	UImage* ItemIconImage;
 
 	UPROPERTY(meta = (BindWidget))

@@ -54,6 +54,7 @@ public:
     void ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoadedDelegate OnLoadedDelegate = nullptr);
 	UUserWidget* ShowUIWidget(const FName& WidgetName);
 	void HideCurrentHUDWidget();
+	void ShowCurrentHUDWidget();
 	void SetCurrentHUDWidget(const FName& HUDWidgetName);
 	void HideUIWidget(const FName& WidgetName);
 
