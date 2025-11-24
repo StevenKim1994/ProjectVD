@@ -24,31 +24,12 @@
 
 AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
 {
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationRoll = false;
-
-	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	Movement->bOrientRotationToMovement = true;
-	Movement->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
-
-	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
-	CameraSpringArmComponent->SetupAttachment(RootComponent);
-	CameraSpringArmComponent->TargetArmLength = 400.0f;
-	CameraSpringArmComponent->bUsePawnControlRotation = true;
-
-	FollowCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCameraComponent->SetupAttachment(CameraSpringArmComponent, USpringArmComponent::SocketName);
-	FollowCameraComponent->bUsePawnControlRotation = false;
-
 	StaminaComponent = CreateDefaultSubobject<UVDBaseStaminaComponent>(TEXT("StaminaComponent"));
 	StaminaComponent->RegisterComponent();
 	StaminaComponent->SetMaxStamina(100.0f);
 	StaminaComponent->SetCurrentStamina(100.0f);
 	StaminaComponent->SetStaminaRecovery(true);
 
-	BaseStatsComponent = CreateDefaultSubobject<UVDCharacterStatsBaseComponent>(TEXT("BaseStatsComponent"));
-	BaseStatsComponent->RegisterComponent();
 	BaseStatsComponent
 		->SetAttackRange(70.0f)
 		->SetAttackSpeed(1.0f)

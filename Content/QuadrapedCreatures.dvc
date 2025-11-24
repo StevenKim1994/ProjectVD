@@ -1,0 +1,6 @@
+outs:
+- md5: 4a4c10cf4c9ca231942127822a34cee4.dir
+  size: 593916080
+  nfiles: 289
+  hash: md5
+  path: QuadrapedCreatures

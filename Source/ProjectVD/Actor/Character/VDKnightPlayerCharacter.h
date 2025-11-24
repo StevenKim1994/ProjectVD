@@ -24,6 +24,7 @@ protected:
 
 	virtual void Move(const FInputActionValue& Value) override;
 	virtual void DefaultAttack(const FInputActionValue& Value) override;
+	virtual void Zoom(const FInputActionValue& Value) override;
 public:
 	AVDKnightPlayerCharacter();
 	virtual void Tick(float DeltaTime) override;

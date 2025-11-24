@@ -1,11 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Actor/Character/VDCharacterBase.h"
+#include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Game/StageLevel/VDStagePlayerController.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Public/VDPhysicInfo.h"
 
 AVDCharacterBase::AVDCharacterBase()
@@ -30,6 +33,25 @@ AVDCharacterBase::AVDCharacterBase()
 	Movement->MaxWalkSpeed = 500.0f;
 	Movement->MinAnalogWalkSpeed = 20.0f;
 	Movement->BrakingDecelerationWalking = 2000.0f;
+	Movement->bOrientRotationToMovement = true;
+	Movement->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+
+
+	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
+	CameraSpringArmComponent->SetupAttachment(RootComponent);
+	CameraSpringArmComponent->TargetArmLength = 400.0f;
+	CameraSpringArmComponent->bUsePawnControlRotation = true;
+
+	FollowCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCameraComponent->SetupAttachment(CameraSpringArmComponent, USpringArmComponent::SocketName);
+	FollowCameraComponent->bUsePawnControlRotation = false;
+
+	BaseStatsComponent = CreateDefaultSubobject<UVDCharacterStatsBaseComponent>(TEXT("BaseStatsComponent"));
+	BaseStatsComponent->RegisterComponent();
 }
 
 void AVDCharacterBase::BeginPlay()
@@ -69,11 +91,16 @@ void AVDCharacterBase::Move(const FInputActionValue& Value)
 
 void AVDCharacterBase::Look(const FInputActionValue& Value)
 {
+	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
+	AddControllerYawInput(-LookAxisVector.X);
+	AddControllerPitchInput(LookAxisVector.Y);
 }
 
 void AVDCharacterBase::Zoom(const FInputActionValue& Value)
 {
+	float ZoomAxis = Value.Get<float>();
+	CameraSpringArmComponent->TargetArmLength = FMath::Clamp(CameraSpringArmComponent->TargetArmLength + ZoomAxis * -20.0f, 200.0f, 600.0f);
 }
 
 void AVDCharacterBase::Escape(const FInputActionValue& Value)

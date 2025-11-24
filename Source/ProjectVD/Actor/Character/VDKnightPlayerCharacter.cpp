@@ -17,25 +17,7 @@
 
 AVDKnightPlayerCharacter::AVDKnightPlayerCharacter()
 {
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
 
-	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	Movement->bOrientRotationToMovement = true;
-	Movement->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
-
-	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
-	CameraSpringArmComponent->SetupAttachment(RootComponent);
-	CameraSpringArmComponent->TargetArmLength = 400.0f;
-	CameraSpringArmComponent->bUsePawnControlRotation = true;
-
-	FollowCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCameraComponent->SetupAttachment(CameraSpringArmComponent, USpringArmComponent::SocketName);
-	FollowCameraComponent->bUsePawnControlRotation = false;
-
-	BaseStatsComponent = CreateDefaultSubobject<UVDCharacterStatsBaseComponent>(TEXT("BaseStatsComponent"));
-	BaseStatsComponent->RegisterComponent();
 }
 
 void AVDKnightPlayerCharacter::BeginPlay()
@@ -46,6 +28,8 @@ void AVDKnightPlayerCharacter::BeginPlay()
 void AVDKnightPlayerCharacter::Look(const FInputActionValue& Value)
 {
 	Super::Look(Value);
+
+	UE_LOG(LogTemp, Warning, TEXT("AVDKnightPlayerCharacter::Look"));
 }
 
 void AVDKnightPlayerCharacter::Move(const FInputActionValue& Value)
@@ -56,6 +40,13 @@ void AVDKnightPlayerCharacter::Move(const FInputActionValue& Value)
 void AVDKnightPlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
 
+}
+
+void AVDKnightPlayerCharacter::Zoom(const FInputActionValue& Value)
+{
+	Super::Zoom(Value);
+
+	UE_LOG(LogTemp, Warning, TEXT("AVDKnightPlayerCharacter::Zoom"));
 }
 
 void AVDKnightPlayerCharacter::Tick(float DeltaTime)
