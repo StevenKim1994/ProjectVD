@@ -184,15 +184,6 @@ void AVDStagePlayerCharacter::DefaultAttackHit()
 	}
 }
 
-void AVDStagePlayerCharacter::Escape(const FInputActionValue& Value)
-{
-	AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
-	if (VDPC)
-	{
-		VDPC->OnEscape(Value);
-	}
-}
-
 void AVDStagePlayerCharacter::Move(const FInputActionValue& Value)
 {
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())

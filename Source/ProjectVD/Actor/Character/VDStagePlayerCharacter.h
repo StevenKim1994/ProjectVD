@@ -62,9 +62,6 @@ protected:
 	TObjectPtr<AVDStagePlayerController> CastPlayerController;
 
 	UFUNCTION()
-	void Escape(const FInputActionValue& Value);
-
-	UFUNCTION()
 	void JumpBegin(const FInputActionValue& Value);
 
 	UFUNCTION()

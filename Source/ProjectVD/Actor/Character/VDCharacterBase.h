@@ -46,6 +46,9 @@ protected:
 	virtual void Zoom(const FInputActionValue& Value);
 
 	UFUNCTION()
+	virtual void Escape(const FInputActionValue& Value);
+
+	UFUNCTION()
 	virtual void DefaultAttack(const FInputActionValue& Value);
 
 public:	

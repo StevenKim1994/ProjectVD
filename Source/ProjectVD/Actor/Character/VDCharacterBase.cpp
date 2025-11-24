@@ -5,6 +5,7 @@
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Game/StageLevel/VDStagePlayerController.h"
 #include "Public/VDPhysicInfo.h"
 
 AVDCharacterBase::AVDCharacterBase()
@@ -73,6 +74,15 @@ void AVDCharacterBase::Look(const FInputActionValue& Value)
 
 void AVDCharacterBase::Zoom(const FInputActionValue& Value)
 {
+}
+
+void AVDCharacterBase::Escape(const FInputActionValue& Value)
+{
+	AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+	if (VDPC)
+	{
+		VDPC->OnEscape(Value);
+	}
 }
 
 void AVDCharacterBase::DefaultAttack(const FInputActionValue& Value)

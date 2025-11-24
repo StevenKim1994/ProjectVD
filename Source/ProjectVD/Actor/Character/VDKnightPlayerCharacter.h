@@ -7,13 +7,16 @@
 #include "Interface/VDAttackable.h"
 #include "VDKnightPlayerCharacter.generated.h"
 
+class AVDStagePlayerController;
+
 UCLASS()
 class PROJECTVD_API AVDKnightPlayerCharacter : public AVDCharacterBase, public IVDAttackable
 {
 	GENERATED_BODY()
 
 private:
-
+	UPROPERTY()
+	TObjectPtr<AVDStagePlayerController> CastPlayerController;
 
 protected:
 	virtual void BeginPlay() override;
