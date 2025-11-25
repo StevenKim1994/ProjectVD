@@ -2,6 +2,9 @@
 
 #include "CoreMinimal.h"
 
+#define VD_INVENTORY_ROW_COUNT 5
+#define VD_INVENTORY_COLUMN_COUNT 5
+
 namespace VDConstants
 {
 #pragma region UI_REGISTRY

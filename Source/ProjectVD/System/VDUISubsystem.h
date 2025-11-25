@@ -49,7 +49,7 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	UUserWidget* GetUIWidget(const FName& WidgetName);
+	UUserWidget* GetUIWidget(const FName& WidgetName,bool isCreate = false);
 	void SetPlayerControllerRootUIWidget(APlayerController* PlayerController);
     void ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoadedDelegate OnLoadedDelegate = nullptr);
 	UUserWidget* ShowUIWidget(const FName& WidgetName);

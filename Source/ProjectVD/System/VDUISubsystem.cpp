@@ -28,7 +28,7 @@ void UVDUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	ModalUIWidgetStack.Empty();
 	ActiveWidgetInstanceMap.Empty();
 
-	RootUIWidget = GetUIWidget(VDConstants::RootUIWidget);
+	RootUIWidget = GetUIWidget(VDConstants::RootUIWidget, true);
 }
 
 void UVDUISubsystem::Deinitialize()
@@ -40,14 +40,20 @@ void UVDUISubsystem::Deinitialize()
 	ResourceSystem = nullptr;
 }
 
-UUserWidget* UVDUISubsystem::GetUIWidget(const FName& WidgetName)
+/// <summary>
+/// 현재 켜져있는 위젯을 반환 만약 isCreate가 true이면 없을경우 새로 생성해서 반환
+/// </summary>
+/// <param name="WidgetName">UMG 위젯 이름</param>
+/// <param name="isCreate">true일시 없으면 꺼져있는 상태를 생성해서 반환</param>
+/// <returns>WidgetName에 해당하는 UMG 인스턴스</returns>
+UUserWidget* UVDUISubsystem::GetUIWidget(const FName& WidgetName, bool isCreate) 
 {
 	UUserWidget* ReturnWidget = nullptr;
 	if (ActiveWidgetInstanceMap.Contains(WidgetName))
 	{
 		ReturnWidget = ActiveWidgetInstanceMap[WidgetName];
 	}
-	else
+	else if(isCreate)
 	{
 		// DESC :: 만약에 위젯이 없으면 새로 생성해서 반환 PlayerController가 없으므로 생성만함.
 

@@ -197,32 +197,29 @@ void AVDStagePlayerController::OnInventory(const FInputActionValue& Value)
 	{
 		if (UISubsystem->GetModalUIWidgetCount() == 0)
 		{
-			UISubsystem->HideCurrentHUDWidget();
-			UISubsystem->ShowUIWidgetAsync(VDConstants::InventoryPanelWidget);
-			bShowMouseCursor = true;
-		}
-		else
-		{
-			if (UUserWidget* InvenWidget = UISubsystem->GetUIWidget(VDConstants::InventoryPanelWidget))
+			if (!UISubsystem->GetUIWidget(VDConstants::InventoryPanelWidget))
 			{
-				if (InvenWidget && InvenWidget->IsInViewport())
-				{
-					UISubsystem->HideUIWidget(VDConstants::InventoryPanelWidget);
-					UISubsystem->ShowCurrentHUDWidget();
-					bShowMouseCursor = false;
-				}
-				else
-				{
-					UISubsystem->HideCurrentHUDWidget();
-					UISubsystem->ShowUIWidgetAsync(VDConstants::InventoryPanelWidget);
-					bShowMouseCursor = true;
-				}
+				UISubsystem->HideCurrentHUDWidget();
+				UISubsystem->ShowUIWidgetAsync(VDConstants::InventoryPanelWidget);
+				bShowMouseCursor = true;
 			}
 			else
 			{
-				UISubsystem->HideUIWidget(VDConstants::InventoryPanelWidget);
-				UISubsystem->ShowCurrentHUDWidget();
-				bShowMouseCursor = false;
+				if (UUserWidget* InvenWidget = UISubsystem->GetUIWidget(VDConstants::InventoryPanelWidget))
+				{
+					if (InvenWidget && InvenWidget->IsInViewport())
+					{
+						UISubsystem->HideUIWidget(VDConstants::InventoryPanelWidget);
+						UISubsystem->ShowCurrentHUDWidget();
+						bShowMouseCursor = false;
+					}
+					else
+					{
+						UISubsystem->HideCurrentHUDWidget();
+						UISubsystem->ShowUIWidgetAsync(VDConstants::InventoryPanelWidget);
+						bShowMouseCursor = true;
+					}
+				}
 			}
 		}
 	}
