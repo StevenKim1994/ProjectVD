@@ -86,7 +86,9 @@ private:
 	void OnChangedMenuStateTweenComplete(bool IsOn); // 트윈 완료시 콜백
 
 protected:
+	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 public:
 	FOnClickExitButtonEvent OnClickExitButtonEvent;

@@ -5,6 +5,11 @@
 #include "Components/ProgressBar.h"
 #include "Actor/ActorComponent/VDBaseStaminaComponent.h"
 
+void UVDHUDStaminaWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+}
+
 void UVDHUDStaminaWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

@@ -9,9 +9,10 @@
 class UVDInventorySlotWidget;
 class UTileView;
 class UTextBlock;
-/**
- * 
- */
+class UButton;
+
+DECLARE_DELEGATE(FOnClickExitButtonEvent);
+
 UCLASS()
 class PROJECTVD_API UVDInventoryPanel : public UUserWidget
 {
@@ -21,9 +22,13 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTileView* InventoryTileView;
 
-protected:
+	UPROPERTY(meta = (BindWidget))
+	UButton* CloseButton;
+
+	UFUNCTION()
+	void OnClickCloseButton();
+
+	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
-
-public:
 };

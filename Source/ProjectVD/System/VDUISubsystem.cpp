@@ -81,7 +81,7 @@ void UVDUISubsystem::SetPlayerControllerRootUIWidget(APlayerController* PlayerCo
 	}
 }
 
-void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoadedDelegate OnLoadedDelegate)
+void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoadedDelegate OnLoadedDelegate, bool bAutoHUDOff)
 {
 	if (!ResourceSystem)
 	{
@@ -111,6 +111,11 @@ void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoade
 			ExistingSlot->SetOffsets(FMargin(0.f));
 			ModalUIWidgetStack.Push(ExistingWidget);
 
+			if (bAutoHUDOff)
+			{
+				HideCurrentHUDWidget();
+			}
+
 			if (OnLoadedDelegate.IsBound())
 			{
 				OnLoadedDelegate.Execute(ExistingWidget);
@@ -122,7 +127,7 @@ void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoade
 	{
 		FOnClassLoaded OnClassLoadedDelegate;
 		OnClassLoadedDelegate.BindLambda(
-			[this, WidgetName, OnLoadedDelegate](UClass* LoadedClass)
+			[this, WidgetName, OnLoadedDelegate, bAutoHUDOff](UClass* LoadedClass)
 			{
 				if (!LoadedClass)
 				{
@@ -145,6 +150,12 @@ void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoade
 						Slot->SetOffsets(FMargin(0.f));
 						ModalUIWidgetStack.Push(Widget);
 					}
+
+					if (bAutoHUDOff)
+					{
+						HideCurrentHUDWidget();
+					}
+
 					if (OnLoadedDelegate.IsBound())
 					{
 						OnLoadedDelegate.Execute(Widget);
@@ -157,7 +168,7 @@ void UVDUISubsystem::ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoade
 	}
 }
 
-UUserWidget* UVDUISubsystem::ShowUIWidget(const FName& WidgetName)
+UUserWidget* UVDUISubsystem::ShowUIWidget(const FName& WidgetName, bool bAutoHUDOff)
 {
 	UUserWidget* Widget = nullptr;
 
@@ -185,6 +196,11 @@ UUserWidget* UVDUISubsystem::ShowUIWidget(const FName& WidgetName)
 			Slot->SetOffsets(FMargin(0.f));
 
 			ModalUIWidgetStack.Push(Widget);
+
+			if (bAutoHUDOff)
+			{
+				HideCurrentHUDWidget();
+			}
 		}
 	}
 	else
@@ -208,6 +224,11 @@ UUserWidget* UVDUISubsystem::ShowUIWidget(const FName& WidgetName)
 
 				ModalUIWidgetStack.Push(Widget);
 			}
+
+			if(bAutoHUDOff)
+			{
+				HideCurrentHUDWidget();
+			}
 		}
 	}
 
@@ -218,14 +239,7 @@ void UVDUISubsystem::HideCurrentHUDWidget()
 {
 	if (CurrentHUDWidget)
 	{
-		if (CurrentHUDWidget->IsVisible())
-		{
-			CurrentHUDWidget->SetVisibility(ESlateVisibility::Hidden);
-		}
-		else
-		{
-			CurrentHUDWidget->SetVisibility(ESlateVisibility::Visible);
-		}
+		CurrentHUDWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -267,7 +281,7 @@ void UVDUISubsystem::SetCurrentHUDWidget(const FName& HUDWidgetName)
 	
 }
 
-void UVDUISubsystem::HideUIWidget(const FName& WidgetName)
+void UVDUISubsystem::HideUIWidget(const FName& WidgetName, bool bAutoHUDOn)
 {
 	if (ActiveWidgetInstanceMap.Contains(WidgetName))
 	{
@@ -278,8 +292,33 @@ void UVDUISubsystem::HideUIWidget(const FName& WidgetName)
 			ModalUIWidgetStack.Remove(Widget);
 		}
 	}
+
+	if (bAutoHUDOn)
+	{
+		if (ModalUIWidgetStack.Num() == 0)
+		{
+			ShowCurrentHUDWidget();
+		}
+	}
 }
 
+void UVDUISubsystem::HideUIWidget(UUserWidget* Widget, bool bAutoHUDOn)
+{
+	if (!Widget) return;
+	Widget->RemoveFromParent();
+	if (ModalUIWidgetStack.Contains(Widget))
+	{
+		ModalUIWidgetStack.Remove(Widget);
+	}
+
+	if (bAutoHUDOn)
+	{
+		if (ModalUIWidgetStack.Num() == 0)
+		{
+			ShowCurrentHUDWidget();
+		}
+	}
+}
 
 TSoftClassPtr<UUserWidget> UVDUISubsystem::GetUIWidgetClassPathByName(const FName& WidgetName)
 {

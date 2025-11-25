@@ -28,7 +28,6 @@ private:
 	TObjectPtr<UInputMappingContext> UIControllerIMC;
 
 	void InitializeInputContext();
-	void ChangeToggleInputContext();
 
 public:
 	AVDStagePlayerController();
@@ -39,6 +38,7 @@ public:
 	void ShowToast(const FString& InTitle, const FString& InMessage);
 	void ShowBossStateBar(AVDEnemyCharacterBase* Boss);
 	void HideBossStateBar();
+	void ChangeToggleInputContext();
 
 	UFUNCTION() 
 	void OnEscape(const FInputActionValue& Value);

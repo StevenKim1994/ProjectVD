@@ -30,5 +30,4 @@ void UVDInventorySlotWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 		ItemQuantityText->SetVisibility(ESlateVisibility::Visible);
 		// TODO :: 실제 아이템 존재하는 슬롯
 	}
-
 }

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UI/Title/VDTitlePanelUserWidget.h"
 #include "Game/VDGameInstance.h"
@@ -149,9 +149,9 @@ void UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete(bool isOn)
 	OptionsParentBox->SetVisibility(isOn ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 }
 
-void UVDTitlePanelUserWidget::NativeConstruct()
+void UVDTitlePanelUserWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 
 	if (ButtonsParentBox)
 	{
@@ -196,12 +196,12 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 		ExitButton->OnClicked.AddDynamic(this, &UVDTitlePanelUserWidget::OnClickExitButton);
 	}
 
-	if(OptionsParentBox)
+	if (OptionsParentBox)
 	{
 		OptionsParentBox->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
-	if(OptionsBackButton)
+	if (OptionsBackButton)
 	{
 		OptionsBackButton->OnClicked.AddDynamic(this, &UVDTitlePanelUserWidget::OnClickOptionsBackButton);
 	}
@@ -216,6 +216,17 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 		TitleMovieMuteToggle->OnCheckStateChanged.AddDynamic(this, &UVDTitlePanelUserWidget::OnToggleTitleMovieMute);
 		TitleMovieMuteToggle->SetCheckedState(ECheckBoxState::Unchecked);
 	}
+}
+
+void UVDTitlePanelUserWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+}
+
+void UVDTitlePanelUserWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
 }
 
 void UVDTitlePanelUserWidget::SetToggleBackgroundSound(bool IsOn)

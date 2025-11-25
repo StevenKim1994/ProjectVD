@@ -112,11 +112,15 @@ void AVDStagePlayerController::ChangeToggleInputContext()
 		{
 			Subsystem->RemoveMappingContext(CharacterControllerIMC);
 			Subsystem->AddMappingContext(UIControllerIMC, 0);
+			bShowMouseCursor = false;
+			return;
 		}
-		else // DESC :: 현재 UI 인풋컨텍스트일떄
+		else if(Subsystem->HasMappingContext(UIControllerIMC))// DESC :: 현재 UI 인풋컨텍스트일떄
 		{
 			Subsystem->RemoveMappingContext(UIControllerIMC);
 			Subsystem->AddMappingContext(CharacterControllerIMC, 0);
+			bShowMouseCursor = true;
+			return;
 		}
 	}
 }
@@ -137,7 +141,6 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 			}
 			else
 			{
-				UISubsystem->HideCurrentHUDWidget();
 				ChangeToggleInputContext();
 				UGameplayStatics::SetGamePaused(this, true);
 
@@ -159,7 +162,7 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 
 												UGameplayStatics::SetGamePaused(this, false);
 												ChangeToggleInputContext();
-												UISubsystemInner->HideCurrentHUDWidget();
+												UISubsystemInner->ShowCurrentHUDWidget();
 											}
 										}
 										else if (ClickedButton == PauseMenuButtonEnum::Options)
@@ -172,6 +175,7 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 											UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
 											if (GI)
 											{
+												GI->GetSubsystem<UVDUISubsystem>()->AllModalUIWidgetClear();
 												if (UVDLevelSystem* LevelSystem = GI->GetSubsystem<UVDLevelSystem>())
 												{
 													LevelSystem->ChangeLevelByName("Title");
@@ -198,7 +202,6 @@ void AVDStagePlayerController::OnInventory(const FInputActionValue& Value)
 	{
 		if (UISubsystem->IsModalUIWidgetStackEmpty())
 		{
-			UISubsystem->HideCurrentHUDWidget();
 			UISubsystem->ShowUIWidgetAsync(VDConstants::InventoryPanelWidget);
 			ChangeToggleInputContext();
 			bShowMouseCursor = true;
@@ -210,7 +213,6 @@ void AVDStagePlayerController::OnInventory(const FInputActionValue& Value)
 				if (InvenWidget)
 				{
 					UISubsystem->HideUIWidget(VDConstants::InventoryPanelWidget);
-					UISubsystem->ShowCurrentHUDWidget();
 					ChangeToggleInputContext();
 					bShowMouseCursor = false;
 				}

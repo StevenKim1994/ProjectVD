@@ -51,12 +51,13 @@ public:
 
 	UUserWidget* GetUIWidget(const FName& WidgetName,bool isCreate = false);
 	void SetPlayerControllerRootUIWidget(APlayerController* PlayerController);
-    void ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoadedDelegate OnLoadedDelegate = nullptr);
-	UUserWidget* ShowUIWidget(const FName& WidgetName);
+    void ShowUIWidgetAsync(const FName& WidgetName, FOnUIWidgetLoadedDelegate OnLoadedDelegate = nullptr, bool bAutoHUDOff = true);
+	UUserWidget* ShowUIWidget(const FName& WidgetName, bool bAutoHUDOff = true);
 	void HideCurrentHUDWidget();
 	void ShowCurrentHUDWidget();
 	void SetCurrentHUDWidget(const FName& HUDWidgetName);
-	void HideUIWidget(const FName& WidgetName);
+	void HideUIWidget(const FName& WidgetName, bool bAutoHUDOn = true);
+	void HideUIWidget(UUserWidget* Widget, bool bAutoHUDOn = true);
 
 	void PopModalUIWidget();
 	void AllModalUIWidgetClear();
