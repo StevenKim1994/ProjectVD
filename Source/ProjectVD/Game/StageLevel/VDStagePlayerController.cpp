@@ -45,14 +45,6 @@ void AVDStagePlayerController::SetupInputComponent()
 	InitializeInputContext();
 }
 
-void AVDStagePlayerController::ShowToast(const FString& InTitle, const FString& InMessage)
-{
-	if (HUDWidget)
-	{
-		HUDWidget->ShowToast(InTitle, InMessage);
-	}
-}
-
 void AVDStagePlayerController::InitializeInputContext()
 {
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);

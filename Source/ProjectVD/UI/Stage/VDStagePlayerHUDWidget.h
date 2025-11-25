@@ -22,9 +22,6 @@ private:
 	UPROPERTY(meta =(BindWidget))
 	TObjectPtr<UVDPlayerHUDEnemyStatusWidget> BossState;
 
-	UPROPERTY(meta =(BindWidget))
-	TObjectPtr<UVDStagePlayerHUDToastWidget> Toast;
-
 	UPROPERTY(meta = (BineWidget))
 	TObjectPtr<UVDPlayerHUDStateWidget> State;
 
@@ -38,7 +35,6 @@ private:
 	void InitializeWidget();
 
 public:
-	void ShowToast(const FString& InTitle, const FString& InMessage);
 	void ShowBossStatus(AVDEnemyCharacterBase* Boss);
 	void SetCharacter(AVDCharacterBase* Character);
 	void HideBossStatus();

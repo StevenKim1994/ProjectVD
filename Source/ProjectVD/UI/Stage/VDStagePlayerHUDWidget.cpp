@@ -2,7 +2,6 @@
 
 
 #include "UI/Stage/VDStagePlayerHUDWidget.h"
-#include "UI/Stage/VDStagePlayerHUDToastWidget.h"
 #include "UI/Stage/VDPlayerHUDEnemyStatusWidget.h"
 #include "UI/Stage/VDPlayerHUDStateWidget.h"
 #include "UI/Stage/VDHUDStaminaWidget.h"
@@ -31,14 +30,6 @@ void UVDStagePlayerHUDWidget::InitializeWidget()
 	if(BossState)
 	{
 		BossState->SetVisibility(ESlateVisibility::Collapsed);
-	}
-}
-
-void UVDStagePlayerHUDWidget::ShowToast(const FString& InTitle, const FString& InMessage)
-{
-	if (Toast)
-	{
-		Toast->ShowToast(InTitle, InMessage);
 	}
 }
 

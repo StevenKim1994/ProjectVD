@@ -35,7 +35,6 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
-	void ShowToast(const FString& InTitle, const FString& InMessage);
 	void ShowBossStateBar(AVDEnemyCharacterBase* Boss);
 	void HideBossStateBar();
 	void ChangeToggleInputContext();
