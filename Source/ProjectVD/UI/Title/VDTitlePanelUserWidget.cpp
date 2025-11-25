@@ -8,6 +8,9 @@
 #include "Containers/Ticker.h"        
 #include "Components/CanvasPanelSlot.h" 
 #include "Components/Image.h"
+#include "Animation/WidgetAnimation.h"
+#include "Animation/WidgetAnimationEvents.h"
+#include "Animation/UMGSequencePlayer.h"
 #include "MediaTexture.h"
 #include "Styling/SlateBrush.h"
 
@@ -73,75 +76,31 @@ void UVDTitlePanelUserWidget::SetBackgroundMediaTexture(UMediaTexture* Texture)
 
 void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 {
-	FIntPoint ScreenSize = GEngine->GameViewport->Viewport->GetSizeXY();
-	const FVector2D StartTranslation(ScreenSize.X, 0.f);
-	const FVector2D FinalTranslation(0.f, 0.f);
-	const float Duration = TitleButtonSlideDuration;
-	FVector2D TargetPosition;
-	FVector2D CurrentPosition;
-
+	FWidgetAnimationHandle PlayerHandle;
 	if (IsOn)
 	{
-		TargetPosition = FinalTranslation;
-		CurrentPosition = StartTranslation;
+		PlayAnimationReverse(MenuTween);
+		PlayerHandle = PlayAnimation(OptionTween);
 	}
 	else
 	{
-		TargetPosition = StartTranslation;
-		CurrentPosition = FinalTranslation;
+		PlayAnimationReverse(OptionTween);
+		PlayerHandle = PlayAnimation(MenuTween);
 	}
-	
-	ButtonsParentBox->SetRenderTranslation(CurrentPosition);
 
-	struct FTweenState
+	if (FWidgetAnimationState* State = PlayerHandle.GetAnimationState())
 	{
-		TWeakObjectPtr<UVerticalBox> InBox;
-		TWeakObjectPtr<UVerticalBox> OutBox;
-		TWeakObjectPtr<UVDTitlePanelUserWidget> Widget;
-		FVector2D From, To;
-		float Duration = 0.f;
-		float Elapsed = 0.f;
-		bool bIsOn = false;
-	};
-
-	TSharedRef<FTweenState, ESPMode::ThreadSafe> State = MakeShared<FTweenState, ESPMode::ThreadSafe>();
-	State->InBox = ButtonsParentBox;
-	State->OutBox = OptionsParentBox;
-	State->Widget = this;
-	State->From = CurrentPosition;
-	State->To = TargetPosition;
-	State->Duration = FMath::Max(0.f, TitleButtonSlideDuration);
-	State->bIsOn = IsOn;
-
-	// TODO :: 이거 굳이 트윈으로 안하고 UMG Anim으로 변경하기
-	FTSTicker::GetCoreTicker().AddTicker(
-		FTickerDelegate::CreateLambda([State](float DeltaTime)
+		TWeakObjectPtr<UVDTitlePanelUserWidget> WeakThis(this);
+		/*
+		State->GetOnWidgetAnimationFinished().AddLambda([WeakThis]()
 			{
-				if (!State->InBox.IsValid() || !State->Widget.IsValid())
+				if (WeakThis.IsValid())
 				{
-					return false;
+					WeakThis->OnChangedMenuStateTweenComplete(WeakThis->bIsMainMenuButtonToggledOn);
 				}
-
-				State->Elapsed += DeltaTime;
-				const float Alpha = (State->Duration > 0.f) ? FMath::Clamp(State->Elapsed / State->Duration, 0.f, 1.f) : 1.f;
-				const float EaseExp = 2.0f;
-				const float EasedAlpha = FMath::InterpEaseInOut(0.f, 1.f, Alpha, EaseExp);
-
-				const FVector2D NewT = FMath::Lerp(State->From, State->To, EasedAlpha);
-				State->InBox->SetRenderTranslation(NewT);
-
-				if (Alpha >= 1.f)
-				{
-					State->Widget->OnChangedMenuStateTweenComplete(State->bIsOn);
-					return false;
-				}
-				else
-				{
-					return true;
-				}
-			}),
-		0.0f
-	);
+			});
+		*/
+	}
 }
 
 void UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete(bool isOn)
@@ -156,8 +115,8 @@ void UVDTitlePanelUserWidget::NativeOnInitialized()
 
 	if (ButtonsParentBox)
 	{
-		bIsMainMenuButtonToggledOn = true;
-		OnMainButtonToggle(bIsMainMenuButtonToggledOn);
+		bIsMainMenuButtonToggledOn = false;
+		//OnMainButtonToggle(bIsMainMenuButtonToggledOn);
 	}
 
 	if (GameTitleName)
@@ -223,6 +182,10 @@ void UVDTitlePanelUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	OptionsParentBox->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonsParentBox->SetVisibility(ESlateVisibility::Visible);
+
+	PlayAnimation(MenuTween);
 }
 
 void UVDTitlePanelUserWidget::NativeDestruct()

@@ -24,7 +24,7 @@ void AVDTitleController::BeginPlay()
 
 	if (TitleBackgroundMediaPlayer)
 	{
-		TitleBackgroundMediaPlayer->OpenSource(TitleBackgroundMediaSource);
+		//TitleBackgroundMediaPlayer->OpenSource(TitleBackgroundMediaSource);
 
 		UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
 
@@ -44,8 +44,8 @@ void AVDTitleController::BeginPlay()
 							TitlePanelUserWidget = Cast<UVDTitlePanelUserWidget>(Widget);
 							if (TitlePanelUserWidget.IsValid())
 							{
-								TitlePanelUserWidget->SetBackgroundMediaTexture(TitleBackgroundMediaTexture);
-								TitleBackgroundMediaSoundComponent->SetMediaPlayer(TitleBackgroundMediaPlayer);
+								//TitlePanelUserWidget->SetBackgroundMediaTexture(TitleBackgroundMediaTexture);
+								//TitleBackgroundMediaSoundComponent->SetMediaPlayer(TitleBackgroundMediaPlayer);
 								TitlePanelUserWidget->OnToggleTitleMovieMuteEvent.BindUObject(this, &AVDTitleController::SetTitleMovieSoundMute);
 							}
 						}

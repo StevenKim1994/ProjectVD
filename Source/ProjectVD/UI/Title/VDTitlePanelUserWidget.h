@@ -16,6 +16,7 @@
 
 class UMediaPlayer;
 class UMediaTexture;
+class UWidgetAnimation;
 
 DECLARE_DELEGATE(FOnClickExitButtonEvent);
 DECLARE_DELEGATE_OneParam(FOnToggleTitleMovieMuteEvent, bool);
@@ -30,37 +31,43 @@ private:
 
 	// UISection
 	UPROPERTY(meta = (BindWidget))
-	UVerticalBox* OptionsParentBox;
+	TObjectPtr<UVerticalBox> OptionsParentBox;
 
 	UPROPERTY(meta = (BindWidget))
-	UVerticalBox* ButtonsParentBox;
+	TObjectPtr<UVerticalBox> ButtonsParentBox;
 
 	UPROPERTY(meta = (BindWidget))	
-	UTextBlock* GameTitleName;
+	TObjectPtr<UTextBlock> GameTitleName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
-	UCheckBox* TitleMovieMuteToggle;
+	TObjectPtr<UCheckBox> TitleMovieMuteToggle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Title", meta = (AllowPrivateAccess = "true", ClampMin = "0.0", UIMin = "0.0"))
 	float TitleButtonSlideDuration = 2.5f;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* OptionsBackButton;
-
-	UPROPERTY(meta = (BindWidget))// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
-	UButton* StartButton;
-
-	UPROPERTY(meta = (BindWidget)) // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
-	UButton* OptionButton;
-
-	UPROPERTY( meta = (BindWidget)) // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
-	UButton* ExitButton;
+	TObjectPtr<UButton> OptionsBackButton;
 
 	UPROPERTY(meta = (BindWidget))
-	UImage* MediaPlayerImage;
+	TObjectPtr<UButton> StartButton;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> OptionButton;
+
+	UPROPERTY( meta = (BindWidget)) // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buttons", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UButton> ExitButton;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> MediaPlayerImage;
 
 	UPROPERTY()
-	UMediaTexture* MediaTexture;
+	TObjectPtr<UMediaTexture> MediaTexture;
+
+	UPROPERTY(Transient, Meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> MenuTween;
+
+	UPROPERTY(Transient, Meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> OptionTween;
 
 	UFUNCTION()
 	void OnClickStartButton();
