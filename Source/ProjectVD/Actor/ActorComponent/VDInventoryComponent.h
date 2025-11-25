@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "VDInventoryComponent.generated.h"
 
+class UVDInventoryItem;
+class AVDItemPropActorBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTVD_API UVDInventoryComponent : public UActorComponent
@@ -13,16 +15,17 @@ class PROJECTVD_API UVDInventoryComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UVDInventoryComponent();
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+public:
+
+	UFUNCTION()
+	bool IsInventoryFull() const;
 		
+	UFUNCTION()
+	bool AddItemToInventory(AVDItemPropActorBase* Item);
 };

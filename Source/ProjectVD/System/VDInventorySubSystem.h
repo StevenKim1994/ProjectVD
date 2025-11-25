@@ -28,6 +28,7 @@ public:
 	void RemoveInventoryItemBySlot(int32 Slot);
 	void ClearInventory();
 	void AddInventoryItem(const UVDInventoryInfo& Item);
+	bool IsInventoryFull() const;
 	FORCEINLINE const UVDInventoryInfo* GetInventoryItemBySlot(int32 Slot) const { return InventoryMap.Find(Slot)->Get(); }
 	FORCEINLINE const TMap<int32, TObjectPtr<UVDInventoryInfo>>& GetInventoryMap() const { return InventoryMap; };
 };

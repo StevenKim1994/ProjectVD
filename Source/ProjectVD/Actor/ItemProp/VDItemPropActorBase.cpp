@@ -93,15 +93,19 @@ void AVDItemPropActorBase::OnPicked(AActor* Picker)
 
 	if (AVDCharacterBase* Character = Cast<AVDCharacterBase>(Picker))
 	{
-		Character->PickItem(this);
-
-		if (PickedEffectComp)
+		if (Character->PickItem(this))
 		{
-			PickedEffectComp->Activate();
+			if (PickedEffectComp)
+			{
+				PickedEffectComp->Activate();
+			}
+			
+			MeshComp->SetHiddenInGame(true);
 		}
-		
-		MeshComp->SetHiddenInGame(true);
-	
+		else
+		{
+			// TODO :: 인벤토리 꽉참 토스트 처리
+		}
 	}
 }
 

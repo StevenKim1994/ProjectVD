@@ -68,12 +68,14 @@ void AVDCharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
+bool AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
 {
 	if (nullptr == InventoryComponent)
 	{
-		return;
+		return false;
 	}
+
+	return InventoryComponent->AddItemToInventory(Item);
 }
 
 void AVDCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

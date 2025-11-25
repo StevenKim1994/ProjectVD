@@ -80,3 +80,8 @@ void UVDInventorySubSystem::AddInventoryItem(const UVDInventoryInfo& Item)
 		UE_LOG(LogTemp, Warning, TEXT("Not enough space to add all items. Remaining quantity: %d"), NewItem->GetQuantity());
 	}
 }
+
+bool UVDInventorySubSystem::IsInventoryFull() const
+{
+	return false;
+}

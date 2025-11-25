@@ -65,7 +65,7 @@ public:
 	AVDCharacterBase();
 
 	UFUNCTION()
-	virtual void PickItem(AVDItemPropActorBase* Item);
+	virtual bool PickItem(AVDItemPropActorBase* Item);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount,struct FDamageEvent const& DamageEvent,class AController* EventInstigator, AActor* DamageCauser) override;
 	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent; }

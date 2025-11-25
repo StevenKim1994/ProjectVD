@@ -2,6 +2,7 @@
 
 
 #include "Actor/ActorComponent/VDInventoryComponent.h"
+#include "System/VDInventorySubSystem.h"
 
 // Sets default values for this component's properties
 UVDInventoryComponent::UVDInventoryComponent()
@@ -30,5 +31,34 @@ void UVDInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+bool UVDInventoryComponent::IsInventoryFull() const
+{
+	UVDInventorySubSystem* InventorySubSystem =	GetOwner()->GetGameInstance()->GetSubsystem<UVDInventorySubSystem>();
+
+	if (InventorySubSystem == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UVDInventoryComponent::IsInventoryFull() InventorySubSystem is nullptr"));
+		return false;
+	}
+
+	bool bResult = InventorySubSystem->IsInventoryFull();
+
+	return bResult;
+}
+
+bool UVDInventoryComponent::AddItemToInventory(AVDItemPropActorBase* Item)
+{
+	UVDInventorySubSystem* InventorySubSystem = GetOwner()->GetGameInstance()->GetSubsystem<UVDInventorySubSystem>();
+
+	if (InventorySubSystem == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UVDInventoryComponent::IsInventoryFull() InventorySubSystem is nullptr"));
+		return false;
+	}
+
+	// TODO :: 인벤토리 추가할 수 있는 아이템은 추가하고 결과를 return 하도록 수정 필요
+	return true;
 }
 
