@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+
 #include "VDInventoryPanel.generated.h"
 
 class UVDInventorySlotWidget;
 class UTileView;
 class UTextBlock;
 class UButton;
+class UWidgetAnimation;
+class UVDInventoryLeftItemDetailSection;
 
 DECLARE_DELEGATE(FOnClickExitButtonEvent);
 
@@ -20,13 +23,25 @@ class PROJECTVD_API UVDInventoryPanel : public UUserWidget
 	
 private:
 	UPROPERTY(meta = (BindWidget))
-	UTileView* InventoryTileView;
+	TObjectPtr<UTileView> InventoryTileView;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* CloseButton;
+	TObjectPtr<UVDInventoryLeftItemDetailSection> ItemDetailSection;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> CloseButton;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> RightAnim;
+
+	UPROPERTY(Transient,meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> LeftAnim;
 
 	UFUNCTION()
 	void OnClickCloseButton();
+
+	UFUNCTION()
+	void OnInventoryItemHoveredChanged(UObject* Item, bool bIsHovered);
 
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;

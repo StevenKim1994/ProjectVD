@@ -9,7 +9,7 @@
 #include "Public/VDConstrants.h"
 #include "UI/Stage/VDStagePlayerHUDWidget.h"
 #include "UI/Stage/VDStagePauseWidget.h"
-#include "UI/VDInventoryPanel.h"
+#include "UI/Stage/Inventory/VDInventoryPanel.h"
 #include "Game/VDGameInstance.h"
 #include "System/VDLevelSystem.h"
 #include "Kismet/GameplayStatics.h"

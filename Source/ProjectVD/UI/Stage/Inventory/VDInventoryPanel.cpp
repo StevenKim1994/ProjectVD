@@ -1,9 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/VDInventoryPanel.h"
+#include "UI/Stage/Inventory/VDInventoryPanel.h"
+#include "UI/Stage/Inventory/VDInventoryLeftItemDetailSection.h"
 #include "Components/TileView.h"
 #include "Components/Button.h"
+#include "Components/Border.h"
+#include "Animation/WidgetAnimation.h"
 #include "System/VDInventorySubSystem.h"
 #include "System/VDUISubsystem.h"
 #include "Game/StageLevel/VDStagePlayerController.h"
@@ -24,12 +27,25 @@ void UVDInventoryPanel::NativeOnInitialized()
 		{
 			InventoryTileView->AddItem(Pair.Value);
 		}
+
+		InventoryTileView->OnItemIsHoveredChanged().AddUObject(this, &UVDInventoryPanel::OnInventoryItemHoveredChanged);
 	}
 }
 
 void UVDInventoryPanel::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	if (InventoryTileView)
+	{
+		float TileViewWidth = InventoryTileView->GetCachedGeometry().GetLocalSize().X;
+		InventoryTileView->SetEntryWidth(125);
+		InventoryTileView->SetEntryHeight(InventoryTileView->GetEntryWidth()); 
+	}
+
+	ItemDetailSection->SetVisibility(ESlateVisibility::Collapsed);
+	PlayAnimation(RightAnim);
+
 }
 
 void UVDInventoryPanel::NativeDestruct()
@@ -47,6 +63,33 @@ void UVDInventoryPanel::OnClickCloseButton()
 		{
 			Controller->ChangeToggleInputContext();
 			GI->GetSubsystem<UVDUISubsystem>()->HideUIWidget(this);
+		}
+	}
+}
+
+void UVDInventoryPanel::OnInventoryItemHoveredChanged(UObject* Item, bool bIsHovered)
+{
+	if (Item)
+	{
+		UVDInventoryInfo* InventoryInfo = Cast<UVDInventoryInfo>(Item);
+		if (InventoryInfo)
+		{
+			if (InventoryInfo->GetIsEmpty()) // DESC :: 빈 슬롯일 경우
+			{
+				ItemDetailSection->SetVisibility(ESlateVisibility::Collapsed);
+				return;
+			}
+
+			if (bIsHovered)
+			{
+				ItemDetailSection->SetVisibility(ESlateVisibility::Visible);
+				PlayAnimation(LeftAnim);
+			}
+			else
+			{
+				ItemDetailSection->SetVisibility(ESlateVisibility::Collapsed);
+				//PlayAnimation(LeftAnim, LeftAnim->GetEndTime(), 1, EUMGSequencePlayMode::Reverse);
+			}
 		}
 	}
 }

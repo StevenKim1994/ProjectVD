@@ -113,6 +113,7 @@ void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 	State->Duration = FMath::Max(0.f, TitleButtonSlideDuration);
 	State->bIsOn = IsOn;
 
+	// TODO :: 이거 굳이 트윈으로 안하고 UMG Anim으로 변경하기
 	FTSTicker::GetCoreTicker().AddTicker(
 		FTickerDelegate::CreateLambda([State](float DeltaTime)
 			{
