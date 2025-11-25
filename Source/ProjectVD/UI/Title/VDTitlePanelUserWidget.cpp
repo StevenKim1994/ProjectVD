@@ -36,7 +36,8 @@ void UVDTitlePanelUserWidget::OnClickOptionButton()
 {
 	if (ButtonsParentBox)
 	{
-		bIsMainMenuButtonToggledOn = !bIsMainMenuButtonToggledOn;
+		bIsMainMenuButtonToggledOn = false;
+		OptionsParentBox->SetVisibility(ESlateVisibility::Visible);
 		OnMainButtonToggle(bIsMainMenuButtonToggledOn);
 	}
 	else
@@ -57,8 +58,10 @@ void UVDTitlePanelUserWidget::OnClickOptionsBackButton()
 {
 	if (OptionsParentBox)
 	{
-		bIsMainMenuButtonToggledOn = !bIsMainMenuButtonToggledOn;
+		bIsMainMenuButtonToggledOn = true;
+		ButtonsParentBox->SetVisibility(ESlateVisibility::Visible);
 		OnMainButtonToggle(bIsMainMenuButtonToggledOn);
+
 	}
 }
 
@@ -84,38 +87,32 @@ void UVDTitlePanelUserWidget::SetBackgroundMediaTexture(UMediaTexture* Texture)
 
 void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 {
-	FWidgetAnimationHandle PlayerHandle;
 	if (IsOn)
 	{
-		PlayAnimationReverse(MenuTween);
-		PlayerHandle = PlayAnimation(OptionTween);
+		PlayAnimationReverse(OptionTween);
+		PlayAnimation(MenuTween);
 	}
 	else
 	{
-		PlayAnimationReverse(OptionTween);
-		PlayerHandle = PlayAnimation(MenuTween);
-	}
-
-	if (FWidgetAnimationState* State = PlayerHandle.GetAnimationState())
-	{
-		TWeakObjectPtr<UVDTitlePanelUserWidget> WeakThis(this);
-		const bool bCachedIsOn = IsOn;
-		State->GetOnWidgetAnimationFinished().Clear();
-		//State->GetOnWidgetAnimationFinished().AddDynamic(this, &UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete);
+		PlayAnimationReverse(MenuTween);
+		PlayAnimation(OptionTween);
 	}
 }
 
 void UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete()
 {
 	ButtonsParentBox->SetVisibility(bIsMainMenuButtonToggledOn ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
-	OptionsParentBox->SetVisibility(bIsMainMenuButtonToggledOn? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+	OptionsParentBox->SetVisibility(bIsMainMenuButtonToggledOn ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 }
 
 void UVDTitlePanelUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	bIsMainMenuButtonToggledOn = false;
+	FWidgetAnimationDynamicEvent EndDelegate;
+	EndDelegate.BindDynamic(this, &UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete);
+	BindToAnimationFinished(MenuTween, EndDelegate);
+	BindToAnimationFinished(OptionTween, EndDelegate);
+	bIsMainMenuButtonToggledOn = true;
 
 	if (GameTitleName)
 	{

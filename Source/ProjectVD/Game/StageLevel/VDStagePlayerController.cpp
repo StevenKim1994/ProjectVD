@@ -196,8 +196,6 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 
 void AVDStagePlayerController::OnInventory(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AVDStagePlayerController::OnInventory Called"));
-	
 	if (UVDUISubsystem* UISubsystem = GetGameInstance()->GetSubsystem<UVDUISubsystem>())
 	{
 		if (UISubsystem->IsModalUIWidgetStackEmpty())
@@ -219,8 +217,6 @@ void AVDStagePlayerController::OnInventory(const FInputActionValue& Value)
 			}
 		}
 	}
-	// TODO :: 열리면 IMC를 UI로 변경하고, 닫히면 다시 캐릭터로 변경하는 로직 추가
-	// TODO :: UI 오픈 로직 추가 후 다시 IMC UI에서 I  누르면 닫히도록 변경
 }
 
 void AVDStagePlayerController::ShowBossStateBar(AVDEnemyCharacterBase* Boss)
