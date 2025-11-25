@@ -5,17 +5,19 @@
 #include "Components/TileView.h"
 #include "System/VDInventorySubSystem.h"
 #include "Object/VDInventoryInfo.h"
+#include "Public/VDConstrants.h"
 void UVDInventoryPanel::NativeConstruct()
 {
 	Super::NativeConstruct();
 
- 	/*
-	TMap<int32, FInventoryItem> InventoryMap = GetGameInstance()->GetSubsystem<UVDInventorySubSystem>()->GetInventoryMap();
-	for (auto& Pair : InventoryMap)
+	if (InventoryTileView)
 	{
-	//	InventoryTileView->AddItem(MakeShared<FInventoryItem>(Pair.Value));
+		auto& InventoryMap = GetGameInstance()->GetSubsystem<UVDInventorySubSystem>()->GetInventoryMap();
+		for (auto& Pair : InventoryMap)
+		{
+			InventoryTileView->AddItem(Pair.Value);
+		}
 	}
-	*/
 }
 
 void UVDInventoryPanel::NativeDestruct()

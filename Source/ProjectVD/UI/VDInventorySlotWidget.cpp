@@ -13,14 +13,13 @@ void UVDInventorySlotWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 		return;
 	}
 
-	/*
-	const FInventoryItem* InventoryItem = Cast<FInventoryItem>(ListItemObject);
+	const UVDInventoryInfo* InventoryItem = Cast<UVDInventoryInfo>(ListItemObject);
 	if (nullptr == InventoryItem)
 	{
 		return;
 	}
 
-	if (InventoryItem->IsEmpty)
+	if (InventoryItem->GetIsEmpty())
 	{
 		ItemIconImage->SetVisibility(ESlateVisibility::Collapsed);
 		ItemQuantityText->SetVisibility(ESlateVisibility::Collapsed);
@@ -31,6 +30,5 @@ void UVDInventorySlotWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 		ItemQuantityText->SetVisibility(ESlateVisibility::Visible);
 		// TODO :: 실제 아이템 존재하는 슬롯
 	}
-	*/
 
 }

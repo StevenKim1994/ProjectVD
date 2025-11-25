@@ -8,7 +8,7 @@
 #include "VDInventorySubSystem.generated.h"
 
 UCLASS()
-class PROJECTVD_API UVDInventorySubSystem : public USubsystem
+class PROJECTVD_API UVDInventorySubSystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 

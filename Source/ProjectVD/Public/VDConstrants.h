@@ -2,8 +2,8 @@
 
 #include "CoreMinimal.h"
 
-#define VD_INVENTORY_ROW_COUNT 5
-#define VD_INVENTORY_COLUMN_COUNT 5
+#define VD_INVENTORY_ROW_COUNT 10
+#define VD_INVENTORY_COLUMN_COUNT 9
 
 namespace VDConstants
 {

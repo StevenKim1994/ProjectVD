@@ -61,7 +61,20 @@ public:
 	void PopModalUIWidget();
 	void AllModalUIWidgetClear();
 
-	FORCEINLINE TSoftClassPtr<UUserWidget> GetUIWidgetClassPathByName(const FName& WidgetName);
+	TSoftClassPtr<UUserWidget> GetUIWidgetClassPathByName(const FName& WidgetName);
+
+	FORCEINLINE bool IsModalUIWidgetStackEmpty() const { return ModalUIWidgetStack.Num() == 0; }
 	FORCEINLINE int GetModalUIWidgetCount() const { return ModalUIWidgetStack.Num(); }
 	FORCEINLINE UUserWidget* GetCurrentHUDWidget() const { return CurrentHUDWidget; }
+	FORCEINLINE UUserWidget* PeekModalUIWidget() const 
+	{ 
+		return ModalUIWidgetStack.Num() > 0 ? ModalUIWidgetStack.Top().Get() : nullptr; 
+	}
+
+	template<typename T>
+	FORCEINLINE T* PeekModalUIWidgetAs() const
+	{
+		static_assert(TIsDerivedFrom<T, UUserWidget>::Value, "T must derive from UUserWidget");
+		return Cast<T>(PeekModalUIWidget());
+	}
 };

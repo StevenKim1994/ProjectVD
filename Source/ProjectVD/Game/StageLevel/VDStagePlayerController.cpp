@@ -9,6 +9,7 @@
 #include "Public/VDConstrants.h"
 #include "UI/Stage/VDStagePlayerHUDWidget.h"
 #include "UI/Stage/VDStagePauseWidget.h"
+#include "UI/VDInventoryPanel.h"
 #include "Game/VDGameInstance.h"
 #include "System/VDLevelSystem.h"
 #include "Kismet/GameplayStatics.h"
@@ -130,7 +131,7 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 	{
 		if (UVDUISubsystem* UISubsystem = GetGameInstance()->GetSubsystem<UVDUISubsystem>())
 		{
-			if (UISubsystem->GetModalUIWidgetCount() > 0)
+			if (!UISubsystem->IsModalUIWidgetStackEmpty())
 			{
 				UISubsystem->PopModalUIWidget();
 			}
@@ -192,33 +193,26 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 void AVDStagePlayerController::OnInventory(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Warning, TEXT("AVDStagePlayerController::OnInventory Called"));
-	ChangeToggleInputContext();
+	
 	if (UVDUISubsystem* UISubsystem = GetGameInstance()->GetSubsystem<UVDUISubsystem>())
 	{
-		if (UISubsystem->GetModalUIWidgetCount() == 0)
+		if (UISubsystem->IsModalUIWidgetStackEmpty())
 		{
-			if (!UISubsystem->GetUIWidget(VDConstants::InventoryPanelWidget))
+			UISubsystem->HideCurrentHUDWidget();
+			UISubsystem->ShowUIWidgetAsync(VDConstants::InventoryPanelWidget);
+			ChangeToggleInputContext();
+			bShowMouseCursor = true;
+		}
+		else
+		{
+			if (UUserWidget* InvenWidget = UISubsystem->PeekModalUIWidget())
 			{
-				UISubsystem->HideCurrentHUDWidget();
-				UISubsystem->ShowUIWidgetAsync(VDConstants::InventoryPanelWidget);
-				bShowMouseCursor = true;
-			}
-			else
-			{
-				if (UUserWidget* InvenWidget = UISubsystem->GetUIWidget(VDConstants::InventoryPanelWidget))
+				if (InvenWidget)
 				{
-					if (InvenWidget && InvenWidget->IsInViewport())
-					{
-						UISubsystem->HideUIWidget(VDConstants::InventoryPanelWidget);
-						UISubsystem->ShowCurrentHUDWidget();
-						bShowMouseCursor = false;
-					}
-					else
-					{
-						UISubsystem->HideCurrentHUDWidget();
-						UISubsystem->ShowUIWidgetAsync(VDConstants::InventoryPanelWidget);
-						bShowMouseCursor = true;
-					}
+					UISubsystem->HideUIWidget(VDConstants::InventoryPanelWidget);
+					UISubsystem->ShowCurrentHUDWidget();
+					ChangeToggleInputContext();
+					bShowMouseCursor = false;
 				}
 			}
 		}
