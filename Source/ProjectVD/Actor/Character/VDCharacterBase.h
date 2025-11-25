@@ -12,6 +12,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UVDCharacterStatsBaseComponent;
 class UVDBaseStaminaComponent;
+class UVDInventoryComponent;
 class AVDItemPropActorBase;
 
 UCLASS(Abstract)
@@ -34,6 +35,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stamina", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UVDBaseStaminaComponent> StaminaComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UVDInventoryComponent> InventoryComponent;
 
 	virtual void BeginPlay() override;
 

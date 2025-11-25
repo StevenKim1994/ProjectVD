@@ -2,6 +2,7 @@
 
 #include "Actor/Character/VDCharacterBase.h"
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
+#include "Actor/ActorComponent/VDInventoryComponent.h"
 #include "Actor/ItemProp/VDItemPropActorBase.h"
 #include "Engine/DamageEvents.h"
 #include "Animation/AnimMontage.h"
@@ -41,6 +42,8 @@ AVDCharacterBase::AVDCharacterBase()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 
+	InventoryComponent = CreateDefaultSubobject<UVDInventoryComponent>(TEXT("InventoryComponent"));
+	InventoryComponent->RegisterComponent();
 
 	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
 	CameraSpringArmComponent->SetupAttachment(RootComponent);
@@ -67,11 +70,10 @@ void AVDCharacterBase::Tick(float DeltaTime)
 
 void AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
 {
-	if (nullptr == Item)
+	if (nullptr == InventoryComponent)
 	{
 		return;
 	}
-
 }
 
 void AVDCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
