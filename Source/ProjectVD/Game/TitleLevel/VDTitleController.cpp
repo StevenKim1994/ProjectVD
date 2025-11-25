@@ -9,6 +9,9 @@
 #include "Game/VDGameInstance.h"
 #include "System/VDUISubsystem.h"
 #include "Public/VDConstrants.h"
+#include "MediaSoundComponent.h"
+#include "MediaPlayer.h"
+
 
 AVDTitleController::AVDTitleController()
 {

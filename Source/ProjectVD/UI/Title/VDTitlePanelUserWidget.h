@@ -4,19 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/Button.h"
-#include "Components/TextBlock.h"
-#include "Components/CheckBox.h"
-#include "Components/VerticalBox.h"
-#include "Components/Image.h"
-#include "MediaPlayer.h"
-#include "MediaSource.h"
-#include "MediaSoundComponent.h"
 #include "VDTitlePanelUserWidget.generated.h"
 
 class UMediaPlayer;
 class UMediaTexture;
+class UButton;
+class UTextBlock;
+class UVerticalBox;
+class UImage;
+class UMediaSoundComponent;
+class UMediaPlayer;
+class UCheckBox;
+class UMediaSource;
 class UWidgetAnimation;
+
+struct FWidgetAnimationState;
 
 DECLARE_DELEGATE(FOnClickExitButtonEvent);
 DECLARE_DELEGATE_OneParam(FOnToggleTitleMovieMuteEvent, bool);
@@ -90,7 +92,8 @@ private:
 	UFUNCTION()
 	void OnMainButtonToggle(bool IsOn);
 
-	void OnChangedMenuStateTweenComplete(bool IsOn); // 트윈 완료시 콜백
+	UFUNCTION()
+	void OnChangedMenuStateTweenComplete(); // 트윈 완료시 콜백
 
 protected:
 	virtual void NativeOnInitialized() override;

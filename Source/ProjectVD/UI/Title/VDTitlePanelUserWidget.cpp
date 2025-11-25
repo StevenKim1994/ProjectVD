@@ -8,7 +8,15 @@
 #include "Containers/Ticker.h"        
 #include "Components/CanvasPanelSlot.h" 
 #include "Components/Image.h"
+#include "Components/Button.h"
+#include "Components/TextBlock.h"
+#include "Components/VerticalBox.h"
+#include "Components/CheckBox.h"
+#include "MediaPlayer.h"
+#include "MediaSoundComponent.h"
+#include "MediaSource.h"
 #include "Animation/WidgetAnimation.h"
+#include "Animation/WidgetAnimationState.h"
 #include "Animation/WidgetAnimationEvents.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "MediaTexture.h"
@@ -91,33 +99,23 @@ void UVDTitlePanelUserWidget::OnMainButtonToggle(bool IsOn)
 	if (FWidgetAnimationState* State = PlayerHandle.GetAnimationState())
 	{
 		TWeakObjectPtr<UVDTitlePanelUserWidget> WeakThis(this);
-		/*
-		State->GetOnWidgetAnimationFinished().AddLambda([WeakThis]()
-			{
-				if (WeakThis.IsValid())
-				{
-					WeakThis->OnChangedMenuStateTweenComplete(WeakThis->bIsMainMenuButtonToggledOn);
-				}
-			});
-		*/
+		const bool bCachedIsOn = IsOn;
+		State->GetOnWidgetAnimationFinished().Clear();
+		//State->GetOnWidgetAnimationFinished().AddDynamic(this, &UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete);
 	}
 }
 
-void UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete(bool isOn)
+void UVDTitlePanelUserWidget::OnChangedMenuStateTweenComplete()
 {
-	ButtonsParentBox->SetVisibility(isOn ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
-	OptionsParentBox->SetVisibility(isOn ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+	ButtonsParentBox->SetVisibility(bIsMainMenuButtonToggledOn ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	OptionsParentBox->SetVisibility(bIsMainMenuButtonToggledOn? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 }
 
 void UVDTitlePanelUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	if (ButtonsParentBox)
-	{
-		bIsMainMenuButtonToggledOn = false;
-		//OnMainButtonToggle(bIsMainMenuButtonToggledOn);
-	}
+	bIsMainMenuButtonToggledOn = false;
 
 	if (GameTitleName)
 	{
