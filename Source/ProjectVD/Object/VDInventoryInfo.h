@@ -52,7 +52,7 @@ public:
 	FORCEINLINE UVDInventoryInfo* SetSlot(int32 NewSlot) { Slot = NewSlot; return this; }
 	FORCEINLINE int32 GetSlot() const { return Slot; }
 
-	UVDInventoryInfo* operator+(const UVDInventoryInfo& Other) const;
-	UVDInventoryInfo* operator-(const UVDInventoryInfo& Other) const;
-
+	UVDInventoryInfo* operator+(const UVDInventoryInfo& Other);
+	UVDInventoryInfo* operator-(const UVDInventoryInfo& Other);
+	UVDInventoryInfo* operator=(const UVDInventoryInfo& Other);
 };

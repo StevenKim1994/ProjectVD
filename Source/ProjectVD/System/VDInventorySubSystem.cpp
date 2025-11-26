@@ -33,7 +33,10 @@ void UVDInventorySubSystem::SetInventoryItemBySlot(int32 Slot, UVDInventoryInfo*
 {
 	if (InventoryMap.Contains(Slot))
 	{
-		InventoryMap[Slot] = Item;
+		InventoryMap[Slot]->SetItemID(Item->GetItemID());
+		InventoryMap[Slot]->SetQuantity(Item->GetQuantity());
+		InventoryMap[Slot]->SetMaxQuantity(Item->GetMaxQuantity());
+		InventoryMap[Slot]->SetIsEmpty(Item->GetIsEmpty());
 	}
 
 	if (OnInventoryChangedDelegate.IsBound())
@@ -46,12 +49,13 @@ void UVDInventorySubSystem::RemoveInventoryItemBySlot(int32 Slot)
 {
 	if (InventoryMap.Contains(Slot))
 	{
-		InventoryMap[Slot]->SetIsEmpty(true);
-	}
-
-	if (OnInventoryChangedDelegate.IsBound())
-	{
-		OnInventoryChangedDelegate.Broadcast(InventoryMap[Slot]);
+		UVDInventoryInfo* ChangedItem = InventoryMap[Slot];
+		ChangedItem->SetIsEmpty(true);
+		
+		if (OnInventoryChangedDelegate.IsBound())
+		{
+			OnInventoryChangedDelegate.Broadcast(ChangedItem);
+		}
 	}
 }
 

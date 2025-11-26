@@ -129,8 +129,17 @@ void UVDInventoryPanel::OnInventoryItemClicked(UObject* Item)
 
 void UVDInventoryPanel::OnChangeInventorySubsystemChanged(UVDInventoryInfo* ChangedItem)
 {
-    if (InventoryTileView)
+    if (InventoryTileView && ChangedItem)
     {
-        InventoryTileView->RequestRefresh(); 
+        // DESC :: 변경된 아이템에 해당하는 Entry Widget을 찾아서 재갱신
+        UUserWidget* EntryWidget = InventoryTileView->GetEntryWidgetFromItem(ChangedItem);
+        if (EntryWidget)
+        {
+            UVDInventorySlotWidget* ItemSlotWidget = Cast<UVDInventorySlotWidget>(EntryWidget);
+            if (ItemSlotWidget)
+            {
+                ItemSlotWidget->RefreshSlotWidget();
+            }
+        }
     }
 }
