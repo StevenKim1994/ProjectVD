@@ -30,6 +30,7 @@ namespace VDConstants
 	extern const FName LoadingPanel;
 	extern const FName PauseMenuWidget;
 	extern const FName InventoryPanelWidget;
+	extern const FName ToastContainer;
 #pragma endregion 
 #pragma region UI_TEXT
 	// 전역 프로젝트 이름 텍스트

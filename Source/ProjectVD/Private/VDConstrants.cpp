@@ -9,6 +9,7 @@ namespace VDConstants
 	const FName TitlePanel(TEXT("TitlePanel"));
 	const FName LoadingPanel(TEXT("LoadingPanel"));
 	const FName RootUIWidget(TEXT("RootUIWidget"));
+	const FName ToastContainer(TEXT("ToastContainer"));
 	const FName ConfirmPopup(TEXT("ConfirmPopup"));
 	const FName PauseMenuWidget(TEXT("PauseMenuWidget"));
 	const FName InventoryPanelWidget(TEXT("InventoryPanel"));

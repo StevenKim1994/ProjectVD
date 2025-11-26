@@ -10,6 +10,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "UI/Global/VDToastContainer.h"
 
 UVDUISubsystem::UVDUISubsystem()
 {
@@ -29,6 +30,8 @@ void UVDUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	ActiveWidgetInstanceMap.Empty();
 
 	RootUIWidget = GetUIWidget(VDConstants::RootUIWidget, true);
+
+	ToastContainerWidget = Cast<UVDToastContainer>(GetUIWidget(VDConstants::ToastContainer, true));
 }
 
 void UVDUISubsystem::Deinitialize()
@@ -71,13 +74,18 @@ UUserWidget* UVDUISubsystem::GetUIWidget(const FName& WidgetName, bool isCreate)
 
 void UVDUISubsystem::SetPlayerControllerRootUIWidget(APlayerController* PlayerController)
 {
-	ensure(PlayerController);
 	CachedPlayerController = PlayerController;
 
-	if (ensure(RootUIWidget))
+	if (RootUIWidget)
 	{
 		RootUIWidget->SetOwningPlayer(CachedPlayerController.Get());
 		RootUIWidget->AddToViewport();
+	}
+
+	if(ToastContainerWidget)
+	{
+		ToastContainerWidget->SetOwningPlayer(CachedPlayerController.Get());
+		ToastContainerWidget->AddToViewport(99);
 	}
 }
 
@@ -350,5 +358,13 @@ void UVDUISubsystem::AllModalUIWidgetClear()
 		{
 			TopWidget->RemoveFromParent();
 		}
+	}
+}
+
+void UVDUISubsystem::ShowToastMessage(const FText& Message)
+{
+	if (ToastContainerWidget)
+	{
+		ToastContainerWidget->ShowToast(Message);
 	}
 }

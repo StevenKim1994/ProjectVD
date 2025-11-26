@@ -9,7 +9,7 @@
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
 #include "Actor/Character/VDCharacterBase.h"
-
+#include "System/VDUISubsystem.h"
 // Sets default values
 AVDItemPropActorBase::AVDItemPropActorBase()
 {
@@ -93,6 +93,7 @@ void AVDItemPropActorBase::OnPicked(AActor* Picker)
 
 	if (AVDCharacterBase* Character = Cast<AVDCharacterBase>(Picker))
 	{
+		UVDUISubsystem* UISubsystem = GetGameInstance()->GetSubsystem<UVDUISubsystem>();
 		if (Character->PickItem(this))
 		{
 			if (PickedEffectComp)
@@ -101,10 +102,12 @@ void AVDItemPropActorBase::OnPicked(AActor* Picker)
 			}
 			
 			MeshComp->SetHiddenInGame(true);
+
+			UISubsystem->ShowToastMessage(FText::FromString(TEXT("아이템을 획득했습니다.")));
 		}
 		else
 		{
-			// TODO :: 인벤토리 꽉참 토스트 처리
+			UISubsystem->ShowToastMessage(FText::FromString(TEXT("인벤토리가 가득 찼습니다.")));
 		}
 	}
 }

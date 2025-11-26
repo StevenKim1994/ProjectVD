@@ -32,17 +32,30 @@ private:
 	float ToastDuration = 3.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Toast", Meta = (AllowPrivateAccess = "true"))
-	int32 MaxToasts = 5;
+	int32 MaxToasts = 3;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Toast", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> ToastEntryWidgetClass;
-	
+
+	UPROPERTY()
+	TArray<TObjectPtr<UVDToastEntryWidget>> ToastPool;
+
+	UPROPERTY()
+	TArray<TObjectPtr<UVDToastEntryWidget>> ActiveToasts;
+
 	TQueue<FToastRequest> PendingQueue;
 
 	UFUNCTION()
 	void HandleToastFinished(UVDToastEntryWidget* FinishedToast);
 
-	UFUNCTION()
 	void SpawnToast(const FToastRequest& Request);
+
+	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
+
+public:
+	UFUNCTION()
+	void ShowToast(const FText& Message);
 
 };

@@ -11,6 +11,7 @@
 class UVDResourceSystem;
 class APlayerController; 
 class UVDLoadingPanelUserWidget;
+class UVDToastContainer;
 
 DECLARE_DELEGATE_OneParam(FOnUIWidgetLoadedDelegate, UUserWidget* /*LoadedUIWidget*/);
 
@@ -39,6 +40,9 @@ private:
 	TObjectPtr<UUserWidget> CurrentHUDWidget; // TODO :: 추후 UUserWidget말고 별도의 인터페이스로 변경 고려
 
 	UPROPERTY()
+	TObjectPtr<UVDToastContainer> ToastContainerWidget;
+
+	UPROPERTY()
 	TArray<TObjectPtr<UUserWidget>> ModalUIWidgetStack;
 
 	UPROPERTY()
@@ -61,6 +65,8 @@ public:
 
 	void PopModalUIWidget();
 	void AllModalUIWidgetClear();
+
+	void ShowToastMessage(const FText& Message);
 
 	TSoftClassPtr<UUserWidget> GetUIWidgetClassPathByName(const FName& WidgetName);
 
