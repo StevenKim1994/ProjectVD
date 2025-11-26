@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "ProjectVD/Actor/Character/VDStagePlayerCharacter.h"
-#include "ProjectVD/Actor/Enemy/VDEnemyCharacterBase.h"
-#include "ProjectVD/Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
-#include "ProjectVD/Actor/ActorComponent/VDBaseStaminaComponent.h"
+#include "Actor/Character/VDStagePlayerCharacter.h"
+#include "Actor/Enemy/VDEnemyCharacterBase.h"
+#include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
+#include "Actor/ActorComponent/VDBaseStaminaComponent.h"
+#include "System/VDUISubsystem.h"
 #include "Engine/World.h"
 #include "Engine/DamageEvents.h"
 #include "Camera/CameraComponent.h"
@@ -44,6 +45,11 @@ void AVDStagePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	CurrentAttackComboCount = 0;
+}
+
+void AVDStagePlayerCharacter::SetEquippedWeapon(AVDEquipItemVisualActor* VisualActor)
+{
+	Super::SetEquippedWeapon(VisualActor);
 }
 
 void AVDStagePlayerCharacter::PostInitializeComponents()
@@ -266,6 +272,12 @@ void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
 	//Super::DefaultAttack(Value); DESC :: 부모함수 호출하지 않음.
 	
+	if (nullptr == EquippedWeapon)
+	{
+		GetGameInstance()->GetSubsystem<UVDUISubsystem>()->ShowToastMessage(FText::FromString(TEXT("무기가 장착되어 있지 않습니다.")));
+		return;
+	}
+
 	const float StaminaCost = 0.0f;//15.0f;
 	if (!StaminaComponent->HasStamina(StaminaCost))
 	{

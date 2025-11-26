@@ -9,6 +9,7 @@
 
 class UTextBlock;
 class UImage;
+class UVDInventoryInfo;
 
 UCLASS()
 class PROJECTVD_API UVDInventorySlotWidget : public UUserWidget, public IUserObjectListEntry
@@ -22,8 +23,17 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ItemQuantityText;
 
+	UPROPERTY()
+	TWeakObjectPtr<UVDInventoryInfo> CurrentInventoryInfo;
+
 protected:
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
+	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
+
 public:
+
+	void RefreshSlotWidget();
 	
 };

@@ -89,6 +89,14 @@ float AVDCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	return DamageAmount;
 }
 
+void AVDCharacterBase::SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon)
+{
+	if (NewWeapon)
+	{
+		EquippedWeapon = NewWeapon;
+	}
+}
+
 void AVDCharacterBase::Move(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();

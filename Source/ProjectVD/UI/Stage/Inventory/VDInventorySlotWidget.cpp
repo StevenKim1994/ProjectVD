@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Object/VDInventoryInfo.h"
+#include "System/VDInventorySubSystem.h"
 
 void UVDInventorySlotWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
@@ -13,21 +14,46 @@ void UVDInventorySlotWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 		return;
 	}
 
-	const UVDInventoryInfo* InventoryItem = Cast<UVDInventoryInfo>(ListItemObject);
+	UVDInventoryInfo* InventoryItem = Cast<UVDInventoryInfo>(ListItemObject);
 	if (nullptr == InventoryItem)
 	{
 		return;
 	}
 
-	if (InventoryItem->GetIsEmpty())
+	CurrentInventoryInfo = InventoryItem;
+	RefreshSlotWidget();
+	
+}
+
+void UVDInventorySlotWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+}
+
+void UVDInventorySlotWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+}
+
+void UVDInventorySlotWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+}
+
+void UVDInventorySlotWidget::RefreshSlotWidget()
+{
+	if (CurrentInventoryInfo.IsValid())
 	{
-		ItemIconImage->SetVisibility(ESlateVisibility::Collapsed);
-		ItemQuantityText->SetVisibility(ESlateVisibility::Collapsed);
-	}
-	else
-	{
-		ItemIconImage->SetVisibility(ESlateVisibility::Visible);
-		ItemQuantityText->SetVisibility(ESlateVisibility::Visible);
-		// TODO :: 실제 아이템 존재하는 슬롯
+		if (CurrentInventoryInfo->GetIsEmpty())
+		{
+			ItemIconImage->SetVisibility(ESlateVisibility::Collapsed);
+			ItemQuantityText->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		else
+		{
+			ItemIconImage->SetVisibility(ESlateVisibility::Visible);
+			ItemQuantityText->SetVisibility(ESlateVisibility::Visible);
+			// TODO :: 실제 아이템 존재하는 슬롯
+		}
 	}
 }

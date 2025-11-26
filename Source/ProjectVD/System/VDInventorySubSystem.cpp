@@ -14,6 +14,7 @@ void UVDInventorySubSystem::Initialize(FSubsystemCollectionBase& Collection)
 	{
 		UVDInventoryInfo* EmptyItem = NewObject<UVDInventoryInfo>();
 		EmptyItem->SetIsEmpty(true);
+		EmptyItem->SetSlot(i);
 		InventoryMap.Add(i, EmptyItem);
 	}
 }
@@ -30,12 +31,31 @@ UVDInventorySubSystem::UVDInventorySubSystem()
 
 void UVDInventorySubSystem::SetInventoryItemBySlot(int32 Slot, UVDInventoryInfo* Item)
 {
+	if (InventoryMap.Contains(Slot))
+	{
+		InventoryMap[Slot] = Item;
+	}
 
+	if (OnInventoryChangedDelegate.IsBound())
+	{
+		OnInventoryChangedDelegate.Broadcast(Item);
+	}
 }
 
 void UVDInventorySubSystem::RemoveInventoryItemBySlot(int32 Slot)
 {
-	InventoryMap.Remove(Slot);
+	UVDInventoryInfo* EmptyItem = NewObject<UVDInventoryInfo>();
+	EmptyItem->SetIsEmpty(true);
+	if (InventoryMap.Contains(Slot))
+	{
+		InventoryMap.Remove(Slot);
+		InventoryMap[Slot] = EmptyItem;
+	}
+
+	if (OnInventoryChangedDelegate.IsBound())
+	{
+		OnInventoryChangedDelegate.Broadcast(EmptyItem);
+	}
 }
 
 void UVDInventorySubSystem::ClearInventory()
@@ -43,15 +63,15 @@ void UVDInventorySubSystem::ClearInventory()
 	InventoryMap.Empty();
 }
 
-void UVDInventorySubSystem::AddInventoryItem(const UVDInventoryInfo& Item)
+void UVDInventorySubSystem::AddInventoryItem(const UVDInventoryInfo* Item)
 {
 	UVDInventoryInfo* NewItem = NewObject<UVDInventoryInfo>();
-	NewItem->SetItemID(Item.GetItemID());
-	NewItem->SetQuantity(Item.GetQuantity());
-	NewItem->SetMaxQuantity(Item.GetMaxQuantity());
+	NewItem->SetItemID(Item->GetItemID());
+	NewItem->SetQuantity(Item->GetQuantity());
+	NewItem->SetMaxQuantity(Item->GetMaxQuantity());
 	NewItem->SetIsEmpty(false);
 
-	// TODO :: 같은 아이템을 찾아서 겹칠 수있는 상태가 있다면 그걸 먼저 처리하도록 처리 추가필요
+	// DESC :: 기존에 같은 아이템이 있다면 수량을 합침
 	for (auto& Pair : InventoryMap)
 	{
 		if (Pair.Value->GetItemID() == NewItem->GetItemID())
@@ -65,7 +85,7 @@ void UVDInventorySubSystem::AddInventoryItem(const UVDInventoryInfo& Item)
 				int32 RemainingQuantity = NewItem->GetQuantity() - QuantityToAdd;
 				if (RemainingQuantity <= 0)
 				{
-					return; // 모든 아이템이 추가되었으므로 종료
+					return;
 				}
 				else
 				{
@@ -75,9 +95,36 @@ void UVDInventorySubSystem::AddInventoryItem(const UVDInventoryInfo& Item)
 		}
 	}
 
+	// DESC :: 남은 수량이 있다면 빈슬롯에 추가
+	for (auto& Pair : InventoryMap)
+	{
+		if (Pair.Value->GetIsEmpty())
+		{
+			int32 QuantityToAdd = FMath::Min(NewItem->GetMaxQuantity(), NewItem->GetQuantity());
+			Pair.Value->SetItemID(NewItem->GetItemID());
+			Pair.Value->SetQuantity(QuantityToAdd);
+			Pair.Value->SetMaxQuantity(NewItem->GetMaxQuantity());
+			Pair.Value->SetIsEmpty(false);
+			int32 RemainingQuantity = NewItem->GetQuantity() - QuantityToAdd;
+			if (RemainingQuantity <= 0)
+			{
+				return;
+			}
+			else
+			{
+				NewItem->SetQuantity(RemainingQuantity);
+			}
+		}
+	}
+
 	if (NewItem->GetQuantity() > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Not enough space to add all items. Remaining quantity: %d"), NewItem->GetQuantity());
+		// TODO :: 이럴땐 어떻게 하면좋을까 ? 일딴 인벤토리 꽉참 알림
+	}
+
+	if (OnInventoryChangedDelegate.IsBound())
+	{
+		OnInventoryChangedDelegate.Broadcast(NewItem);
 	}
 }
 

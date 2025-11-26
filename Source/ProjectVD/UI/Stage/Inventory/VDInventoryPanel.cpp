@@ -3,6 +3,7 @@
 
 #include "UI/Stage/Inventory/VDInventoryPanel.h"
 #include "UI/Stage/Inventory/VDInventoryLeftItemDetailSection.h"
+#include "UI/Stage/Inventory/VDInventorySlotWidget.h"
 #include "Components/TileView.h"
 #include "Components/Button.h"
 #include "Components/Border.h"
@@ -15,20 +16,31 @@
 void UVDInventoryPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+	
 	if (CloseButton)
 	{
 		CloseButton->OnClicked.AddDynamic(this, &UVDInventoryPanel::OnClickCloseButton);
 	}
 
-	if (InventoryTileView)
+	UVDInventorySubSystem* InventorySubSystem = GetGameInstance()->GetSubsystem<UVDInventorySubSystem>();
+	
+	if (InventoryTileView && InventorySubSystem)
 	{
-		auto& InventoryMap = GetGameInstance()->GetSubsystem<UVDInventorySubSystem>()->GetInventoryMap(); // DESC :: 일단 슬롯 갯수만큼 생성
+		InventoryTileView->SetEntryWidth(125);
+		InventoryTileView->SetEntryHeight(InventoryTileView->GetEntryWidth());
+		
+		const auto& InventoryMap = InventorySubSystem->GetInventoryMap();
 		for (auto& Pair : InventoryMap)
 		{
 			InventoryTileView->AddItem(Pair.Value);
 		}
 
+		InventoryTileView->SetSelectionMode(ESelectionMode::Single);
 		InventoryTileView->OnItemIsHoveredChanged().AddUObject(this, &UVDInventoryPanel::OnInventoryItemHoveredChanged);
+		InventoryTileView->OnItemClicked().AddUObject(this, &UVDInventoryPanel::OnInventoryItemClicked);
+		
+		// DESC :: 서브시스템의 변경 이벤트에 바인딩
+		InventorySubSystem->OnInventoryChanged().AddUObject(this, &UVDInventoryPanel::OnChangeInventorySubsystemChanged);
 	}
 }
 
@@ -36,16 +48,9 @@ void UVDInventoryPanel::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (InventoryTileView)
-	{
-		float TileViewWidth = InventoryTileView->GetCachedGeometry().GetLocalSize().X;
-		InventoryTileView->SetEntryWidth(125);
-		InventoryTileView->SetEntryHeight(InventoryTileView->GetEntryWidth()); 
-	}
-
+	InventoryTileView->RequestRefresh();
 	ItemDetailSection->SetVisibility(ESlateVisibility::Collapsed);
 	PlayAnimation(RightAnim);
-
 }
 
 void UVDInventoryPanel::NativeDestruct()
@@ -74,22 +79,58 @@ void UVDInventoryPanel::OnInventoryItemHoveredChanged(UObject* Item, bool bIsHov
 		UVDInventoryInfo* InventoryInfo = Cast<UVDInventoryInfo>(Item);
 		if (InventoryInfo)
 		{
+			// TODO :: 툴팁출력
+			 
+			//if (InventoryInfo->GetIsEmpty()) // DESC :: 빈 슬롯일 경우
+			//{
+			//	ItemDetailSection->SetVisibility(ESlateVisibility::Collapsed);
+			//	return;
+			//}
+			//
+			//if (bIsHovered)
+			//{
+			//	ItemDetailSection->SetVisibility(ESlateVisibility::Visible);
+			//	PlayAnimation(LeftAnim);
+			//}
+			//else
+			//{
+			//	ItemDetailSection->SetVisibility(ESlateVisibility::Collapsed);
+			//	//PlayAnimation(LeftAnim, LeftAnim->GetEndTime(), 1, EUMGSequencePlayMode::Reverse);
+			//}
+		}
+	}
+}
+
+void UVDInventoryPanel::OnInventoryItemClicked(UObject* Item)
+{
+	UE_LOG(LogTemp, Warning, TEXT("UVDInventoryPanel::OnInventoryItemClicked"));
+	if (Item)
+	{
+		UVDInventoryInfo* InventoryInfo = Cast<UVDInventoryInfo>(Item);
+		if (InventoryInfo)
+		{
 			if (InventoryInfo->GetIsEmpty()) // DESC :: 빈 슬롯일 경우
 			{
-				ItemDetailSection->SetVisibility(ESlateVisibility::Collapsed);
 				return;
 			}
 
-			if (bIsHovered)
-			{
-				ItemDetailSection->SetVisibility(ESlateVisibility::Visible);
-				PlayAnimation(LeftAnim);
-			}
-			else
-			{
-				ItemDetailSection->SetVisibility(ESlateVisibility::Collapsed);
-				//PlayAnimation(LeftAnim, LeftAnim->GetEndTime(), 1, EUMGSequencePlayMode::Reverse);
-			}
+			ItemDetailSection->SetVisibility(ESlateVisibility::Visible);
+			ItemDetailSection->SetItemDetailInfo(InventoryInfo);
+		}
+
+		UVDInventorySlotWidget* ItemSlotWidget = Cast<UVDInventorySlotWidget>(InventoryTileView->GetEntryWidgetFromItem(Item));
+		if (ItemSlotWidget)
+		{
+			//ItemSlotWidget->SetIsSelected(true);
 		}
 	}
+}
+
+void UVDInventoryPanel::OnChangeInventorySubsystemChanged(UVDInventoryInfo* ChangedItem)
+{
+    // DESC :: 변경된 아이템만 UI 갱신
+    if (InventoryTileView && ChangedItem)
+    {
+        InventoryTileView->RequestRefresh(); // 또는 특정 엔트리만 갱신
+    }
 }

@@ -13,6 +13,7 @@ class UTextBlock;
 class UButton;
 class UWidgetAnimation;
 class UVDInventoryLeftItemDetailSection;
+class UVDInventoryInfo;
 
 DECLARE_DELEGATE(FOnClickExitButtonEvent);
 
@@ -42,6 +43,11 @@ private:
 
 	UFUNCTION()
 	void OnInventoryItemHoveredChanged(UObject* Item, bool bIsHovered);
+
+	UFUNCTION()
+	void OnInventoryItemClicked(UObject* Item);
+
+	void OnChangeInventorySubsystemChanged(UVDInventoryInfo* ChangedItem);
 
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;

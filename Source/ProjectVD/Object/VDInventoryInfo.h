@@ -4,17 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "Public/VDItemType.h"
 #include "VDInventoryInfo.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PROJECTVD_API UVDInventoryInfo : public UObject
 {
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY()
+	EVDItemType ItemType = EVDItemType::Consumable;
+
 	UPROPERTY()
 	int32 ItemID = -1;
 
@@ -27,8 +28,14 @@ private:
 	UPROPERTY()
 	bool IsEmpty = true;
 
+	UPROPERTY()
+	int32 Slot = -1; // DESC :: 인벤토리 내 슬롯 번호
+
 public:
 	UVDInventoryInfo();
+
+	FORCEINLINE UVDInventoryInfo* SetItemType(EVDItemType NewItemType) { ItemType = NewItemType; return this; }
+	FORCEINLINE EVDItemType GetItemType() const { return ItemType; }
 
 	FORCEINLINE UVDInventoryInfo* SetItemID(int32 NewItemID) { ItemID = NewItemID; return this; }
 	FORCEINLINE int32 GetItemID() const { return ItemID; }
@@ -41,6 +48,9 @@ public:
 
 	FORCEINLINE UVDInventoryInfo* SetIsEmpty(bool bNewIsEmpty) { IsEmpty = bNewIsEmpty; return this; }
 	FORCEINLINE bool GetIsEmpty() const { return IsEmpty; }
+
+	FORCEINLINE UVDInventoryInfo* SetSlot(int32 NewSlot) { Slot = NewSlot; return this; }
+	FORCEINLINE int32 GetSlot() const { return Slot; }
 
 	UVDInventoryInfo* operator+(const UVDInventoryInfo& Other) const;
 	UVDInventoryInfo* operator-(const UVDInventoryInfo& Other) const;

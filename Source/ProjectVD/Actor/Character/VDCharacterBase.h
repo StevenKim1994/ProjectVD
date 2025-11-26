@@ -14,6 +14,7 @@ class UVDCharacterStatsBaseComponent;
 class UVDBaseStaminaComponent;
 class UVDInventoryComponent;
 class AVDItemPropActorBase;
+class AVDEquipItemVisualActor;
 
 UCLASS(Abstract)
 class PROJECTVD_API AVDCharacterBase : public ACharacter
@@ -39,6 +40,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UVDInventoryComponent> InventoryComponent;
 
+	UPROPERTY()
+	TObjectPtr<AVDEquipItemVisualActor> EquippedWeapon;
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
@@ -61,6 +65,7 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon);
 public:	
 	AVDCharacterBase();
 
