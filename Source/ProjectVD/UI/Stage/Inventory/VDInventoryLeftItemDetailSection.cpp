@@ -7,7 +7,9 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
+#include "System/VDPlayerSubsystem.h"
 #include "Public/VDConstrants.h"
+#include "Public/VDEquipType.h"
 
 void UVDInventoryLeftItemDetailSection::UpdateItemDetailInfo(UVDInventoryInfo* InInventoryInfo)
 {
@@ -30,14 +32,24 @@ void UVDInventoryLeftItemDetailSection::OnClickedUseButton()
 {
 	switch(CurrentInventoryInfo->GetItemType())
 	{
+		UVDPlayerSubsystem* PlayerSubsystem = GetGameInstance()->GetSubsystem<UVDPlayerSubsystem>();
 		case EVDItemType::Weapon:
 		{
-			// TODO :: 무기 장착 로직
+			PlayerSubsystem->SetPlayerEquippedItem(EVDEquipType::Weapon, CurrentInventoryInfo->GetItemID());
+		}
+		case EVDItemType::Equipment:
+		{
+			EVDEquipType EquipType = EVDEquipType::HeadArmor;
+			int32 EquipID = 1;
+			// TODO :: 추후 테이블 추가시 ID로 해당 테이블 정보 읽어서 장비 타입 분기 필요
+			// TODO :: 장비 장착 로직
+			PlayerSubsystem->SetPlayerEquippedItem(EquipType, EquipID);
 		}
 		break;
 		case EVDItemType::Consumable:
 		{
 			// TODO :: 소비 아이템 사용 로직
+			PlayerSubsystem->SetUseConsumeableItem(CurrentInventoryInfo->GetItemID());
 		}
 		break;
 	}
