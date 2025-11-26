@@ -34,6 +34,7 @@ private:
 public:
 	UVDInventoryInfo();
 
+	UVDInventoryInfo* SetIsEmpty(bool bNewIsEmpty);
 	FORCEINLINE UVDInventoryInfo* SetItemType(EVDItemType NewItemType) { ItemType = NewItemType; return this; }
 	FORCEINLINE EVDItemType GetItemType() const { return ItemType; }
 
@@ -46,7 +47,6 @@ public:
 	FORCEINLINE UVDInventoryInfo* SetMaxQuantity(int32 NewMaxQuantity) { MaxQuantity = NewMaxQuantity; return this; }
 	FORCEINLINE int32 GetMaxQuantity() const { return MaxQuantity; }
 
-	FORCEINLINE UVDInventoryInfo* SetIsEmpty(bool bNewIsEmpty) { IsEmpty = bNewIsEmpty; return this; }
 	FORCEINLINE bool GetIsEmpty() const { return IsEmpty; }
 
 	FORCEINLINE UVDInventoryInfo* SetSlot(int32 NewSlot) { Slot = NewSlot; return this; }

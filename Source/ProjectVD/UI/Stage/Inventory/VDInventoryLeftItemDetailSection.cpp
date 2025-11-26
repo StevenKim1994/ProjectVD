@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
+#include "Public/VDConstrants.h"
 
 void UVDInventoryLeftItemDetailSection::UpdateItemDetailInfo(UVDInventoryInfo* InInventoryInfo)
 {
@@ -14,12 +15,12 @@ void UVDInventoryLeftItemDetailSection::UpdateItemDetailInfo(UVDInventoryInfo* I
 	{
 		case EVDItemType::Weapon:
 		{
-			UseButtonText->SetText(FText::FromString(TEXT("장착하기")));
+			UseButtonText->SetText(VDConstants::GetInventoryEquipButtonText());
 		}
 		break;
 		case EVDItemType::Consumable:
 		{
-			UseButtonText->SetText(FText::FromString(TEXT("사용하기")));
+			UseButtonText->SetText(VDConstants::GetInventoryUseButtonText());
 		}
 		break;
 	}
@@ -49,13 +50,29 @@ void UVDInventoryLeftItemDetailSection::OnClickedDeleteButton()
 	{
 		InventorySubSystem->RemoveInventoryItemBySlot(CurrentInventoryInfo->GetSlot());
 	}
+}
 
-	SetVisibility(ESlateVisibility::Collapsed);
+void UVDInventoryLeftItemDetailSection::OnInventoryChanged(UVDInventoryInfo* ChangedItem)
+{
+	if (CurrentInventoryInfo == ChangedItem)
+	{
+		if (ChangedItem->GetIsEmpty())
+		{
+			CurrentInventoryInfo = nullptr;
+			SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
 }
 
 void UVDInventoryLeftItemDetailSection::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
+	UVDInventorySubSystem* InventorySubSystem = GetGameInstance()->GetSubsystem<UVDInventorySubSystem>();
+	if (InventorySubSystem)
+	{
+		InventorySubSystem->OnInventoryChanged().AddUObject(this, &UVDInventoryLeftItemDetailSection::OnInventoryChanged);
+	}
 
 	UseButton->OnClicked.AddDynamic(this, &UVDInventoryLeftItemDetailSection::OnClickedUseButton);
 	DeleteButton->OnClicked.AddDynamic(this, &UVDInventoryLeftItemDetailSection::OnClickedDeleteButton);

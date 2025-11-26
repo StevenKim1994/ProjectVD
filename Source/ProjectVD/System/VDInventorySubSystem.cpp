@@ -44,17 +44,14 @@ void UVDInventorySubSystem::SetInventoryItemBySlot(int32 Slot, UVDInventoryInfo*
 
 void UVDInventorySubSystem::RemoveInventoryItemBySlot(int32 Slot)
 {
-	UVDInventoryInfo* EmptyItem = NewObject<UVDInventoryInfo>();
-	EmptyItem->SetIsEmpty(true);
 	if (InventoryMap.Contains(Slot))
 	{
-		InventoryMap.Remove(Slot);
-		InventoryMap[Slot] = EmptyItem;
+		InventoryMap[Slot]->SetIsEmpty(true);
 	}
 
 	if (OnInventoryChangedDelegate.IsBound())
 	{
-		OnInventoryChangedDelegate.Broadcast(EmptyItem);
+		OnInventoryChangedDelegate.Broadcast(InventoryMap[Slot]);
 	}
 }
 

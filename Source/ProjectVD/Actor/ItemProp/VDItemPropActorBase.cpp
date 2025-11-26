@@ -10,6 +10,7 @@
 #include "NiagaraComponent.h"
 #include "Actor/Character/VDCharacterBase.h"
 #include "System/VDUISubsystem.h"
+#include "Public/VDConstrants.h"
 // Sets default values
 AVDItemPropActorBase::AVDItemPropActorBase()
 {
@@ -103,11 +104,11 @@ void AVDItemPropActorBase::OnPicked(AActor* Picker)
 			
 			MeshComp->SetHiddenInGame(true);
 
-			UISubsystem->ShowToastMessage(FText::FromString(TEXT("아이템을 획득했습니다.")));
+			UISubsystem->ShowToastMessage(VDConstants::GetToastItemPickupText());
 		}
 		else
 		{
-			UISubsystem->ShowToastMessage(FText::FromString(TEXT("인벤토리가 가득 찼습니다.")));
+			UISubsystem->ShowToastMessage(VDConstants::GetToastInventoryIsFullText());
 		}
 	}
 }

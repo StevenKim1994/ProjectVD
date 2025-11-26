@@ -46,6 +46,9 @@ private:
 	UFUNCTION()
 	void OnClickedDeleteButton();
 
+	UFUNCTION()
+	void OnInventoryChanged(UVDInventoryInfo* ChangedItem);
+
 	void UpdateItemDetailInfo(UVDInventoryInfo* InInventoryInfo);
 
 	virtual void NativeOnInitialized() override;

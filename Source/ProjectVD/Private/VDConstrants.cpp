@@ -51,4 +51,27 @@ namespace VDConstants
 		static const FText Text = NSLOCTEXT("VD.UI", "TitleSoundMuteToggle", "MUTE");
 		return Text;
 	}
+	const FText& GetToastItemPickupText()
+	{
+		static const FText Text = NSLOCTEXT("VD.UI", "ToastItemPickup", "아이템 획득");
+		return Text;
+	}
+
+	const FText& GetToastInventoryIsFullText()
+	{
+		static const FText Text = NSLOCTEXT("VD.UI", "ToastInventoryIsFull", "인벤토리가 가득 찼습니다.");
+		return Text;
+	}
+
+	const FText& GetInventoryEquipButtonText()
+	{
+		static const FText Text = NSLOCTEXT("VD.UI.Inventory", "EquipButton", "장착하기");
+		return Text;
+	}
+
+	const FText& GetInventoryUseButtonText()
+	{
+		static const FText Text = NSLOCTEXT("VD.UI.Inventory", "UseButton", "사용하기");
+		return Text;
+	}
 }

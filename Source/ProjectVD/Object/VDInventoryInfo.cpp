@@ -6,6 +6,18 @@ UVDInventoryInfo::UVDInventoryInfo()
 {
 }
 
+UVDInventoryInfo* UVDInventoryInfo::SetIsEmpty(bool bNewIsEmpty)
+{
+	IsEmpty = bNewIsEmpty;
+	if (bNewIsEmpty) // DESC :: 빈슬롯설정시에는 기본값으로 초기화
+	{
+		ItemID = -1;
+		ItemType = EVDItemType::Consumable;
+		Quantity = 0;
+	}
+	return this;
+}
+
 UVDInventoryInfo* UVDInventoryInfo::operator+(const UVDInventoryInfo& Other) const
 {
 	UVDInventoryInfo* Result = NewObject<UVDInventoryInfo>();

@@ -9,20 +9,10 @@
 
 void UVDInventorySlotWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
-	if (nullptr == ListItemObject)
-	{
-		return;
-	}
-
 	UVDInventoryInfo* InventoryItem = Cast<UVDInventoryInfo>(ListItemObject);
-	if (nullptr == InventoryItem)
-	{
-		return;
-	}
-
 	CurrentInventoryInfo = InventoryItem;
+	// DESC :: null 일시 비어있는 슬롯처리
 	RefreshSlotWidget();
-	
 }
 
 void UVDInventorySlotWidget::NativeOnInitialized()
@@ -53,7 +43,27 @@ void UVDInventorySlotWidget::RefreshSlotWidget()
 		{
 			ItemIconImage->SetVisibility(ESlateVisibility::Visible);
 			ItemQuantityText->SetVisibility(ESlateVisibility::Visible);
-			// TODO :: 실제 아이템 존재하는 슬롯
+
+			ItemQuantityText->SetText(FText::AsNumber(CurrentInventoryInfo->GetQuantity()));
+
+			switch (CurrentInventoryInfo->GetItemType())
+			{
+				case EVDItemType::Weapon:
+				{
+					// TODO :: 무기 아이콘 설정
+				}
+				break;
+				case EVDItemType::Consumable:
+				{
+					// TODO :: 소비 아이템 아이콘 설정
+				}
+				break;
+			}
 		}
+	}
+	else
+	{
+		ItemIconImage->SetVisibility(ESlateVisibility::Collapsed);
+		ItemQuantityText->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }

@@ -58,13 +58,15 @@ bool UVDInventoryComponent::AddItemToInventory(AVDItemPropActorBase* Item)
 		return false;
 	}
 
+	// TODO :: 실제 아이템으로 아이템 정보를 받아오도록 수정 필요
 	UVDInventoryInfo* NewItemInfo = NewObject<UVDInventoryInfo>();
 	NewItemInfo->SetItemID(11); // TODO :: Item Prop Actor에서 아이템 ID를 받아오도록 수정 필요 
 	NewItemInfo->SetQuantity(1);
+	NewItemInfo->SetItemType(EVDItemType::Weapon);
+	NewItemInfo->SetIsEmpty(false);
 
 	InventorySubSystem->AddInventoryItem(NewItemInfo);
 
-	// TODO :: 인벤토리 추가할 수 있는 아이템은 추가하고 결과를 return 하도록 수정 필요
 	return true;
 }
 

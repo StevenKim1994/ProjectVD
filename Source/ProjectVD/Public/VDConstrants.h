@@ -41,5 +41,11 @@ namespace VDConstants
 	const FText& GetTitleOptionButtonText();
 	const FText& GetTitleExitButtonText();
 	const FText& GetTitleSoundMuteToggleText();
+	const FText& GetToastItemPickupText();
+	const FText& GetToastInventoryIsFullText();
+	
+	// 인벤토리 관련 텍스트
+	const FText& GetInventoryEquipButtonText();
+	const FText& GetInventoryUseButtonText();
 #pragma endregion
 }

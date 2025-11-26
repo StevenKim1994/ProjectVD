@@ -13,6 +13,7 @@
 #include "Game/StageLevel/VDStagePlayerController.h"
 #include "Object/VDInventoryInfo.h"
 #include "Public/VDConstrants.h"
+
 void UVDInventoryPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -128,9 +129,8 @@ void UVDInventoryPanel::OnInventoryItemClicked(UObject* Item)
 
 void UVDInventoryPanel::OnChangeInventorySubsystemChanged(UVDInventoryInfo* ChangedItem)
 {
-    // DESC :: 변경된 아이템만 UI 갱신
-    if (InventoryTileView && ChangedItem)
+    if (InventoryTileView)
     {
-        InventoryTileView->RequestRefresh(); // 또는 특정 엔트리만 갱신
+        InventoryTileView->RequestRefresh(); 
     }
 }
