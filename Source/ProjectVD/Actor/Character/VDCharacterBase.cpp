@@ -4,6 +4,7 @@
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Actor/ActorComponent/VDInventoryComponent.h"
 #include "Actor/ItemProp/VDItemPropActorBase.h"
+#include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "Engine/DamageEvents.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
@@ -75,6 +76,17 @@ bool AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
 		return false;
 	}
 
+	TSoftClassPtr VisualActor = Item->GetItemVisualActor();
+	UClass* LoadedClass = VisualActor.LoadSynchronous();
+	if (LoadedClass)
+	{
+		AVDEquipItemVisualActor* SpawnedVisualActor = GetWorld()->SpawnActor<AVDEquipItemVisualActor>(LoadedClass);
+		if (SpawnedVisualActor)
+		{
+			SetEquippedWeapon(SpawnedVisualActor);
+		}
+	}
+
 	return InventoryComponent->AddItemToInventory(Item);
 }
 
@@ -89,11 +101,32 @@ float AVDCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	return DamageAmount;
 }
 
+void AVDCharacterBase::UpdateEquippedItem(EVDEquipType EquipType, int32 ItemID)
+{
+	if(EquippedArmorMap.Contains(EquipType))
+	{
+		EquippedArmorMap[EquipType] = ItemID;
+	}
+	else
+	{
+		EquippedArmorMap.Add(EquipType, ItemID);
+	}
+
+	// TODO :: 장비아이템 능력치 StatComponent에 반영
+}
+
+void AVDCharacterBase::UseConsumeableItem(int32 ItemID)
+{
+	// TODO :: 소비아이템 사용 효과 StatComponent에 반영
+
+}
+
 void AVDCharacterBase::SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon)
 {
 	if (NewWeapon)
 	{
 		EquippedWeapon = NewWeapon;
+		NewWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
 	}
 }
 

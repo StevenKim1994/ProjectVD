@@ -10,12 +10,16 @@ class AVDCharacterBase;
 enum class EVDEquipType : uint8;
 
 UCLASS()
-class PROJECTVD_API UVDPlayerSubsystem : public USubsystem
+class PROJECTVD_API UVDPlayerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
 private:
+	
+	UPROPERTY()
 	TMap<EVDEquipType, int32> PlayerEquippedMap;
+
+	UPROPERTY()
 	TObjectPtr<AVDCharacterBase> PlayerCharacter;
 
 protected:
@@ -24,6 +28,7 @@ protected:
 
 public:
 
+	void SetCurrentCharacter(AVDCharacterBase* InCharacter);
 	void SetUseConsumeableItem(int32 ItemID);
 	void SetPlayerEquippedItem(EVDEquipType, int32 ItemID);
 	FORCEINLINE int32 GetPlayerEquippedItem(EVDEquipType EquipType) const { return PlayerEquippedMap[EquipType]; } ;

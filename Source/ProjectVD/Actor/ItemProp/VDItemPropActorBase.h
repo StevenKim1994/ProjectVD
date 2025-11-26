@@ -11,6 +11,7 @@ class UStaticMeshComponent;
 class UBoxComponent;
 class UNiagaraSystem;
 class UNiagaraComponent;
+class AVDEquipItemVisualActor;
 
 UCLASS(Abstract)
 class PROJECTVD_API AVDItemPropActorBase : public AActor , public IVDPickable
@@ -18,6 +19,7 @@ class PROJECTVD_API AVDItemPropActorBase : public AActor , public IVDPickable
 	GENERATED_BODY()
 	
 private:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemProp", Meta = (AllowPrivateAccess = "true"))
 	bool bIsHoverable = true;
 
@@ -35,10 +37,10 @@ private:
 	float HoverRange = 10.0f;
 	FVector InitialLocation = FVector::ZeroVector;
 
-public:	
-	AVDItemPropActorBase();
-
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VisualActor", Meta = (AllowPrivateAccess = "true"))
+	TSoftClassPtr<AVDEquipItemVisualActor> ItemVisualActor;
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
@@ -48,6 +50,7 @@ protected:
 	UFUNCTION()
 	virtual void OnPickedEffectFinished(UNiagaraComponent* FinishedComponent);
 public:
+	AVDItemPropActorBase();
 
 	virtual void ResetItemProp();
 
@@ -55,5 +58,7 @@ public:
 	bool CanBePicked() override;
 
 	void OnPicked(AActor* Picker) override;
+
+	FORCEINLINE virtual const TSoftClassPtr<AVDEquipItemVisualActor>  GetItemVisualActor() { return ItemVisualActor; };
 
 };

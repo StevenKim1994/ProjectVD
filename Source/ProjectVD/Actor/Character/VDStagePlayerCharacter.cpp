@@ -4,6 +4,7 @@
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Actor/ActorComponent/VDBaseStaminaComponent.h"
+#include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "System/VDUISubsystem.h"
 #include "Engine/World.h"
 #include "Engine/DamageEvents.h"
@@ -124,6 +125,11 @@ void AVDStagePlayerCharacter::DefaultAttackHit()
 		const FVector Start = GetActorLocation() + (GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius() );
 		const FVector End = Start + (GetActorForwardVector() * AttackRange);
 
+		if (EquippedWeapon)
+		{
+			EquippedWeapon->SetColider(true);
+		}
+		return;
 		if (World)
 		{
 			bool bIsHitCheck = World->SweepSingleByChannel(HitResult,

@@ -4,10 +4,10 @@
 #include "UI/Stage/Inventory/VDInventoryLeftItemDetailSection.h"
 #include "Object/VDInventoryInfo.h"
 #include "System/VDInventorySubSystem.h"
+#include "System/VDPlayerSubsystem.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
-#include "System/VDPlayerSubsystem.h"
 #include "Public/VDConstrants.h"
 #include "Public/VDEquipType.h"
 
@@ -30,13 +30,15 @@ void UVDInventoryLeftItemDetailSection::UpdateItemDetailInfo(UVDInventoryInfo* I
 
 void UVDInventoryLeftItemDetailSection::OnClickedUseButton()
 {
+	UGameInstance* GI = GetGameInstance(); 
+	UVDPlayerSubsystem* PlayerSubsystem = GI->GetSubsystem<UVDPlayerSubsystem>();
 	switch(CurrentInventoryInfo->GetItemType())
 	{
-		UVDPlayerSubsystem* PlayerSubsystem = GetGameInstance()->GetSubsystem<UVDPlayerSubsystem>();
 		case EVDItemType::Weapon:
 		{
 			PlayerSubsystem->SetPlayerEquippedItem(EVDEquipType::Weapon, CurrentInventoryInfo->GetItemID());
 		}
+		break;
 		case EVDItemType::Equipment:
 		{
 			EVDEquipType EquipType = EVDEquipType::HeadArmor;

@@ -2,6 +2,7 @@
 #include "Actor/Character/VDStagePlayerCharacter.h"
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
 #include "System/VDUISubsystem.h"
+#include "System/VDPlayerSubsystem.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
@@ -24,8 +25,8 @@ void AVDStagePlayerController::BeginPlay()
 
 	FInputModeGameAndUI InputMode;
 	SetInputMode(InputMode);
-
-	if (UVDUISubsystem* UISubsystem = GetGameInstance()->GetSubsystem<UVDUISubsystem>())
+	UGameInstance* GameInstance = GetGameInstance();
+	if (UVDUISubsystem* UISubsystem = GameInstance->GetSubsystem<UVDUISubsystem>())
 	{
 		UISubsystem->SetPlayerControllerRootUIWidget(this);
 		UISubsystem->SetCurrentHUDWidget(VDConstants::StagePlayerHUD);
@@ -35,6 +36,11 @@ void AVDStagePlayerController::BeginPlay()
 		{
 			HUDWidget->SetCharacter(Cast<AVDCharacterBase>(GetCharacter()));
 		}
+	}
+
+	if (UVDPlayerSubsystem* PlayerSubsytem = GameInstance->GetSubsystem<UVDPlayerSubsystem>())
+	{
+		PlayerSubsytem->SetCurrentCharacter(Cast<AVDCharacterBase>(GetCharacter()));
 	}
 }
 
