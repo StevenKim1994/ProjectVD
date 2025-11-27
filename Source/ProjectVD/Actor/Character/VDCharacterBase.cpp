@@ -84,7 +84,9 @@ bool AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
 
 	if (InventoryComponent->AddItemToInventory(Item))
 	{
-		Item->Destroy(); // TODO :: 풀링변경 필요
+		Item->SetMeshHidden(true); // TODO :: 풀링변경 필요
+
+		return true;
 	}
 	/*
 	UClass* LoadedClass = VisualActor.LoadSynchronous();
@@ -97,7 +99,7 @@ bool AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
 		}
 	}
 	*/
-	return InventoryComponent->AddItemToInventory(Item);
+	return false;
 }
 
 void AVDCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

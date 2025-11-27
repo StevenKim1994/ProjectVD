@@ -6,6 +6,7 @@
 #include "Actor/ActorComponent/VDBaseStaminaComponent.h"
 #include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "System/VDUISubsystem.h"
+#include "System/VDDataTableSubsystem.h"
 #include "Engine/World.h"
 #include "Engine/DamageEvents.h"
 #include "Camera/CameraComponent.h"
@@ -20,6 +21,7 @@
 #include "Animation/AnimInstance.h"          
 #include "TimerManager.h"                    
 #include "Public/VDPhysicInfo.h"
+#include "DataTable/VDCharacterDefaultStats.h"
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
@@ -32,19 +34,29 @@ AVDStagePlayerCharacter::AVDStagePlayerCharacter()
 	StaminaComponent->SetCurrentStamina(100.0f);
 	StaminaComponent->SetStaminaRecovery(true);
 
-	BaseStatsComponent
-		->SetAttackRange(70.0f)
-		->SetAttackSpeed(1.0f)
-		->SetAttackPower(10.0f)
-		->SetMaxHealth(100.0f)
-		->SetMaxMana(100.0f)
-		->SetHealth(100.0f)
-		->SetMana(100.0f);
 }
 
 void AVDStagePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FVDCharacterDefaultStats* DataTableInfo = GetGameInstance()->GetSubsystem<UVDDataTableSubSystem>()->GetDataTableRow<FVDCharacterDefaultStats>(FName(TEXT("CharacterDefaultStats")), FName(TEXT("1")));
+	
+	if(DataTableInfo)
+	{
+		BaseStatsComponent
+			->SetAttackRange(DataTableInfo->AttackRange)
+			->SetAttackSpeed(DataTableInfo->AttackSpeed)
+			->SetAttackPower(DataTableInfo->AttackPower)
+			->SetMaxHealth(DataTableInfo->MaxHealth)
+			->SetMaxMana(DataTableInfo->MaxMana)
+			->SetHealth(DataTableInfo->MaxHealth)
+			->SetMana(DataTableInfo->MaxMana);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AVDStagePlayerCharacter::BeginPlay() DataTableInfo is nullptr"));
+	}
 	CurrentAttackComboCount = 0;
 }
 

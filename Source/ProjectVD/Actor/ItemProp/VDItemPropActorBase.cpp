@@ -85,6 +85,14 @@ void AVDItemPropActorBase::ResetItemProp()
 
 }
 
+void AVDItemPropActorBase::SetMeshHidden(bool bIsHidden)
+{
+	if (MeshComp)
+	{
+		MeshComp->SetHiddenInGame(bIsHidden);
+	}
+}
+
 bool AVDItemPropActorBase::CanBePicked()
 {
 	return true;

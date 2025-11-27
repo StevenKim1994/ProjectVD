@@ -55,7 +55,7 @@ public:
 	FName GetItemInfoName();
 
 	virtual void ResetItemProp();
-
+	virtual void SetMeshHidden(bool bIsHidden);
 	// IVDPickable을(를) 통해 상속됨
 	bool CanBePicked() override;
 

@@ -1,2 +1,2 @@
-Name,MaxHealth,MaxMana,AttackPower
-1,100,100,10
+﻿Name,MaxHealth,MaxMana,AttackPower,AttackRange,AttackSpeed
+1,100,100,10,70,1
