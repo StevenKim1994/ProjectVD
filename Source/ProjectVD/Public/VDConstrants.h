@@ -7,6 +7,10 @@
 
 namespace VDConstants
 {
+#pragma region TABLE_REGISTRY
+	// 데이터 테이블 키 이름들
+	extern const FString TableRegistryDataAssetPath;
+#pragma endregion
 #pragma region UI_REGISTRY
 	// UI 레지스트리 데이터 에셋 경로
 	extern const FString UIRegistryDataAssetPath;

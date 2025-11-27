@@ -6,6 +6,7 @@
 
 enum class EVDItemType : uint8;
 class UTexture2D;
+class AVDItemPropActorBase;
 
 USTRUCT(BlueprintType)
 struct FVDItemInfoTable : public FTableRowBase
@@ -25,4 +26,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Info")
 	TSoftObjectPtr<UTexture2D> Icon; // DESC :: 아이콘 참조
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Info")
+	TSoftClassPtr<AVDItemPropActorBase> ItemPropActorClass; // DESC :: 아이템 프랍 액터 클래스 참조
 };

@@ -22,7 +22,7 @@ namespace VDConstants
 	const FName TitleMovieSoundMuteToggleName(TEXT("TitleMovieSoundMuteToggle"));
 
 	const FString UIRegistryDataAssetPath(TEXT("/Game/ProjectVD/DataAsset/UIRegistry.UIRegistry"));
-
+	const FString TableRegistryDataAssetPath(TEXT("/Game/ProjectVD/DataAsset/TableRegistry.TableRegistry"));
 	const FName LoadingLevel(TEXT("Loading"));
 
 

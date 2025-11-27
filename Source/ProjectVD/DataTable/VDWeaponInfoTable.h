@@ -4,6 +4,8 @@
 #include "Engine/DataTable.h"
 #include "VDWeaponInfoTable.generated.h"
 
+class AVDEquipItemVisualActor;
+
 USTRUCT(BlueprintType)
 struct FVDWeaponInfoTable : public FTableRowBase
 {
@@ -16,4 +18,7 @@ public:
 	float AttackSpeed; // DESC :: 무기 공격 속도
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Info")
 	float CriticalChance; // DESC :: 치명타 확률
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Info")
+	TSoftClassPtr<AVDEquipItemVisualActor> WeaponVisualActorClass; // DESC :: 무기 시각적 액터 클래스
 };
