@@ -23,7 +23,7 @@ private:
 	TWeakObjectPtr<AVDCharacterBase> PlayerCharacter;
 
 	UPROPERTY()
-	TMap<EVDEquipType, int32> PlayerEquippedMap;
+	TMap<EVDEquipType, FName> PlayerEquippedMap;
 
 protected:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -32,8 +32,8 @@ protected:
 public:
 
 	void SetCurrentCharacter(AVDCharacterBase* InCharacter);
-	void SetUseConsumeableItem(int32 ItemID);
-	void SetPlayerEquippedItem(EVDEquipType, int32 ItemID);
-	FORCEINLINE int32 GetPlayerEquippedItem(EVDEquipType EquipType) const { return PlayerEquippedMap[EquipType]; } ;
+	void SetUseConsumeableItem(FName ItemID);
+	void SetPlayerEquippedItem(EVDEquipType, FName ItemID);
+	FORCEINLINE FName GetPlayerEquippedItem(EVDEquipType EquipType) const { return PlayerEquippedMap[EquipType]; } ;
 
 };

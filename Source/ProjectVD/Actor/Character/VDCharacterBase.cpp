@@ -12,8 +12,12 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "System/VDDataTableSubSystem.h"
 #include "Object/VDInventoryInfo.h"
 #include "Public/VDPhysicInfo.h"
+#include "Public/VDItemType.h"
+#include "Public/VDEquipType.h"
+#include "DataTable/VDItemInfoTable.h"
 
 AVDCharacterBase::AVDCharacterBase()
 {
@@ -77,7 +81,11 @@ bool AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
 		return false;
 	}
 
-	TSoftClassPtr VisualActor = Item->GetItemVisualActor();
+	if (InventoryComponent->AddItemToInventory(Item))
+	{
+		Item->Destroy(); // TODO :: 풀링변경 필요
+	}
+	/*
 	UClass* LoadedClass = VisualActor.LoadSynchronous();
 	if (LoadedClass)
 	{
@@ -87,7 +95,7 @@ bool AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
 			SetEquippedWeapon(SpawnedVisualActor);
 		}
 	}
-
+	*/
 	return InventoryComponent->AddItemToInventory(Item);
 }
 
@@ -102,9 +110,9 @@ float AVDCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	return DamageAmount;
 }
 
-bool AVDCharacterBase::UpdateEquippedItem(EVDEquipType EquipType, int32 ItemID)
+bool AVDCharacterBase::UpdateEquippedItem(EVDEquipType EquipType, FName ItemID)
 {
-	if(EquippedArmorMap.Contains(EquipType))
+	if (EquippedArmorMap.Contains(EquipType))
 	{
 		EquippedArmorMap[EquipType] = ItemID;
 	}
@@ -113,9 +121,9 @@ bool AVDCharacterBase::UpdateEquippedItem(EVDEquipType EquipType, int32 ItemID)
 		EquippedArmorMap.Add(EquipType, ItemID);
 	}
 
-	// TODO :: 장비아이템 능력치 StatComponent에 반영
+	// TODO :: 장비아이템 능력치 StatComponent에 반영 방어구 아이템은 능력치만 처리함.
 
-	return true; // DESC :: 장착성공
+	return true;
 }
 
 bool AVDCharacterBase::UseConsumeableItem(UVDInventoryInfo* ItemInfo)
@@ -123,7 +131,7 @@ bool AVDCharacterBase::UseConsumeableItem(UVDInventoryInfo* ItemInfo)
 
 	// TODO :: 소비아이템 사용 효과 StatComponent에 반영
 
-	return true; // DESC :: 사용성공
+	return true;
 }
 
 void AVDCharacterBase::SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon)

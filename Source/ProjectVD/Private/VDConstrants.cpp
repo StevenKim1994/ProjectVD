@@ -65,13 +65,13 @@ namespace VDConstants
 
 	const FText& GetInventoryEquipButtonText()
 	{
-		static const FText Text = NSLOCTEXT("VD.UI.Inventory", "EquipButton", "장착하기");
+		static const FText Text = NSLOCTEXT("VD.UI.Inventory", "EquipButton", "장착");
 		return Text;
 	}
 
 	const FText& GetInventoryUseButtonText()
 	{
-		static const FText Text = NSLOCTEXT("VD.UI.Inventory", "UseButton", "사용하기");
+		static const FText Text = NSLOCTEXT("VD.UI.Inventory", "UseButton", "사용");
 		return Text;
 	}
 }

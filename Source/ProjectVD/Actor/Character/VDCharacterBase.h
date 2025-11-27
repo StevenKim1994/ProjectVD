@@ -47,7 +47,7 @@ protected:
 	TObjectPtr<AVDEquipItemVisualActor> EquippedWeapon;
 
 	UPROPERTY()
-	TMap<EVDEquipType, int32> EquippedArmorMap;
+	TMap<EVDEquipType, FName> EquippedArmorMap;
 
 	virtual void BeginPlay() override;
 
@@ -71,15 +71,15 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon);
 public:	
 	AVDCharacterBase();
 
 	UFUNCTION()
+	virtual void SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon);
 	virtual bool PickItem(AVDItemPropActorBase* Item);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount,struct FDamageEvent const& DamageEvent,class AController* EventInstigator, AActor* DamageCauser) override;
-	virtual bool UpdateEquippedItem(EVDEquipType EquipType, int32 ItemID);
+	virtual bool UpdateEquippedItem(EVDEquipType EquipType, FName ItemID);
 	virtual bool UseConsumeableItem(UVDInventoryInfo* Item); 
 	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent; }
 };

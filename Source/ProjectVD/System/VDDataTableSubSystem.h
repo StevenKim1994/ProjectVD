@@ -9,7 +9,7 @@
 #include "VDDataTableSubSystem.generated.h"
 
 UCLASS()
-class PROJECTVD_API UVDDataTableSubSystem : public USubsystem
+class PROJECTVD_API UVDDataTableSubSystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 

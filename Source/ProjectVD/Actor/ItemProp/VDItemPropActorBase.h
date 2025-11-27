@@ -38,8 +38,8 @@ private:
 	FVector InitialLocation = FVector::ZeroVector;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VisualActor", Meta = (AllowPrivateAccess = "true"))
-	TSoftClassPtr<AVDEquipItemVisualActor> ItemVisualActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemProp", Meta = (AllowPrivateAccess = "true" , RowType = "VDItemInfoTable" ))
+	FDataTableRowHandle  ItemInfoTableRowName;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -52,13 +52,13 @@ protected:
 public:
 	AVDItemPropActorBase();
 
+	FName GetItemInfoName();
+
 	virtual void ResetItemProp();
 
 	// IVDPickable을(를) 통해 상속됨
 	bool CanBePicked() override;
 
 	void OnPicked(AActor* Picker) override;
-
-	FORCEINLINE virtual const TSoftClassPtr<AVDEquipItemVisualActor>  GetItemVisualActor() { return ItemVisualActor; };
 
 };

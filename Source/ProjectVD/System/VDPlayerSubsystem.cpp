@@ -3,8 +3,11 @@
 
 #include "System/VDPlayerSubsystem.h"
 #include "System/VDInventorySubSystem.h"
+#include "System/VDDataTableSubSystem.h"
 #include "Public/VDEquipType.h"
 #include "Public/VDItemType.h"
+#include "DataTable/VDItemInfoTable.h"
+#include "DataTable/VDWeaponInfoTable.h"
 #include "Actor/Character/VDCharacterBase.h"
 
 void UVDPlayerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -29,7 +32,7 @@ void UVDPlayerSubsystem::SetCurrentCharacter(AVDCharacterBase* InCharacter)
 	PlayerCharacter = InCharacter;
 }
 
-void UVDPlayerSubsystem::SetUseConsumeableItem(int32 ItemID)
+void UVDPlayerSubsystem::SetUseConsumeableItem(FName ItemID)
 {
 	if (!InventorySubsystem.IsValid())
 	{
@@ -54,11 +57,10 @@ void UVDPlayerSubsystem::SetUseConsumeableItem(int32 ItemID)
 	}
 }
 
-void UVDPlayerSubsystem::SetPlayerEquippedItem(EVDEquipType EquipType, int32 ItemID)
+void UVDPlayerSubsystem::SetPlayerEquippedItem(EVDEquipType EquipType, FName ItemID)
 {
 	if (PlayerEquippedMap.Contains(EquipType))
 	{
-		// TODO :: 기존 장착아이템 인벤토리 이전 필요
 		PlayerEquippedMap[EquipType] = ItemID;
 	}
 	else
@@ -66,5 +68,26 @@ void UVDPlayerSubsystem::SetPlayerEquippedItem(EVDEquipType EquipType, int32 Ite
 		PlayerEquippedMap.Add(EquipType, ItemID);
 	}
 
-	PlayerCharacter->UpdateEquippedItem(EquipType, ItemID);
+	if (EquipType == EVDEquipType::Weapon)
+	{
+		UVDDataTableSubSystem* DataTableSubsystem = GetGameInstance()->GetSubsystem<UVDDataTableSubSystem>(); 
+		FVDWeaponInfoTable* WeaponTable = DataTableSubsystem->GetDataTableRow<FVDWeaponInfoTable>(FName(TEXT("WeaponInfo")), ItemID);
+
+		if (!WeaponTable)
+		{
+			return;
+		}
+		WeaponTable->WeaponVisualActorClass.LoadSynchronous();
+		UClass* LoadedClass = WeaponTable->WeaponVisualActorClass.Get();
+
+		if (LoadedClass)
+		{
+			AVDEquipItemVisualActor* WeaponActor = GetWorld()->SpawnActor<AVDEquipItemVisualActor>(LoadedClass);
+			PlayerCharacter->SetEquippedWeapon(WeaponActor);
+		}
+	}
+	else
+	{
+		PlayerCharacter->UpdateEquippedItem(EquipType, ItemID);
+	}
 }

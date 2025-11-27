@@ -31,6 +31,11 @@ AVDItemPropActorBase::AVDItemPropActorBase()
 	ColiderComp->OnComponentBeginOverlap.AddDynamic(this, &AVDItemPropActorBase::OnBeginOverlap);
 }
 
+FName AVDItemPropActorBase::GetItemInfoName()
+{
+	return ItemInfoTableRowName.RowName;
+}
+
 // Called when the game starts or when spawned
 void AVDItemPropActorBase::BeginPlay()
 {

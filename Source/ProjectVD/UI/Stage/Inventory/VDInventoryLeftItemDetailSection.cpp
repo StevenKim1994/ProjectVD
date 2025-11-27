@@ -5,17 +5,27 @@
 #include "Object/VDInventoryInfo.h"
 #include "System/VDInventorySubSystem.h"
 #include "System/VDPlayerSubsystem.h"
+#include "System/VDDataTableSubSystem.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
 #include "Public/VDConstrants.h"
 #include "Public/VDEquipType.h"
+#include "DataTable/VDItemInfoTable.h"
 
 void UVDInventoryLeftItemDetailSection::UpdateItemDetailInfo(UVDInventoryInfo* InInventoryInfo)
 {
+	UVDDataTableSubSystem* DataTableSubsystem = GetGameInstance()->GetSubsystem<UVDDataTableSubSystem>();
+	FVDItemInfoTable* Table = DataTableSubsystem->GetDataTableRow<FVDItemInfoTable>(FName(TEXT("ItemInfo")), InInventoryInfo->GetItemID());
+
+	ItemName->SetText(FText::FromName(InInventoryInfo->GetItemID()));
+	ItemDesc->SetText(FText::FromString(Table->ItemDescription));
+
+	// DESC :: 아이템 타입에 따른 버튼 텍스트 변경 (장비, 무기 : 장착 , 소비아이템 : 사용)
 	switch (InInventoryInfo->GetItemType())
 	{
 		case EVDItemType::Weapon:
+		case EVDItemType::Equipment:
 		{
 			UseButtonText->SetText(VDConstants::GetInventoryEquipButtonText());
 		}
@@ -36,25 +46,27 @@ void UVDInventoryLeftItemDetailSection::OnClickedUseButton()
 	{
 		case EVDItemType::Weapon:
 		{
-			PlayerSubsystem->SetPlayerEquippedItem(EVDEquipType::Weapon, CurrentInventoryInfo->GetItemID());
+			PlayerSubsystem->SetPlayerEquippedItem (EVDEquipType::Weapon, CurrentInventoryInfo->GetItemID());
 		}
 		break;
 		case EVDItemType::Equipment:
 		{
 			EVDEquipType EquipType = EVDEquipType::HeadArmor;
-			int32 EquipID = 1;
+			FName EquipID = FName();
 			// TODO :: 추후 테이블 추가시 ID로 해당 테이블 정보 읽어서 장비 타입 분기 필요
 			// TODO :: 장비 장착 로직
-			PlayerSubsystem->SetPlayerEquippedItem(EquipType, EquipID);
+			//PlayerSubsystem->SetPlayerEquippedItem(EquipType, EquipID);
 		}
 		break;
 		case EVDItemType::Consumable:
 		{
-			// TODO :: 소비 아이템 사용 로직
-			PlayerSubsystem->SetUseConsumeableItem(CurrentInventoryInfo->GetItemID());
+			// TODO :: 소비아이템 테이블에서 GetItemID로 읽어와서 사용 로직 처리
+			//PlayerSubsystem->SetUseConsumeableItem(CurrentInventoryInfo->GetItemID());
 		}
 		break;
 	}
+
+	SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UVDInventoryLeftItemDetailSection::OnClickedDeleteButton()

@@ -34,6 +34,7 @@ void UVDInventorySubSystem::SetInventoryItemBySlot(int32 Slot, UVDInventoryInfo*
 	if (InventoryMap.Contains(Slot))
 	{
 		InventoryMap[Slot]->SetItemID(Item->GetItemID());
+		InventoryMap[Slot]->SetItemType(Item->GetItemType());
 		InventoryMap[Slot]->SetQuantity(Item->GetQuantity());
 		InventoryMap[Slot]->SetMaxQuantity(Item->GetMaxQuantity());
 		InventoryMap[Slot]->SetIsEmpty(Item->GetIsEmpty());
@@ -78,6 +79,7 @@ void UVDInventorySubSystem::AddInventoryItem(const UVDInventoryInfo* Item)
 	UVDInventoryInfo* NewItem = NewObject<UVDInventoryInfo>();
 	NewItem->SetItemID(Item->GetItemID());
 	NewItem->SetQuantity(Item->GetQuantity());
+	NewItem->SetItemType(Item->GetItemType());
 	NewItem->SetMaxQuantity(Item->GetMaxQuantity());
 	NewItem->SetIsEmpty(false);
 
@@ -114,6 +116,7 @@ void UVDInventorySubSystem::AddInventoryItem(const UVDInventoryInfo* Item)
 			Pair.Value->SetItemID(NewItem->GetItemID());
 			Pair.Value->SetQuantity(QuantityToAdd);
 			Pair.Value->SetMaxQuantity(NewItem->GetMaxQuantity());
+			Pair.Value->SetItemType(NewItem->GetItemType());
 			Pair.Value->SetIsEmpty(false);
 			int32 RemainingQuantity = NewItem->GetQuantity() - QuantityToAdd;
 			if (RemainingQuantity <= 0)
@@ -143,7 +146,7 @@ bool UVDInventorySubSystem::IsInventoryFull() const
 	return false;
 }
 
-UVDInventoryInfo* UVDInventorySubSystem::GetItem(EVDItemType ItemType, int32 ItemID) const
+UVDInventoryInfo* UVDInventorySubSystem::GetItem(EVDItemType ItemType, FName ItemID) const
 {
 	for (auto& Pair : InventoryMap)
 	{

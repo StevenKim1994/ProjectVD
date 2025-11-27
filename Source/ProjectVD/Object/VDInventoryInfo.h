@@ -17,7 +17,7 @@ private:
 	EVDItemType ItemType = EVDItemType::Consumable;
 
 	UPROPERTY()
-	int32 ItemID = -1;
+	FName ItemID;
 
 	UPROPERTY()
 	int32 Quantity = 1;
@@ -38,8 +38,8 @@ public:
 	FORCEINLINE UVDInventoryInfo* SetItemType(EVDItemType NewItemType) { ItemType = NewItemType; return this; }
 	FORCEINLINE EVDItemType GetItemType() const { return ItemType; }
 
-	FORCEINLINE UVDInventoryInfo* SetItemID(int32 NewItemID) { ItemID = NewItemID; return this; }
-	FORCEINLINE int32 GetItemID() const { return ItemID; }
+	FORCEINLINE UVDInventoryInfo* SetItemID(FName NewItemID) { ItemID = NewItemID; return this; }
+	FORCEINLINE FName GetItemID() const { return ItemID; }
 	
 	FORCEINLINE UVDInventoryInfo* SetQuantity(int32 NewQuantity) { Quantity = NewQuantity; return this; }
 	FORCEINLINE int32 GetQuantity() const { return Quantity; }

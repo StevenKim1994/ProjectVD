@@ -35,7 +35,7 @@ public:
 	void AddInventoryItem(const UVDInventoryInfo* Item);
 	bool IsInventoryFull() const;
 	
-	UVDInventoryInfo* GetItem(EVDItemType ItemType, int32 ItemID) const;
+	UVDInventoryInfo* GetItem(EVDItemType ItemType, FName ItemID) const;
 
 	FORCEINLINE FOnInventoryChangedDelegate& OnInventoryChanged() { return OnInventoryChangedDelegate; }
 	FORCEINLINE const UVDInventoryInfo* GetInventoryItemBySlot(int32 Slot) const { return InventoryMap.Find(Slot)->Get(); }
