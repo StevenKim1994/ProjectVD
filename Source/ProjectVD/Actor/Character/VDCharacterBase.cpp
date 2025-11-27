@@ -13,6 +13,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "System/VDDataTableSubSystem.h"
+#include "System/VDUISubsystem.h"
 #include "Object/VDInventoryInfo.h"
 #include "Public/VDPhysicInfo.h"
 #include "Public/VDItemType.h"
@@ -140,6 +141,8 @@ void AVDCharacterBase::SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon)
 	{
 		EquippedWeapon = NewWeapon;
 		NewWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
+
+		GetGameInstance()->GetSubsystem<UVDUISubsystem>()->ShowToastMessage(FText::FromString(TEXT("무기 장착 완료")));
 	}
 }
 

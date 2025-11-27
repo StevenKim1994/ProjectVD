@@ -42,6 +42,7 @@ void UVDInventoryLeftItemDetailSection::OnClickedUseButton()
 {
 	UGameInstance* GI = GetGameInstance(); 
 	UVDPlayerSubsystem* PlayerSubsystem = GI->GetSubsystem<UVDPlayerSubsystem>();
+	UVDInventorySubSystem* InventorySubSystem = GI->GetSubsystem<UVDInventorySubSystem>();
 	switch(CurrentInventoryInfo->GetItemType())
 	{
 		case EVDItemType::Weapon:
@@ -66,7 +67,7 @@ void UVDInventoryLeftItemDetailSection::OnClickedUseButton()
 		break;
 	}
 
-	SetVisibility(ESlateVisibility::Collapsed);
+	InventorySubSystem->RemoveInventoryItemBySlot(CurrentInventoryInfo->GetSlot());
 }
 
 void UVDInventoryLeftItemDetailSection::OnClickedDeleteButton()
