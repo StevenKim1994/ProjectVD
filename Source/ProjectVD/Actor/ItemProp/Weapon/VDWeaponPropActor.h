@@ -7,11 +7,18 @@
 #include "Actor/ItemProp/VDItemPropActorBase.h"
 #include "VDWeaponPropActor.generated.h"
 
+class UNagaraComponent;
+
 UCLASS()
 class PROJECTVD_API AVDWeaponPropActor : public AVDItemPropActorBase
 {
 	GENERATED_BODY()
 	
+private:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponProp", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UNiagaraComponent> EquipEffectComp;
+
 public:	
 	AVDWeaponPropActor();
 

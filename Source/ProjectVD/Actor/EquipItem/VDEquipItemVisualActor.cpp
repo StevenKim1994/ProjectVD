@@ -6,7 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "Public/VDConstrants.h"
 #include "Public/VDPhysicInfo.h"
-
+#include "NiagaraComponent.h"
 
 // Sets default values
 AVDEquipItemVisualActor::AVDEquipItemVisualActor()
@@ -16,13 +16,17 @@ AVDEquipItemVisualActor::AVDEquipItemVisualActor()
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
 	StaticMeshComp->SetCollisionProfileName(CPROFILE_NO_COLLISION);
 	RootComponent = StaticMeshComp;
+
+	EquipEffectComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("EquipEffectComp"));
+	EquipEffectComp->SetupAttachment(RootComponent);
+
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
 	BoxComp->SetupAttachment(RootComponent);
 	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BoxComp->SetGenerateOverlapEvents(true);
+	BoxComp->SetCollisionProfileName(CPROFILE_CHARACTER_CAPSULE);
 	BoxComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	BoxComp->SetCollisionObjectType(CCHANNEL_PROFILE_CHACRACTER_ACTION);
-	BoxComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	BoxComp->SetCollisionResponseToChannel(CCHANNEL_PROFILE_CHACRACTER_ACTION, ECR_Overlap);
 	BoxComp->IgnoreActorWhenMoving(GetOwner(), true);
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &AVDEquipItemVisualActor::OnBoxBeginOverlap);

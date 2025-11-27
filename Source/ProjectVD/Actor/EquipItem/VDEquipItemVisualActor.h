@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "VDEquipItemVisualActor.generated.h"
 
+class UNiagaraComponent;
+
 DECLARE_DELEGATE_SixParams(FOnDetectedHitColiderTarget, UPrimitiveComponent* , AActor* , UPrimitiveComponent* , int32 , bool , const FHitResult& );
 
 class UStaticMeshComponent;
@@ -18,6 +20,9 @@ class PROJECTVD_API AVDEquipItemVisualActor : public AActor
 private:
 	UPROPERTY()
 	TArray<AActor*> DetectedActors;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EquipItem", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UNiagaraComponent> EquipEffectComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="EquipItem", Meta = (AllowPrivateAccess ="true"))
 	TObjectPtr<UStaticMeshComponent> StaticMeshComp; 

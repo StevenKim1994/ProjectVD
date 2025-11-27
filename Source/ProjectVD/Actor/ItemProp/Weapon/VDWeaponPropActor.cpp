@@ -2,11 +2,16 @@
 
 
 #include "Actor/ItemProp/Weapon/VDWeaponPropActor.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AVDWeaponPropActor::AVDWeaponPropActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	EquipEffectComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("EquipEffectComp"));
+
+	EquipEffectComp->SetupAttachment(RootComponent);
+
 }
 
 void AVDWeaponPropActor::BeginPlay()
