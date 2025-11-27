@@ -15,6 +15,7 @@ class UVDBaseStaminaComponent;
 class UVDInventoryComponent;
 class AVDItemPropActorBase;
 class AVDEquipItemVisualActor;
+class UVDInventoryInfo;
 
 enum class EVDEquipType: uint8;
 
@@ -78,7 +79,7 @@ public:
 	virtual bool PickItem(AVDItemPropActorBase* Item);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount,struct FDamageEvent const& DamageEvent,class AController* EventInstigator, AActor* DamageCauser) override;
-	virtual void UpdateEquippedItem(EVDEquipType EquipType, int32 ItemID);
-	virtual void UseConsumeableItem(int32 ItemID); 
+	virtual bool UpdateEquippedItem(EVDEquipType EquipType, int32 ItemID);
+	virtual bool UseConsumeableItem(UVDInventoryInfo* Item); 
 	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent; }
 };

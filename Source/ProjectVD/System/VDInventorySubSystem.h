@@ -30,11 +30,13 @@ public:
 	UVDInventorySubSystem();
 
 	void SetInventoryItemBySlot(int32 Slot, UVDInventoryInfo* Item);
-	void RemoveInventoryItemBySlot(int32 Slot);
+	void RemoveInventoryItemBySlot(int32 Slot, int32 Count = 1);
 	void ClearInventory();
 	void AddInventoryItem(const UVDInventoryInfo* Item);
 	bool IsInventoryFull() const;
 	
+	UVDInventoryInfo* GetItem(EVDItemType ItemType, int32 ItemID) const;
+
 	FORCEINLINE FOnInventoryChangedDelegate& OnInventoryChanged() { return OnInventoryChangedDelegate; }
 	FORCEINLINE const UVDInventoryInfo* GetInventoryItemBySlot(int32 Slot) const { return InventoryMap.Find(Slot)->Get(); }
 	FORCEINLINE const TMap<int32, TObjectPtr<UVDInventoryInfo>>& GetInventoryMap() const { return InventoryMap; };

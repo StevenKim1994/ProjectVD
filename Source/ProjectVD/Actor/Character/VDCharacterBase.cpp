@@ -12,6 +12,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Object/VDInventoryInfo.h"
 #include "Public/VDPhysicInfo.h"
 
 AVDCharacterBase::AVDCharacterBase()
@@ -101,7 +102,7 @@ float AVDCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	return DamageAmount;
 }
 
-void AVDCharacterBase::UpdateEquippedItem(EVDEquipType EquipType, int32 ItemID)
+bool AVDCharacterBase::UpdateEquippedItem(EVDEquipType EquipType, int32 ItemID)
 {
 	if(EquippedArmorMap.Contains(EquipType))
 	{
@@ -113,12 +114,16 @@ void AVDCharacterBase::UpdateEquippedItem(EVDEquipType EquipType, int32 ItemID)
 	}
 
 	// TODO :: 장비아이템 능력치 StatComponent에 반영
+
+	return true; // DESC :: 장착성공
 }
 
-void AVDCharacterBase::UseConsumeableItem(int32 ItemID)
+bool AVDCharacterBase::UseConsumeableItem(UVDInventoryInfo* ItemInfo)
 {
+
 	// TODO :: 소비아이템 사용 효과 StatComponent에 반영
 
+	return true; // DESC :: 사용성공
 }
 
 void AVDCharacterBase::SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon)

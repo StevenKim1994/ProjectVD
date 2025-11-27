@@ -45,12 +45,21 @@ void UVDInventorySubSystem::SetInventoryItemBySlot(int32 Slot, UVDInventoryInfo*
 	}
 }
 
-void UVDInventorySubSystem::RemoveInventoryItemBySlot(int32 Slot)
+void UVDInventorySubSystem::RemoveInventoryItemBySlot(int32 Slot, int32 Count)
 {
 	if (InventoryMap.Contains(Slot))
 	{
 		UVDInventoryInfo* ChangedItem = InventoryMap[Slot];
-		ChangedItem->SetIsEmpty(true);
+		int32 NewQuantity = ChangedItem->GetQuantity() - Count;
+		if (NewQuantity > 0)
+		{
+			ChangedItem->SetQuantity(NewQuantity);
+			ChangedItem->SetIsEmpty(false);
+		}
+		else
+		{
+			ChangedItem->SetIsEmpty(true);
+		}
 		
 		if (OnInventoryChangedDelegate.IsBound())
 		{
@@ -132,4 +141,17 @@ void UVDInventorySubSystem::AddInventoryItem(const UVDInventoryInfo* Item)
 bool UVDInventorySubSystem::IsInventoryFull() const
 {
 	return false;
+}
+
+UVDInventoryInfo* UVDInventorySubSystem::GetItem(EVDItemType ItemType, int32 ItemID) const
+{
+	for (auto& Pair : InventoryMap)
+	{
+		if (!Pair.Value->GetIsEmpty() && Pair.Value->GetItemType() == ItemType && Pair.Value->GetItemID() == ItemID)
+		{
+			return Pair.Value;
+		}
+	}
+
+	return nullptr;
 }

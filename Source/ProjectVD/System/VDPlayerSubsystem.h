@@ -7,6 +7,7 @@
 #include "VDPlayerSubsystem.generated.h"
 
 class AVDCharacterBase;
+class UVDInventorySubSystem;
 enum class EVDEquipType : uint8;
 
 UCLASS()
@@ -15,12 +16,14 @@ class PROJECTVD_API UVDPlayerSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 private:
-	
 	UPROPERTY()
-	TMap<EVDEquipType, int32> PlayerEquippedMap;
+	TWeakObjectPtr<UVDInventorySubSystem> InventorySubsystem;
 
 	UPROPERTY()
-	TObjectPtr<AVDCharacterBase> PlayerCharacter;
+	TWeakObjectPtr<AVDCharacterBase> PlayerCharacter;
+
+	UPROPERTY()
+	TMap<EVDEquipType, int32> PlayerEquippedMap;
 
 protected:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;

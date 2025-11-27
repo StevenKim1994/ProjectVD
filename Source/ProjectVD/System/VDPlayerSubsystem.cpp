@@ -2,12 +2,16 @@
 
 
 #include "System/VDPlayerSubsystem.h"
+#include "System/VDInventorySubSystem.h"
 #include "Public/VDEquipType.h"
+#include "Public/VDItemType.h"
 #include "Actor/Character/VDCharacterBase.h"
 
 void UVDPlayerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+
+	InventorySubsystem = GetGameInstance()->GetSubsystem<UVDInventorySubSystem>(); // DESC :: 약한참조로 인벤토리 서브시스템 캐싱
 }
 
 void UVDPlayerSubsystem::Deinitialize()
@@ -17,19 +21,37 @@ void UVDPlayerSubsystem::Deinitialize()
 
 void UVDPlayerSubsystem::SetCurrentCharacter(AVDCharacterBase* InCharacter)
 {
-	if(InCharacter)
+	if (!InCharacter)
 	{
-		PlayerCharacter = InCharacter;
+		return;
 	}
+
+	PlayerCharacter = InCharacter;
 }
 
 void UVDPlayerSubsystem::SetUseConsumeableItem(int32 ItemID)
 {
-	if (PlayerCharacter)
+	if (!InventorySubsystem.IsValid())
 	{
-		PlayerCharacter->UseConsumeableItem(ItemID);
+		return;
 	}
-	// TODO :: 소비 아이템 사용 로직 구현 필요
+
+	if (!PlayerCharacter.IsValid())
+	{
+		return;
+	}
+
+	UVDInventoryInfo* Item = InventorySubsystem->GetItem(EVDItemType::Consumable, ItemID);
+
+	if (!Item)
+	{
+		return;
+	}
+
+	if (PlayerCharacter->UseConsumeableItem(Item)) // DESC :: 소비아이템 사용 성공
+	{
+		InventorySubsystem->RemoveInventoryItemBySlot(Item->GetSlot());
+	}
 }
 
 void UVDPlayerSubsystem::SetPlayerEquippedItem(EVDEquipType EquipType, int32 ItemID)
