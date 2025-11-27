@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "VDWeaponInfoTable.generated.h"
+#include "VDEquipInfoTable.generated.h"
 
 USTRUCT(BlueprintType)
 
