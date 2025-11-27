@@ -74,6 +74,9 @@ protected:
 	void RollRight(const FInputActionValue& Value);
 
 	UFUNCTION()
+	void Skill1(const FInputActionValue& Value);
+
+	UFUNCTION()
 	void DefendHold(const FInputActionValue& Value);
 
 	UFUNCTION()

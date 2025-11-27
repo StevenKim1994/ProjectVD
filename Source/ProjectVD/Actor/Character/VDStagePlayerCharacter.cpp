@@ -274,6 +274,12 @@ void AVDStagePlayerCharacter::RollRight(const FInputActionValue& Value)
 	}
 }
 
+void AVDStagePlayerCharacter::Skill1(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("Skill1 Activated"));
+
+}
+
 void AVDStagePlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
 	//Super::DefaultAttack(Value); DESC :: 부모함수 호출하지 않음.

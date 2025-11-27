@@ -140,8 +140,10 @@ void AVDCharacterBase::SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon)
 	if (NewWeapon)
 	{
 		EquippedWeapon = NewWeapon;
-		NewWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
+		EquippedWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
 
+		EquippedWeapon->GetOnDetectedHitColiderTarget().Unbind();
+		EquippedWeapon->GetOnDetectedHitColiderTarget().BindUObject(this, &AVDCharacterBase::WeaponColiderHit);
 		GetGameInstance()->GetSubsystem<UVDUISubsystem>()->ShowToastMessage(FText::FromString(TEXT("무기 장착 완료")));
 	}
 }
@@ -203,5 +205,10 @@ void AVDCharacterBase::Inventory(const FInputActionValue& Value)
 	{
 		VDPC->OnInventory(Value);
 	}
+}
+
+void AVDCharacterBase::WeaponColiderHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Log, TEXT("Weapon Colider Hit Actor : %s"), *OtherActor->GetName());
 }
 

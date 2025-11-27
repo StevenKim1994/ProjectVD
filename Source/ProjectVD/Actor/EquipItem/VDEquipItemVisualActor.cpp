@@ -7,6 +7,7 @@
 #include "Public/VDConstrants.h"
 #include "Public/VDPhysicInfo.h"
 
+
 // Sets default values
 AVDEquipItemVisualActor::AVDEquipItemVisualActor()
 {
@@ -17,19 +18,25 @@ AVDEquipItemVisualActor::AVDEquipItemVisualActor()
 	RootComponent = StaticMeshComp;
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
 	BoxComp->SetupAttachment(RootComponent);
-	BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	BoxComp->SetCollisionObjectType(ECC_WorldDynamic);
-	BoxComp->SetCollisionResponseToAllChannels(ECR_Ignore);
-	BoxComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BoxComp->SetGenerateOverlapEvents(true);
+	BoxComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+	BoxComp->SetCollisionObjectType(CCHANNEL_PROFILE_CHACRACTER_ACTION);
+	BoxComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	BoxComp->SetCollisionResponseToChannel(CCHANNEL_PROFILE_CHACRACTER_ACTION, ECR_Overlap);
+	BoxComp->IgnoreActorWhenMoving(GetOwner(), true);
+	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &AVDEquipItemVisualActor::OnBoxBeginOverlap);
+	BoxComp->OnComponentEndOverlap.AddDynamic(this, &AVDEquipItemVisualActor::OnBoxEndOverlap);
+
+	DetectedActors.Empty();
 }
 
 void AVDEquipItemVisualActor::SetColider(bool bEnable)
 {
 	if (BoxComp)
 	{
-		BoxComp->SetCollisionEnabled(bEnable ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
-
+		BoxComp->SetCollisionEnabled(bEnable ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
+		
 		if (bEnable)
 		{
 			DrawDebugBox(
@@ -44,6 +51,11 @@ void AVDEquipItemVisualActor::SetColider(bool bEnable)
 				2.0f 
 			);
 		}
+
+		if (bEnable == false)
+		{
+			DetectedActors.Empty();
+		}
 	}
 }
 
@@ -57,5 +69,20 @@ void AVDEquipItemVisualActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AVDEquipItemVisualActor::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (DetectedActors.Contains(OtherActor) == false)
+	{
+		DetectedActors.Add(OtherActor);
+
+		OnDetectedHitColiderTarget.ExecuteIfBound(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	}
+}
+
+void AVDEquipItemVisualActor::OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	// Overlap 종료 처리
 }
 

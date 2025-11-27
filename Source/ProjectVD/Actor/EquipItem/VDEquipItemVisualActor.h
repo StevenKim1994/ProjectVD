@@ -6,22 +6,30 @@
 #include "GameFramework/Actor.h"
 #include "VDEquipItemVisualActor.generated.h"
 
+DECLARE_DELEGATE_SixParams(FOnDetectedHitColiderTarget, UPrimitiveComponent* , AActor* , UPrimitiveComponent* , int32 , bool , const FHitResult& );
+
 class UStaticMeshComponent;
 class UBoxComponent;
-
 UCLASS()
 class PROJECTVD_API AVDEquipItemVisualActor : public AActor
 {
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY()
+	TArray<AActor*> DetectedActors;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="EquipItem", Meta = (AllowPrivateAccess ="true"))
 	TObjectPtr<UStaticMeshComponent> StaticMeshComp; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EquipItem", Meta= (AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> BoxComp;
 
+	FOnDetectedHitColiderTarget OnDetectedHitColiderTarget;
 protected:
+	virtual void OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	virtual void OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -29,7 +37,7 @@ protected:
 public:	
 	AVDEquipItemVisualActor();
 	
-	//void SetEquipInfo(); // TODO :: 해당아이템의 정보처리
-
 	void SetColider(bool bEnable);
+
+	FORCEINLINE FOnDetectedHitColiderTarget& GetOnDetectedHitColiderTarget() { return OnDetectedHitColiderTarget; }
 };
