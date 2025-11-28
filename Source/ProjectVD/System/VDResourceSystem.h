@@ -23,7 +23,7 @@ private:
 	TObjectPtr<UAssetManager> AssetManager;
 
 	UPROPERTY()
-	TMap<FPrimaryAssetId, TObjectPtr<UPrimaryDataAsset>> LoadedPrimaryAssets;
+	TMap<FPrimaryAssetId, TWeakObjectPtr<UPrimaryDataAsset>> LoadedPrimaryAssets;
 
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;

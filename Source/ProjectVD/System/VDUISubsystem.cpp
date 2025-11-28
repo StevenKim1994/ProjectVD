@@ -21,7 +21,7 @@ void UVDUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	ResourceSystem = Collection.InitializeDependency<UVDResourceSystem>();
-	UIRegistry = ResourceSystem->GetLoadedPrimaryAsset<UVDUIRegistry>(FPrimaryAssetId(FName(TEXT("UI")), FName(TEXT("UIRegistry"))));
+	UIRegistry = ResourceSystem->GetLoadedPrimaryAsset<UVDUIRegistry>(FPrimaryAssetId(FName(TEXT("UI")), FName(TEXT("PAL_UIRegistry"))));
 	
 	ModalUIWidgetStack.Empty();
 	ActiveWidgetInstanceMap.Empty();

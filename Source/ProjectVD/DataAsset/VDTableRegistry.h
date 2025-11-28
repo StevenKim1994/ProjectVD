@@ -25,6 +25,11 @@ public:
 		return nullptr;
 	}
 
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override
+	{
+		return FPrimaryAssetId(FName(TEXT("Table")), GetFName());
+	}
+
 	const TMap<FName, TSoftObjectPtr<UDataTable>>& GetDataTableMap() const
 	{
 		return DataTableMap;

@@ -16,6 +16,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	TSoftClassPtr<UUserWidget> GetWidgetClassByName(const FName& WidgetName) const;
 
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override
+	{
+		return FPrimaryAssetId(FName(TEXT("UI")), GetFName());
+	}
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& E) override;

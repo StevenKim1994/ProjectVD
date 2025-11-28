@@ -4,16 +4,19 @@
 #include "System/VDResourceSystem.h"
 #include "DataAsset/VDMovieRegistry.h"
 #include "DataAsset/VDUIRegistry.h"
+#include "Engine/AssetManager.h"
 
 void UVDResourceSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-	AssetManager = UAssetManager::GetIfInitialized();
-
+	Super::Initialize(Collection);
+	AssetManager = UAssetManager::Get();
+	AssetManager->FinishInitialLoading();
 	UE_LOG(LogTemp, Warning, TEXT("UVDResourceSystem Initialize"));
 }
 
 void UVDResourceSystem::Deinitialize()
 {
+	Super::Deinitialize();
 	UE_LOG(LogTemp, Warning, TEXT("UVDResourceSystem Deinitialize"));
 }
 
