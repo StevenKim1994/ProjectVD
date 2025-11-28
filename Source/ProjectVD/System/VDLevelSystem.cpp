@@ -28,29 +28,20 @@ void UVDLevelSystem::LoadChangeLevel()
 	UAssetManager& AssetManager = UAssetManager::Get();
 
 	FPrimaryAssetType LabelType = FName(TEXT("Stage"));
-    FName LabelName = FName(TEXT("PAL_Stage"));
-	FPrimaryAssetId LevelLabelId = FPrimaryAssetId(LabelType, LabelName);
-	TArray<FName> LoadBundles;
-    LevelStreamableHandle = AssetManager.LoadPrimaryAsset(LevelLabelId, LoadBundles, FStreamableDelegate::CreateLambda([this]
-    {
-        OnLevelLoaded();
-    }));
+    TArray<FPrimaryAssetId> LabelIds;
+	bool Result = AssetManager.GetPrimaryAssetIdList(LabelType, LabelIds);
 
-
-	if (LevelStreamableHandle.IsValid())
+    if (Result)
     {
-		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-		if (ProgressTimerHandle.IsValid())
+        for (const FPrimaryAssetId& Id : LabelIds)
         {
-			ProgressTimerHandle.Invalidate();
-        }
-
-        TimerManager.SetTimer(ProgressTimerHandle, FTimerDelegate::CreateLambda([this]()
+            UE_LOG(LogTemp, Log, TEXT("VDLevelSystem::LoadChangeLevel - Found Primary Asset Id: %s"), *Id.ToString());
+            UPrimaryAssetLabel* Label = Cast<UPrimaryAssetLabel>(AssetManager.GetPrimaryAssetObject(Id));
+            if (Label)
             {
-                float Progress = LevelStreamableHandle->GetProgress();
-                LevelLoadedDelegate.ExecuteIfBound(Progress);
-				UE_LOG(LogTemp, Log, TEXT("VDLevelSystem::LoadChangeLevel - Loading Progress: %.2f"), Progress);
-			}), 0.1f, false, true);
+
+            }
+        }
     }
 }
 
@@ -74,9 +65,6 @@ void UVDLevelSystem::ChangeLevelByName(const FString& LevelName)
 
 void UVDLevelSystem::OnLevelLoaded()
 {
-    CurrentLevelName = NextLevelName;
-    NextLevelName.Empty();
-
     if (ProgressTimerHandle.IsValid())
     {
         ProgressTimerHandle.Invalidate();
@@ -84,5 +72,14 @@ void UVDLevelSystem::OnLevelLoaded()
 
     LevelLoadedCompleteDelegate.ExecuteIfBound();
 
-    UGameplayStatics::OpenLevel(GetWorld(), FName(CurrentLevelName));
+}
+
+void UVDLevelSystem::ChangeToNextLevel()
+{
+    if (!NextLevelName.IsEmpty())
+    {
+        CurrentLevelName = NextLevelName;
+        NextLevelName.Empty();
+        UGameplayStatics::OpenLevel(GetWorld(), FName(CurrentLevelName));
+    }
 }

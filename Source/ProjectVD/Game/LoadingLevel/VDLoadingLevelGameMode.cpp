@@ -43,6 +43,9 @@ void AVDLoadingLevelGameMode::OnLoadingFinished()
 	{
 		LoadingController->HideLoadingPanel();
 	}
+
+	UVDLevelSystem* LevelSystem = GetGameInstance()->GetSubsystem<UVDLevelSystem>();
+	LevelSystem->ChangeToNextLevel();
 }
 
 void AVDLoadingLevelGameMode::OnLoadingStarted()
@@ -50,7 +53,8 @@ void AVDLoadingLevelGameMode::OnLoadingStarted()
 	if (LoadingController.IsValid())
 	{
 		LoadingController->ShowLoadingPanel();
-	
+
+
 		UVDLevelSystem* LevelSystem = GetGameInstance()->GetSubsystem<UVDLevelSystem>();
 		LevelSystem->GetLevelLoadedDelegate().BindUObject(this, &AVDLoadingLevelGameMode::OnLoadingProgressUpdated);
 		LevelSystem->GetLevelLoadedCompleteDelegate().BindUObject(this, &AVDLoadingLevelGameMode::OnLoadingFinished);

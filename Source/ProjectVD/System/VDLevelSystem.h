@@ -42,6 +42,7 @@ public:
 
 	void ChangeLevelByName(const FString& LevelName);
 	void OnLevelLoaded();
+	void ChangeToNextLevel();
 
 	FORCEINLINE FOnLevelLoadedDelegate& GetLevelLoadedDelegate() { return LevelLoadedDelegate; }
 	FORCEINLINE FOnLevelLoadedCompleteDelegate& GetLevelLoadedCompleteDelegate() { return LevelLoadedCompleteDelegate; }
