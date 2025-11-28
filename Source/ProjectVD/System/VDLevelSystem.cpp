@@ -1,11 +1,10 @@
 #include "System/VDLevelSystem.h"
 #include "Engine/LevelStreamingDynamic.h"
 #include "Kismet/GameplayStatics.h"
-#include "Engine/AssetManager.h"
-#include "Engine/StreamableManager.h"
 #include "Engine/World.h"
 #include "Engine/PrimaryAssetLabel.h"
 #include "Public/VDConstrants.h"
+#include "System/VDResourceSystem.h"
 
 
 void UVDLevelSystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -25,24 +24,53 @@ void UVDLevelSystem::LoadPrepareNextLevelAssets()
 
 void UVDLevelSystem::LoadChangeLevel()
 {
-	UAssetManager& AssetManager = UAssetManager::Get();
-
-	FPrimaryAssetType LabelType = FName(TEXT("Stage"));
-    TArray<FPrimaryAssetId> LabelIds;
-	bool Result = AssetManager.GetPrimaryAssetIdList(LabelType, LabelIds);
-
-    if (Result)
+    FName LoadPALAssetName = FName(*FString::Printf(TEXT("PAL_%s"), *NextLevelName));
+    const FPrimaryAssetId LevelAssetId(FName(TEXT("PrimaryAssetLabel")), LoadPALAssetName);
+    if (!LevelPrepareAssetsMap.Contains(LevelAssetId))
     {
-        for (const FPrimaryAssetId& Id : LabelIds)
-        {
-            UE_LOG(LogTemp, Log, TEXT("VDLevelSystem::LoadChangeLevel - Found Primary Asset Id: %s"), *Id.ToString());
-            UPrimaryAssetLabel* Label = Cast<UPrimaryAssetLabel>(AssetManager.GetPrimaryAssetObject(Id));
-            if (Label)
-            {
+        UVDResourceSystem* ResourceSystem = GetGameInstance()->GetSubsystem<UVDResourceSystem>();
+        UPrimaryAssetLabel* LoadMapInfo = ResourceSystem->GetLoadedPrimaryAsset<UPrimaryAssetLabel>(LevelAssetId);
 
-            }
+        if(LoadMapInfo)
+        {
+            LevelPrepareAssetsMap.Add(LevelAssetId, LoadMapInfo);
+		}
+    }
+
+    UPrimaryAssetLabel* PrepareLevelAsset = LevelPrepareAssetsMap[LevelAssetId].Get();
+    if (PrepareLevelAsset)
+    {
+        UAssetManager& AssetManager = UAssetManager::Get();
+		FStreamableManager& StreamableManager = AssetManager.GetStreamableManager();
+
+        TArray<FSoftObjectPath> AssetPaths;
+        for (const TSoftObjectPtr<UObject> Ptr : PrepareLevelAsset->ExplicitAssets)
+        {
+            AssetPaths.Add(Ptr.ToSoftObjectPath());
+        }
+        for (const TSoftClassPtr<UObject> Ptr : PrepareLevelAsset->ExplicitBlueprints)
+        {
+            AssetPaths.Add(Ptr.ToSoftObjectPath());
+        }
+        CurrentCount = 0;
+        AssetNum = AssetPaths.Num();
+        FStreamableDelegate ProgressDelegate = FStreamableDelegate::CreateUObject(
+            this,
+            &UVDLevelSystem::OnLevelLoaded
+		);
+        for (const FSoftObjectPath& Path : AssetPaths)
+        {
+            UAssetManager::GetStreamableManager().RequestAsyncLoad(
+                Path,
+                ProgressDelegate
+            );
         }
     }
+    else
+    {
+        ChangeToNextLevel();
+	}
+
 }
 
 void UVDLevelSystem::ChangeLevelByName(const FString& LevelName)
@@ -82,4 +110,11 @@ void UVDLevelSystem::ChangeToNextLevel()
         NextLevelName.Empty();
         UGameplayStatics::OpenLevel(GetWorld(), FName(CurrentLevelName));
     }
+}
+
+void UVDLevelSystem::OnLoadSingleAsset()
+{
+    CurrentCount++;
+
+    UE_LOG(LogTemp, Warning, TEXT("VDLevelSystem::OnLoadSingleAsset Count : '%d' Max : '%d'"), CurrentCount, AssetNum);
 }

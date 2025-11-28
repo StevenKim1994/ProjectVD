@@ -10,28 +10,13 @@
 DECLARE_DELEGATE(FOnLevelLoadedCompleteDelegate);
 DECLARE_DELEGATE_OneParam(FOnLevelLoadedDelegate, float);
 
+class UPrimaryAssetLabel;
 struct FStreamableHandle;
-
 UCLASS()
 class PROJECTVD_API UVDLevelSystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY()
-	FString CurrentLevelName;
-
-	UPROPERTY()
-	FString NextLevelName;
-
-	UPROPERTY()
-	TWeakObjectPtr<UVDLoadingPanelUserWidget> LoadingPanelWidget;
-
-	TSharedPtr<FStreamableHandle> LevelStreamableHandle;
-
-	FTimerHandle ProgressTimerHandle;
-	FOnLevelLoadedDelegate LevelLoadedDelegate;
-	FOnLevelLoadedCompleteDelegate LevelLoadedCompleteDelegate;
 
 public:
 	void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -46,4 +31,28 @@ public:
 
 	FORCEINLINE FOnLevelLoadedDelegate& GetLevelLoadedDelegate() { return LevelLoadedDelegate; }
 	FORCEINLINE FOnLevelLoadedCompleteDelegate& GetLevelLoadedCompleteDelegate() { return LevelLoadedCompleteDelegate; }
+
+
+private:
+	TMap<FPrimaryAssetId, TWeakObjectPtr<UPrimaryAssetLabel>> LevelPrepareAssetsMap;
+
+	UFUNCTION()
+	void OnLoadSingleAsset();
+	int32 CurrentCount = 0;
+	int32 AssetNum = 0;
+
+	UPROPERTY()
+	FString CurrentLevelName;
+
+	UPROPERTY()
+	FString NextLevelName;
+
+	UPROPERTY()
+	TWeakObjectPtr<UVDLoadingPanelUserWidget> LoadingPanelWidget;
+
+	TSharedPtr<FStreamableHandle> LevelStreamableHandle;
+
+	FTimerHandle ProgressTimerHandle;
+	FOnLevelLoadedDelegate LevelLoadedDelegate;
+	FOnLevelLoadedCompleteDelegate LevelLoadedCompleteDelegate;
 };
