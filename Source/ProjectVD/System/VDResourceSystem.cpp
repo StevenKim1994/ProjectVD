@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "System/VDResourceSystem.h"
@@ -8,9 +8,6 @@
 void UVDResourceSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	AssetManager = UAssetManager::GetIfInitialized();
-
-	FPrimaryAssetId Id("UI","UIRegistry");
-	LoadPrimaryAsset(Id);
 
 	UE_LOG(LogTemp, Warning, TEXT("UVDResourceSystem Initialize"));
 }

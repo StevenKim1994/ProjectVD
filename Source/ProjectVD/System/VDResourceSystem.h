@@ -47,9 +47,8 @@ public:
 		}
 		else
 		{
-			UAssetManager& AM = UAssetManager::Get();
-			const FSoftObjectPath AssetPath = AM.GetPrimaryAssetPath(AssetId);
-			UObject* LoadObject = AM.GetStreamableManager().LoadSynchronous(AssetPath, true /*bManageActiveHandle*/);
+			const FSoftObjectPath AssetPath = AssetManager->GetPrimaryAssetPath(AssetId);
+			UObject* LoadObject = AssetManager->GetStreamableManager().LoadSynchronous(AssetPath, true /*bManageActiveHandle*/);
 
 			if (LoadObject)
 			{
