@@ -14,11 +14,7 @@
 
 UVDUISubsystem::UVDUISubsystem()
 {
-//	ConstructorHelpers::FObjectFinder<UVDUIRegistry> UIRegistryObj(*VDConstants::UIRegistryDataAssetPath);
-//	if (UIRegistryObj.Succeeded())
-//	{
-//		UIRegistry = UIRegistryObj.Object;
-//	}
+
 }
 
 void UVDUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -27,7 +23,6 @@ void UVDUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	ResourceSystem = Collection.InitializeDependency<UVDResourceSystem>();
 	UIRegistry = ResourceSystem->GetLoadedPrimaryAsset<UVDUIRegistry>(FPrimaryAssetId(FName(TEXT("UI")), FName(TEXT("UIRegistry"))));
 	
-
 	ModalUIWidgetStack.Empty();
 	ActiveWidgetInstanceMap.Empty();
 

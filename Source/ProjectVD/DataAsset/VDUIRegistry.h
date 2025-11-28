@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -13,12 +13,6 @@ class PROJECTVD_API UVDUIRegistry : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-
-	virtual FPrimaryAssetId GetPrimaryAssetId() const override
-	{
-		return FPrimaryAssetId(FPrimaryAssetType("UI"), GetFName());
-	}
-
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	TSoftClassPtr<UUserWidget> GetWidgetClassByName(const FName& WidgetName) const;
 

@@ -37,7 +37,7 @@ public:
 	void LoadPrimaryAsset(const FPrimaryAssetId& AssetId);
 
 	template<typename T>
-	T* GetLoadedPrimaryAsset(const FPrimaryAssetId& AssetId) const
+	T* GetLoadedPrimaryAsset(const FPrimaryAssetId& AssetId)
 	{
 		static_assert(TIsDerivedFrom<T, UPrimaryDataAsset>::IsDerived, "T must derive from UPrimaryDataAsset");
 
@@ -45,14 +45,16 @@ public:
 		{
 			return Cast<T>(LoadedPrimaryAssets[AssetId]);
 		}
-		else
-		{
-			const FSoftObjectPath AssetPath = AssetManager->GetPrimaryAssetPath(AssetId);
-			UObject* LoadObject = AssetManager->GetStreamableManager().LoadSynchronous(AssetPath, true /*bManageActiveHandle*/);
 
-			if (LoadObject)
+		const FSoftObjectPath AssetPath = AssetManager->GetPrimaryAssetPath(AssetId);
+		UObject* LoadObject = AssetManager->GetStreamableManager().LoadSynchronous(AssetPath, true /*bManageActiveHandle*/);
+
+		if (LoadObject)
+		{
+			if (UPrimaryDataAsset* PrimaryAsset = Cast<UPrimaryDataAsset>(LoadObject))
 			{
-				return Cast<T>(LoadObject);
+				LoadedPrimaryAssets.Add(AssetId, PrimaryAsset);
+				return Cast<T>(PrimaryAsset);
 			}
 		}
 
