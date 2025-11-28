@@ -9,10 +9,9 @@
 
 DECLARE_DELEGATE(FOnLevelLoadedCompleteDelegate);
 DECLARE_DELEGATE_OneParam(FOnLevelLoadedDelegate, float);
-class UVDUISubSystem;
-/**
- * 
- */
+
+struct FStreamableHandle;
+
 UCLASS()
 class PROJECTVD_API UVDLevelSystem : public UGameInstanceSubsystem
 {
@@ -25,7 +24,15 @@ private:
 	UPROPERTY()
 	FString NextLevelName;
 
+	UPROPERTY()
+	TWeakObjectPtr<UVDLoadingPanelUserWidget> LoadingPanelWidget;
+
+	TSharedPtr<FStreamableHandle> LevelStreamableHandle;
+
+	FTimerHandle ProgressTimerHandle;
+	FOnLevelLoadedDelegate LevelLoadedDelegate;
 	FOnLevelLoadedCompleteDelegate LevelLoadedCompleteDelegate;
+
 public:
 	void Initialize(FSubsystemCollectionBase& Collection) override;
 	void Deinitialize() override;
@@ -36,4 +43,6 @@ public:
 	void ChangeLevelByName(const FString& LevelName);
 	void OnLevelLoaded();
 
+	FORCEINLINE FOnLevelLoadedDelegate& GetLevelLoadedDelegate() { return LevelLoadedDelegate; }
+	FORCEINLINE FOnLevelLoadedCompleteDelegate& GetLevelLoadedCompleteDelegate() { return LevelLoadedCompleteDelegate; }
 };

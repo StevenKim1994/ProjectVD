@@ -1,7 +1,10 @@
 #include "System/VDLevelSystem.h"
 #include "Engine/LevelStreamingDynamic.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/AssetManager.h"
+#include "Engine/StreamableManager.h"
 #include "Engine/World.h"
+#include "Engine/PrimaryAssetLabel.h"
 #include "Public/VDConstrants.h"
 
 
@@ -22,9 +25,33 @@ void UVDLevelSystem::LoadPrepareNextLevelAssets()
 
 void UVDLevelSystem::LoadChangeLevel()
 {
-    UGameplayStatics::OpenLevel(GetWorld(), FName(NextLevelName));
-    CurrentLevelName = NextLevelName;
-    // TODO :: LoadPrepareNextLevelAssets가 끝나면 OpenLevel(NextLevelName);
+	UAssetManager& AssetManager = UAssetManager::Get();
+
+	FPrimaryAssetType LabelType = FName(TEXT("Stage"));
+    FName LabelName = FName(TEXT("PAL_Stage"));
+	FPrimaryAssetId LevelLabelId = FPrimaryAssetId(LabelType, LabelName);
+	TArray<FName> LoadBundles;
+    LevelStreamableHandle = AssetManager.LoadPrimaryAsset(LevelLabelId, LoadBundles, FStreamableDelegate::CreateLambda([this]
+    {
+        OnLevelLoaded();
+    }));
+
+
+	if (LevelStreamableHandle.IsValid())
+    {
+		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+		if (ProgressTimerHandle.IsValid())
+        {
+			ProgressTimerHandle.Invalidate();
+        }
+
+        TimerManager.SetTimer(ProgressTimerHandle, FTimerDelegate::CreateLambda([this]()
+            {
+                float Progress = LevelStreamableHandle->GetProgress();
+                LevelLoadedDelegate.ExecuteIfBound(Progress);
+				UE_LOG(LogTemp, Log, TEXT("VDLevelSystem::LoadChangeLevel - Loading Progress: %.2f"), Progress);
+			}), 0.1f, false, true);
+    }
 }
 
 void UVDLevelSystem::ChangeLevelByName(const FString& LevelName)
@@ -50,8 +77,12 @@ void UVDLevelSystem::OnLevelLoaded()
     CurrentLevelName = NextLevelName;
     NextLevelName.Empty();
 
-    if (LevelLoadedCompleteDelegate.IsBound())
+    if (ProgressTimerHandle.IsValid())
     {
-        LevelLoadedCompleteDelegate.Execute();
-    }
+        ProgressTimerHandle.Invalidate();
+	}
+
+    LevelLoadedCompleteDelegate.ExecuteIfBound();
+
+    UGameplayStatics::OpenLevel(GetWorld(), FName(CurrentLevelName));
 }

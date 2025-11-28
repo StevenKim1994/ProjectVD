@@ -6,14 +6,6 @@
 
 AVDStageGameMode::AVDStageGameMode()
 {
-	PlayerControllerClass = AVDStagePlayerController::StaticClass();
-
-	static ConstructorHelpers::FClassFinder<APawn> DefaultPawnClassRef(TEXT("/Script/CoreUObject.Class'/Script/ProjectVD.VDStagePlayerCharacter'"));
-	if(DefaultPawnClassRef.Class)
-	{
-		DefaultPawnClass = DefaultPawnClassRef.Class;
-	}
-
 
 }
 

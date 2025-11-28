@@ -35,14 +35,9 @@ void AVDLoadingController::ShowLoadingPanel()
 
 void AVDLoadingController::HideLoadingPanel()
 {
-	UVDGameInstance* GI = GetGameInstance<UVDGameInstance>();
-	if (GI)
+	if (LoadingPanelWidget)
 	{
-		UVDUISubsystem* UISubsystem = GI->GetSubsystem<UVDUISubsystem>();
-		if (UISubsystem)
-		{
-			UISubsystem->HideUIWidget(VDConstants::LoadingPanel);
-		}
+		LoadingPanelWidget->RemoveFromParent();
 	}
 }
 

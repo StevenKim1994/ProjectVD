@@ -6,10 +6,11 @@
 #include "System/VDLevelSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/AssetManager.h"
-
+#include "System/VDLevelSystem.h"
 void AVDLoadingLevelGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
 	OnLoadingStarted();
 }
 
@@ -42,38 +43,18 @@ void AVDLoadingLevelGameMode::OnLoadingFinished()
 	{
 		LoadingController->HideLoadingPanel();
 	}
-
-	GetGameInstance()->GetSubsystem<UVDLevelSystem>()->LoadChangeLevel();
 }
 
-FTimerHandle TimerHandle;
 void AVDLoadingLevelGameMode::OnLoadingStarted()
 {
 	if (LoadingController.IsValid())
 	{
 		LoadingController->ShowLoadingPanel();
-		
-		// TODO :: DataAsset , StreamableManager로 다음 레벨에서 사용하는 에셋정보 미리 로드 한다음 OpenLevel 진행하기 .. 퍼센트 보이게 하려면 이방법을 써야할듯 추후 추가필요
-		// 지금은 페이크 퍼센트이후 OpenLevel 호출
-		GetWorldTimerManager().SetTimer(
-			TimerHandle,
-			[this]()
-			{
-				static float FakePercent = 0.0f;
-				FakePercent += 0.1f;
-				if (FakePercent > 1.0f)
-				{
-					FakePercent = 0.0f;
-					GetWorldTimerManager().ClearTimer(TimerHandle);
-					OnLoadingFinished();
-				}
-				else
-				{
-					OnLoadingProgressUpdated(FakePercent);
-				}
-			},
-			0.1f,
-			true
-		);
+	
+		UVDLevelSystem* LevelSystem = GetGameInstance()->GetSubsystem<UVDLevelSystem>();
+		LevelSystem->GetLevelLoadedDelegate().BindUObject(this, &AVDLoadingLevelGameMode::OnLoadingProgressUpdated);
+		LevelSystem->GetLevelLoadedCompleteDelegate().BindUObject(this, &AVDLoadingLevelGameMode::OnLoadingFinished);
+		LevelSystem->LoadPrepareNextLevelAssets();
+		LevelSystem->LoadChangeLevel();
 	}
 }

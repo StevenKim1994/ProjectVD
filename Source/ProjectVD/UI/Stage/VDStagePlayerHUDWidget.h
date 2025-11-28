@@ -19,7 +19,7 @@ class PROJECTVD_API UVDStagePlayerHUDWidget : public UUserWidget
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(meta =(BindWidget))
+	UPROPERTY(meta =(BindWidget, FieldNotify))
 	TObjectPtr<UVDPlayerHUDEnemyStatusWidget> BossState;
 
 	UPROPERTY(meta = (BineWidget))
