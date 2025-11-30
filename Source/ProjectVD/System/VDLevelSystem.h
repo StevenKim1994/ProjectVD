@@ -52,7 +52,6 @@ private:
 
 	TSharedPtr<FStreamableHandle> LevelStreamableHandle;
 
-	FTimerHandle ProgressTimerHandle;
 	FOnLevelLoadedDelegate LevelLoadedDelegate;
 	FOnLevelLoadedCompleteDelegate LevelLoadedCompleteDelegate;
 };

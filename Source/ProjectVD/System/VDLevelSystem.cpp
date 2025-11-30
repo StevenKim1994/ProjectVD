@@ -31,10 +31,19 @@ void UVDLevelSystem::LoadChangeLevel()
         UVDResourceSystem* ResourceSystem = GetGameInstance()->GetSubsystem<UVDResourceSystem>();
         UPrimaryAssetLabel* LoadMapInfo = ResourceSystem->GetLoadedPrimaryAsset<UPrimaryAssetLabel>(LevelAssetId);
 
-        if(LoadMapInfo)
+		if (LoadMapInfo == nullptr)
         {
-            LevelPrepareAssetsMap.Add(LevelAssetId, LoadMapInfo);
-		}
+            UE_LOG(LogTemp, Warning, TEXT("VDLevelSystem::LoadChangeLevel - Failed to load PrimaryAssetLabel '%s'."), *LoadPALAssetName.ToString());
+            return;
+        }
+
+        LevelPrepareAssetsMap.Add(LevelAssetId, LoadMapInfo);
+    }
+
+	if (LevelPrepareAssetsMap.Contains(LevelAssetId) == false)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("VDLevelSystem::LoadChangeLevel - LevelPrepareAssetsMap does not contain LevelAssetId '%s'."), *LevelAssetId.ToString());
+        return;
     }
 
     UPrimaryAssetLabel* PrepareLevelAsset = LevelPrepareAssetsMap[LevelAssetId].Get();
@@ -93,12 +102,18 @@ void UVDLevelSystem::ChangeLevelByName(const FString& LevelName)
 
 void UVDLevelSystem::OnLevelLoaded()
 {
-    if (ProgressTimerHandle.IsValid())
+    CurrentCount++;
+    if (CurrentCount < AssetNum)
     {
-        ProgressTimerHandle.Invalidate();
-	}
+	    UE_LOG(LogTemp, Warning, TEXT("VDLevelSystem::OnLevelLoaded - All assets loaded for level '%d'."), CurrentCount);
+        float LoadPercent = static_cast<float>(CurrentCount) / static_cast<float>(AssetNum);
+		LevelLoadedDelegate.ExecuteIfBound(LoadPercent);
+    }
+    else
+    {
+        LevelLoadedCompleteDelegate.ExecuteIfBound();
+    }
 
-    LevelLoadedCompleteDelegate.ExecuteIfBound();
 
 }
 

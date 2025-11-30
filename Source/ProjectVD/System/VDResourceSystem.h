@@ -48,7 +48,6 @@ public:
 
 		const FSoftObjectPath AssetPath = AssetManager->GetPrimaryAssetPath(AssetId);
 		UObject* LoadObject = AssetManager->GetStreamableManager().LoadSynchronous(AssetPath, true /*bManageActiveHandle*/);
-
 		if (LoadObject)
 		{
 			if (UPrimaryDataAsset* PrimaryAsset = Cast<UPrimaryDataAsset>(LoadObject))
