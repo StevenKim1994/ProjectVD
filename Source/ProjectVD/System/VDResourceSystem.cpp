@@ -9,7 +9,7 @@
 void UVDResourceSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	AssetManager = UAssetManager::Get();
+	AssetManager = &UAssetManager::Get();
 	AssetManager->FinishInitialLoading();
 	UE_LOG(LogTemp, Warning, TEXT("UVDResourceSystem Initialize"));
 }

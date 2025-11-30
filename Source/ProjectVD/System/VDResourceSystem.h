@@ -19,12 +19,10 @@ class PROJECTVD_API UVDResourceSystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY()
-	TObjectPtr<UAssetManager> AssetManager;
+	UAssetManager* AssetManager;
 
 	UPROPERTY()
 	TMap<FPrimaryAssetId, TWeakObjectPtr<UPrimaryDataAsset>> LoadedPrimaryAssets;
-
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
@@ -46,14 +44,13 @@ public:
 			return Cast<T>(LoadedPrimaryAssets[AssetId]);
 		}
 
-		const FSoftObjectPath AssetPath = AssetManager->GetPrimaryAssetPath(AssetId);
-		UObject* LoadObject = AssetManager->GetStreamableManager().LoadSynchronous(AssetPath, true /*bManageActiveHandle*/);
-		if (LoadObject)
+		UObject* LoadPrimaryAsset = AssetManager->GetPrimaryAssetObject<T>(AssetId);
+		if (LoadPrimaryAsset)
 		{
-			if (UPrimaryDataAsset* PrimaryAsset = Cast<UPrimaryDataAsset>(LoadObject))
+			if (T* PrimaryAsset = Cast<T>(LoadPrimaryAsset))
 			{
 				LoadedPrimaryAssets.Add(AssetId, PrimaryAsset);
-				return Cast<T>(PrimaryAsset);
+				return PrimaryAsset;
 			}
 		}
 
