@@ -163,13 +163,6 @@ void AVDStagePlayerController::ClearCutSceneCamera()
 {
 	SetViewTargetWithBlend(GetPawn(), 0.3f, EViewTargetBlendFunction::VTBlend_Cubic);
 
-	// DESC :: 컷신 종료 - 입력 재활성화
-	if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
-		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
-	{
-		Subsystem->AddMappingContext(CurrentInputContext, 0);
-	}
-
 	UGameInstance* GameInstance = GetGameInstance();
 	if (GameInstance)
 	{
@@ -177,6 +170,13 @@ void AVDStagePlayerController::ClearCutSceneCamera()
 		{
 			UISubsystem->ShowCurrentHUDWidget();
 		}
+	}
+
+	// DESC :: 컷신 종료 - 입력 재활성화
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		Subsystem->AddMappingContext(CurrentInputContext, 0);
 	}
 }
 

@@ -37,7 +37,7 @@ void AVDLoadingController::HideLoadingPanel()
 {
 	if (LoadingPanelWidget)
 	{
-		LoadingPanelWidget->RemoveFromParent();
+		GetGameInstance()->GetSubsystem<UVDUISubsystem>()->HideUIWidget(LoadingPanelWidget);
 	}
 }
 
