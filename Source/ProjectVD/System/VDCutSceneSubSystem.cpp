@@ -92,6 +92,26 @@ void UVDCutSceneSubSystem::Deinitialize()
 	Super::Deinitialize();
 }
 
+void UVDCutSceneSubSystem::ShowNamePlate(const FName& InName)
+{
+	UVDUISubsystem* UISubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UVDUISubsystem>();
+	if (UISubsystem)
+	{
+		//UISubsystem->ShowNamePlate(InName);
+		UE_LOG(LogTemp, Warning, TEXT("Show Name Plate: %s"), InName);
+	}
+}
+
+void UVDCutSceneSubSystem::HideNamePlate()
+{
+	UVDUISubsystem* UISubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UVDUISubsystem>();
+	if (UISubsystem)
+	{
+		//UISubsystem->HideNamePlate();
+		UE_LOG(LogTemp, Warning, TEXT("Hide Name Plate"));
+	}
+}
+
 void UVDCutSceneSubSystem::StartCutScene(IVDSequenceable* CutSceneActor, FOnCutSceneFinishedDelegate OnFinishedDelegate)
 {
 	if(bIsInCutScene) // DESC :: 이미 컷씬 진행이면 무시함.
@@ -131,8 +151,6 @@ void UVDCutSceneSubSystem::StartCutScene(IVDSequenceable* CutSceneActor, FOnCutS
 	OutActor->SetBindingByTag(FName(TEXT("Boss")), TArray<AActor*>{ Cast<AActor>(CutSceneActor) });
 	FMovieSceneObjectBindingID CameraID = OutActor->FindNamedBinding(FName(TEXT("Camera")));
 
-
-	// 바인딩 구조 획득
 	FMovieSceneBinding* CameraBinding = MovieScene->FindBinding(CameraID.GetGuid());
 	if (CameraBinding == nullptr)
 	{
@@ -168,6 +186,8 @@ void UVDCutSceneSubSystem::StartCutScene(IVDSequenceable* CutSceneActor, FOnCutS
 	SequencePlayer->OnFinished.AddDynamic(this, &UVDCutSceneSubSystem::FinishCutScene);
 	SequencePlayer->OnPause.AddDynamic(this, &UVDCutSceneSubSystem::PauseCutScene);
 	SequencePlayer->OnStop.AddDynamic(this, &UVDCutSceneSubSystem::CleanupCutScene);
+	//SequencePlayer->ProcessEvent(this->FindFunction(TEXT("ShowNamePlate")), "TEST");
+	// 컷신에서 특정 메서드 호출방법 연구하기
 	SequencePlayer->Play();
 	StartCutScene();
 	bIsInCutScene = true;

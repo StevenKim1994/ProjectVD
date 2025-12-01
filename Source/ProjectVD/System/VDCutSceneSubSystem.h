@@ -50,6 +50,13 @@ private:
 	virtual void Deinitialize() override;
 
 public:
+
+	UFUNCTION(BlueprintCallable, Category = "CutScene")
+	void ShowNamePlate(const FName& InName);
+
+	UFUNCTION(BlueprintCallable, Category = "CutScene")
+	void HideNamePlate();
+
 	void StartCutScene(IVDSequenceable* CutSceneActor, FOnCutSceneFinishedDelegate OnFinishedDelegate = nullptr);
 	FORCEINLINE bool IsInCutScene() const { return bIsInCutScene; }
 };
