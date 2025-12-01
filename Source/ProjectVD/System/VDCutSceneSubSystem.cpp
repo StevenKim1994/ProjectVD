@@ -98,7 +98,7 @@ void UVDCutSceneSubSystem::ShowNamePlate(const FName& InName)
 	if (UISubsystem)
 	{
 		//UISubsystem->ShowNamePlate(InName);
-		UE_LOG(LogTemp, Warning, TEXT("Show Name Plate: %s"), InName);
+		//UE_LOG(LogTemp, Warning, TEXT("Show Name Plate: %s"), InName);
 	}
 }
 

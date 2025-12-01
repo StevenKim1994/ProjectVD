@@ -13,8 +13,9 @@
 #include "UI/Stage/Inventory/VDInventoryPanel.h"
 #include "Game/VDGameInstance.h"
 #include "System/VDLevelSystem.h"
+#include "CineCameraActor.h"	
 #include "Kismet/GameplayStatics.h"
-
+	
 AVDStagePlayerController::AVDStagePlayerController()
 {
 }
