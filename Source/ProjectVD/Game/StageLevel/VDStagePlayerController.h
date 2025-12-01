@@ -10,6 +10,8 @@
 class UVDStagePlayerHUDWidget;
 class UInputMappingContext;
 class AVDEnemyCharacterBase;
+class ACineCameraActor;
+
 UCLASS()
 class PROJECTVD_API AVDStagePlayerController : public APlayerController
 {
@@ -38,6 +40,8 @@ public:
 	void ShowBossStateBar(AVDEnemyCharacterBase* Boss);
 	void HideBossStateBar();
 	void ChangeToggleInputContext();
+	void SetCutSceneCamera(ACineCameraActor* CineCamera); 
+	void ClearCutSceneCamera();
 
 	UFUNCTION() 
 	void OnEscape(const FInputActionValue& Value);

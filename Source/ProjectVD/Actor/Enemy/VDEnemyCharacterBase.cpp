@@ -15,6 +15,7 @@ AVDEnemyCharacterBase::AVDEnemyCharacterBase()
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AVDEnemyAIController::StaticClass();
+	EnemyAIController = Cast<AVDEnemyAIController>(GetController());
 
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;

@@ -2,9 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/TextBlock.h"
-#include "Components/RichTextBlock.h"
 #include "VDLoadingPanelUserWidget.generated.h"
+
+class UTextBlock;
+class RichTextBlock;
+class UOverlay;
 
 UCLASS()
 class PROJECTVD_API UVDLoadingPanelUserWidget : public UUserWidget
@@ -12,6 +14,9 @@ class PROJECTVD_API UVDLoadingPanelUserWidget : public UUserWidget
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(meta = (BindWidget))
+	UOverlay* LoadingDescOverlay;
+
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* LoadingDescText;
 

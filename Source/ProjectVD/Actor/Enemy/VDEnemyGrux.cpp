@@ -2,9 +2,14 @@
 
 
 #include "Actor/Enemy/VDEnemyGrux.h"
-#include "Engine/DamageEvents.h"
 #include "Actor/ActorComponent/VDEnemyStatsBaseComponent.h"
+#include "Actor/Enemy/AIController/VDEnemyAIController.h"
+#include "Engine/DamageEvents.h"
+#include "System/VDCutSceneSubSystem.h"
 #include "Animation/VDEnemyAnimInstance.h"
+#include "LevelSequence.h"
+#include "LevelSequenceActor.h"
+#include "LevelSequencePlayer.h"
 
 AVDEnemyGrux::AVDEnemyGrux()
 {
@@ -97,6 +102,8 @@ void AVDEnemyGrux::HitReact(const FVector& HitPos)
 void AVDEnemyGrux::BeginPlay()
 {
 	Super::BeginPlay();
+
+	StartCutScene();
 }
 
 void AVDEnemyGrux::Tick(float DeltaTime)
@@ -110,6 +117,7 @@ void AVDEnemyGrux::SetComboInputOn(bool bIsOn)
 
 void AVDEnemyGrux::DefaultAttackHit()
 {
+
 }
 
 float AVDEnemyGrux::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -124,4 +132,36 @@ float AVDEnemyGrux::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	HitReact(DamageCauser->GetActorLocation());
 
 	return Result;
+}
+
+void AVDEnemyGrux::StartCutScene()
+{
+	if (CutSceneSequencer)
+	{
+		UVDCutSceneSubSystem* CutSceneSubsystem = GetWorld()->GetSubsystem<UVDCutSceneSubSystem>();
+		if (CutSceneSubsystem)
+		{
+			CutSceneSubsystem->StartCutScene(this);
+		}
+	}
+}
+
+void AVDEnemyGrux::OnSequenceStart()
+{
+	EnemyAIController->StopAI();
+}
+
+void AVDEnemyGrux::OnSequenceStop()
+{
+	EnemyAIController->RunAI();
+}
+
+void AVDEnemyGrux::OnSequencePause()
+{
+
+}
+
+void AVDEnemyGrux::OnSequenceResume()
+{
+
 }

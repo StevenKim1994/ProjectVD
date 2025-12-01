@@ -12,7 +12,8 @@ public class ProjectVD : ModuleRules
 
         PublicDependencyModuleNames.AddRange(new string[] {
             "Core", "CoreUObject", "Engine", "InputCore", "UMG", "MediaAssets", "AudioMixer",
-            "EnhancedInput", "NavigationSystem", "AIModule" , "Niagara"
+            "EnhancedInput", "NavigationSystem", "AIModule" , "Niagara", "CinematicCamera", "UnrealEd",
+            "LevelSequence",  "MovieScene", "MovieSceneTracks"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

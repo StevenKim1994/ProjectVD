@@ -2,12 +2,15 @@
 
 
 #include "UI/Global/VDLoadingPanelUserWidget.h"
+#include "Components/TextBlock.h"
+#include "Components/Overlay.h"
 
 void UVDLoadingPanelUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	LoadingDescTextChangeCurrentTime = 0.0f;
 	LoadingDescText->SetText(FText::FromString(TEXT("Loading")));
+	LoadingDescOverlay->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UVDLoadingPanelUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -51,6 +54,15 @@ UVDLoadingPanelUserWidget* UVDLoadingPanelUserWidget::SetLoadingText(const FText
 UVDLoadingPanelUserWidget* UVDLoadingPanelUserWidget::SetLoadingPercent(float InPercent)
 {
 	FText PercentText = FText::AsPercent(InPercent);
+
+	if (LoadingDescOverlay->GetVisibility() != ESlateVisibility::Visible)
+	{
+		if (InPercent > 0.0f)
+		{
+			LoadingDescOverlay->SetVisibility(ESlateVisibility::Visible);
+		}
+	}
+
 	LoadingPercentText->SetText(PercentText);
 
 	return this;

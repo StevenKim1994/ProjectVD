@@ -123,6 +123,38 @@ void AVDStagePlayerController::ChangeToggleInputContext()
 	}
 }
 
+void AVDStagePlayerController::SetCutSceneCamera(ACineCameraActor* CineCamera)
+{
+	if (CineCamera)
+	{
+		AActor* CineCameraActor = Cast<AActor>(CineCamera);
+		SetViewTargetWithBlend(CineCameraActor, 0.1f, EViewTargetBlendFunction::VTBlend_Cubic);
+
+		UGameInstance* GameInstance = GetGameInstance();
+		if (GameInstance)
+		{
+			if (UVDUISubsystem* UISubsystem = GameInstance->GetSubsystem<UVDUISubsystem>())
+			{
+				UISubsystem->HideCurrentHUDWidget();
+			}
+		}
+	}
+}
+
+void AVDStagePlayerController::ClearCutSceneCamera()
+{
+	SetViewTargetWithBlend(GetPawn(), 0.3f, EViewTargetBlendFunction::VTBlend_Cubic);
+
+	UGameInstance* GameInstance = GetGameInstance();
+	if (GameInstance)
+	{
+		if (UVDUISubsystem* UISubsystem = GameInstance->GetSubsystem<UVDUISubsystem>())
+		{
+			UISubsystem->ShowCurrentHUDWidget();
+		}
+	}
+}
+
 void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 {
 

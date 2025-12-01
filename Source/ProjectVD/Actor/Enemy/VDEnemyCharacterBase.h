@@ -10,6 +10,8 @@
 
 class UAnimMontage;
 class UVDEnemyAnimInstance;
+class AVDEnemyAIController;
+
 UCLASS(Abstract)
 class PROJECTVD_API AVDEnemyCharacterBase : public ACharacter, public IVDEnemyInterface
 {
@@ -18,6 +20,7 @@ class PROJECTVD_API AVDEnemyCharacterBase : public ACharacter, public IVDEnemyIn
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyInfo", Meta = (AllowPrivateAccess = "true"))
 	FName EnemyName;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyInfo", Meta = (AllowPrivateAccess = "true"))
 	bool bIsBossEnemy = false;
@@ -30,6 +33,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DeathAM;
+
+	UPROPERTY()
+	TObjectPtr<AVDEnemyAIController> EnemyAIController;
 
 	UPROPERTY()
 	bool bIsDead = false;
