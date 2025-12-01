@@ -17,11 +17,32 @@ class PROJECTVD_API UVDCutSceneSubSystem : public UWorldSubsystem
 	GENERATED_BODY()
 	
 private:
+	FOnCutSceneFinishedDelegate OnCutSceneFinishedDelegate;
 
 	UPROPERTY()
 	TWeakObjectPtr<AVDStagePlayerController> PlayerController;
 
+	UPROPERTY()
+	TWeakObjectPtr<ULevelSequence> CurrentCutSceneSequence;
+
+	TWeakInterfacePtr <IVDSequenceable> CurrentCutSceneActor;
+
 	bool bIsInCutScene = false;
+
+	UFUNCTION()
+	void StartCutScene();
+
+	UFUNCTION()
+	void FinishCutScene();
+
+	UFUNCTION()
+	void CleanupCutScene();
+
+	UFUNCTION()
+	void PauseCutScene();
+
+	UFUNCTION()
+	void ResumeCutScene();
 
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 	virtual void OnWorldEndPlay(UWorld& InWorld) override;

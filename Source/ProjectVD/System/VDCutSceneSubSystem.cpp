@@ -16,6 +16,61 @@
 #include "Game/StageLevel/VDStagePlayerController.h"
 #include "System/VDUISubsystem.h"
 
+void UVDCutSceneSubSystem::StartCutScene()
+{
+	if (CurrentCutSceneActor.IsValid() && CurrentCutSceneSequence.IsValid())
+	{
+
+		bIsInCutScene = true;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("CutScene Started"));
+}
+
+void UVDCutSceneSubSystem::FinishCutScene()
+{
+	if (CurrentCutSceneActor.IsValid() && CurrentCutSceneSequence.IsValid())
+	{
+		bIsInCutScene = false;
+		if (OnCutSceneFinishedDelegate.IsBound())
+		{
+			OnCutSceneFinishedDelegate.Execute();
+		}
+	}
+	PlayerController->ClearCutSceneCamera();
+	UE_LOG(LogTemp, Warning, TEXT("CutScene Finished"));
+}
+
+void UVDCutSceneSubSystem::CleanupCutScene()
+{
+	if (CurrentCutSceneActor.IsValid() && CurrentCutSceneSequence.IsValid())
+	{
+		bIsInCutScene = false;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("CutScene Cleaned up"));
+}
+
+void UVDCutSceneSubSystem::PauseCutScene()
+{
+	if (CurrentCutSceneActor.IsValid() && CurrentCutSceneSequence.IsValid())
+	{
+
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("CutScene Paused"));
+}
+
+void UVDCutSceneSubSystem::ResumeCutScene()
+{
+	if (CurrentCutSceneActor.IsValid() && CurrentCutSceneSequence.IsValid())
+	{
+
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("CutScene Resumed"));
+}
+
 void UVDCutSceneSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 {
 	Super::OnWorldBeginPlay(InWorld);
@@ -39,7 +94,10 @@ void UVDCutSceneSubSystem::Deinitialize()
 
 void UVDCutSceneSubSystem::StartCutScene(IVDSequenceable* CutSceneActor, FOnCutSceneFinishedDelegate OnFinishedDelegate)
 {
-	bIsInCutScene = true;
+	if(bIsInCutScene) // DESC :: 이미 컷씬 진행이면 무시함.
+	{
+		return;
+	}
 
 	FMovieSceneSequencePlaybackSettings Settings;
 	ALevelSequenceActor* OutActor = nullptr;
@@ -54,6 +112,10 @@ void UVDCutSceneSubSystem::StartCutScene(IVDSequenceable* CutSceneActor, FOnCutS
 	{
 		return;
 	}
+
+	OnCutSceneFinishedDelegate = OnFinishedDelegate;
+	CurrentCutSceneActor = CutSceneActor;
+	CurrentCutSceneSequence = LevelSequence;
 
 	ULevelSequencePlayer* SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
 		GetWorld(),
@@ -100,13 +162,13 @@ void UVDCutSceneSubSystem::StartCutScene(IVDSequenceable* CutSceneActor, FOnCutS
 		}
 	}
 
+	CutSceneActor->OnSequenceStart();
 	PlayerController->SetCutSceneCamera(CameraActor);
 
+	SequencePlayer->OnFinished.AddDynamic(this, &UVDCutSceneSubSystem::FinishCutScene);
+	SequencePlayer->OnPause.AddDynamic(this, &UVDCutSceneSubSystem::PauseCutScene);
+	SequencePlayer->OnStop.AddDynamic(this, &UVDCutSceneSubSystem::CleanupCutScene);
 	SequencePlayer->Play();
-
-	if (OnFinishedDelegate.IsBound())
-	{
-		OnFinishedDelegate.Execute();
-	}
-	bIsInCutScene = false;
+	StartCutScene();
+	bIsInCutScene = true;
 }

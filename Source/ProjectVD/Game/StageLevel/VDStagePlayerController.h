@@ -29,6 +29,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> UIControllerIMC;
 
+	UPROPERTY()
+	TObjectPtr<UInputMappingContext> CurrentInputContext;
+
 	void InitializeInputContext();
 
 public:

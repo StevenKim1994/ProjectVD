@@ -6,50 +6,50 @@
 #include "Game/VDGameInstance.h"
 #include "System/VDStageObjectSubsystem.h"
 
-#if WITH_EDITORONLY_DATA
-#include "Components/BillboardComponent.h"
-#include "Components/ArrowComponent.h"
-#endif
 AVDSpawnPoint::AVDSpawnPoint()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-#if WITH_EDITORONLY_DATA
-    Billboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("Billboard"));
-    RootComponent = Billboard;
-    Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
-    Arrow->SetupAttachment(RootComponent);
-#else
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-#endif
 }
 
 void AVDSpawnPoint::SpawnEnemy()
 {
-    if (UWorld* World = GetWorld())
-    {
-        if (UVDStageObjectSubsystem* StageObjectSubSystem = World->GetSubsystem<UVDStageObjectSubsystem>())
-        {
-            if (AllowedClass)
-            {
-               SpawnedEnemy = Cast<AVDEnemyCharacterBase>(StageObjectSubSystem->Acquire(AllowedClass, GetActorTransform()));
+	UWorld* World = GetWorld();
 
-			   if (SpawnedEnemy.IsValid())
-               {
-				   AVDEnemyCharacterBase* Enemy = SpawnedEnemy.Get();
-                   Enemy->SetActorHiddenInGame(true);
-                   Enemy->SetActorEnableCollision(false);
-                   Enemy->SetActorTickEnabled(false);
-               }
-            }
-        }
+    if (!World)
+    {
+        return;
     }
+
+	// TODO :: SubSystem에서 스폰 처리 이전필요 (현재 Actor는 위치만 제공)
+    AActor* SpawnedActor = World->SpawnActorDeferred<AActor>(
+        AllowedClass,
+        SpawnInstanceTransform,
+        nullptr,
+        nullptr,
+        ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn
+    );
+
+    if (SpawnedActor)
+    {
+		SpawnedActor->FinishSpawning(GetSpawnTransform());
+
+		AVDEnemyCharacterBase* SpawnedEnemy = Cast<AVDEnemyCharacterBase>(SpawnedActor);
+		if (SpawnedEnemy)
+        {
+            // TODO :: SubSystem에 등록하기
+        }
+	}
 }
 
 void AVDSpawnPoint::BeginPlay()
 {
 	Super::BeginPlay();
-    SpawnEnemy();
+    FTimerManager& TimerManager = GetWorldTimerManager();
+    TimerManager.SetTimerForNextTick(FTimerDelegate::CreateLambda([this]()
+        {
+            this->SpawnEnemy();
+        }));
 }
 
 void AVDSpawnPoint::Tick(float DeltaTime)

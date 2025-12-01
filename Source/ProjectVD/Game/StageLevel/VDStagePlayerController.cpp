@@ -97,6 +97,7 @@ void AVDStagePlayerController::InitializeInputContext()
 
 	// DESC :: 기본 캐릭터 인풋컨텍스트
 	Subsystem->AddMappingContext(CharacterControllerIMC, 0);
+	CurrentInputContext = CharacterControllerIMC;
 }
 
 void AVDStagePlayerController::ChangeToggleInputContext()
@@ -110,6 +111,7 @@ void AVDStagePlayerController::ChangeToggleInputContext()
 		{
 			Subsystem->RemoveMappingContext(CharacterControllerIMC);
 			Subsystem->AddMappingContext(UIControllerIMC, 0);
+			CurrentInputContext = UIControllerIMC;
 			bShowMouseCursor = false;
 			return;
 		}
@@ -117,6 +119,7 @@ void AVDStagePlayerController::ChangeToggleInputContext()
 		{
 			Subsystem->RemoveMappingContext(UIControllerIMC);
 			Subsystem->AddMappingContext(CharacterControllerIMC, 0);
+			CurrentInputContext = CharacterControllerIMC;
 			bShowMouseCursor = true;
 			return;
 		}
@@ -127,6 +130,21 @@ void AVDStagePlayerController::SetCutSceneCamera(ACineCameraActor* CineCamera)
 {
 	if (CineCamera)
 	{
+		// DESC :: 컷신 시작 - 입력 비활성화
+
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+			ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+		{
+			if (Subsystem->HasMappingContext(CharacterControllerIMC))
+			{
+				Subsystem->RemoveMappingContext(CharacterControllerIMC);
+			}
+			if (Subsystem->HasMappingContext(UIControllerIMC))
+			{
+				Subsystem->RemoveMappingContext(UIControllerIMC);
+			}
+		}
+
 		AActor* CineCameraActor = Cast<AActor>(CineCamera);
 		SetViewTargetWithBlend(CineCameraActor, 0.1f, EViewTargetBlendFunction::VTBlend_Cubic);
 
@@ -144,6 +162,13 @@ void AVDStagePlayerController::SetCutSceneCamera(ACineCameraActor* CineCamera)
 void AVDStagePlayerController::ClearCutSceneCamera()
 {
 	SetViewTargetWithBlend(GetPawn(), 0.3f, EViewTargetBlendFunction::VTBlend_Cubic);
+
+	// DESC :: 컷신 종료 - 입력 재활성화
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		Subsystem->AddMappingContext(CurrentInputContext, 0);
+	}
 
 	UGameInstance* GameInstance = GetGameInstance();
 	if (GameInstance)

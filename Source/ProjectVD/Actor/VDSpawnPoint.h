@@ -7,8 +7,6 @@
 #include "VDSpawnPoint.generated.h"
 
 class AVDEnemyCharacterBase;
-class UBillboardComponent;
-class UArrowComponent;
 UCLASS()
 class PROJECTVD_API AVDSpawnPoint : public AActor
 {
@@ -18,19 +16,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnPoint", meta = (AllowPrivateAccess = "true"))
     TSubclassOf<AVDEnemyCharacterBase> AllowedClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnPoint", meta = (AllowPrivateAccess = "true"))
+	FTransform SpawnInstanceTransform; // DESC :: 스폰된 액터의 회전 크기, 위치 오프셋용
+
 protected:
-#if WITH_EDITORONLY_DATA
-	
-	UPROPERTY() 
-	TObjectPtr<UBillboardComponent> Billboard;
-
-	UPROPERTY() 
-	TObjectPtr<UArrowComponent> Arrow;
-
-	UPROPERTY()
-	TWeakObjectPtr<AVDEnemyCharacterBase> SpawnedEnemy;
-
-#endif
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 public:	

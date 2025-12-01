@@ -50,6 +50,16 @@ void AVDEnemyAIController::RunAI()
 
 void AVDEnemyAIController::StopAI()
 {
+	if (!BTAsset)
+	{
+		return;
+	}
+
+	if (!BrainComponent)
+	{
+		return;
+	}
+
 	UBehaviorTreeComponent* BTComponent = Cast<UBehaviorTreeComponent>(BrainComponent);
 	if(BTComponent)
 	{

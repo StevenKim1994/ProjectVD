@@ -148,12 +148,18 @@ void AVDEnemyGrux::StartCutScene()
 
 void AVDEnemyGrux::OnSequenceStart()
 {
-	EnemyAIController->StopAI();
+	if(EnemyAIController)
+	{ 
+		EnemyAIController->StopAI();
+	}
 }
 
 void AVDEnemyGrux::OnSequenceStop()
 {
-	EnemyAIController->RunAI();
+	if (EnemyAIController)
+	{
+		EnemyAIController->RunAI();
+	}
 }
 
 void AVDEnemyGrux::OnSequencePause()
