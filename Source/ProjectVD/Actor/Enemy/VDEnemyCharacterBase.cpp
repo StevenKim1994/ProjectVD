@@ -54,6 +54,21 @@ UVDEnemyAnimInstance* AVDEnemyCharacterBase::PrepareAnimMontagePlay()
 	return nullptr;
 }
 
+UVDEnemyAnimInstance* AVDEnemyCharacterBase::DefaultAttackMontagePlay()
+{
+	if (DefaultAttackAM)
+	{
+		GetCharacterMovement()->StopMovementImmediately();
+		UVDEnemyAnimInstance* AnimInstance = Cast<UVDEnemyAnimInstance>(GetMesh()->GetAnimInstance());
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(DefaultAttackAM);
+			return AnimInstance;
+		}
+	}
+	return nullptr;
+}
+
 UAnimMontage* AVDEnemyCharacterBase::GetFindPlayerAnimMontage() const
 {
 	return FindPlayerAM;

@@ -25,6 +25,7 @@ class PROJECTVD_API IVDEnemyInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual UVDEnemyAnimInstance* PrepareAnimMontagePlay();
+	virtual UVDEnemyAnimInstance* DefaultAttackMontagePlay();
 	virtual UAnimMontage* GetFindPlayerAnimMontage() const;
 
 	virtual float GetPatrolRadius() const = 0;

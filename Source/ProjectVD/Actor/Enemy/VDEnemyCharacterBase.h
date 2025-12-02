@@ -66,6 +66,7 @@ public:
 
 	// IVDEnemyInterface을(를) 통해 상속됨
 	virtual UVDEnemyAnimInstance* PrepareAnimMontagePlay() override;
+	virtual UVDEnemyAnimInstance* DefaultAttackMontagePlay() override;
 	virtual UAnimMontage* GetFindPlayerAnimMontage() const override;
 	float GetPatrolRadius() const override;
 	float GetPatrolWaitTime() const override;

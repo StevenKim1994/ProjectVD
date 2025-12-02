@@ -11,6 +11,7 @@
 class UAnimMontage;
 class UVDEnemyStatsBaseComponent;
 class ULevelSequence;
+class UCapsuleComponent;
 
 UCLASS()
 class PROJECTVD_API AVDEnemyGrux : public AVDEnemyCharacterBase, public IVDAttackable, public IVDSequenceable
@@ -23,6 +24,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ULevelSequence> CutSceneSequencer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeakPoint", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> WeakPointCollision;
 
 protected:
 	virtual void FindPlayer() override;

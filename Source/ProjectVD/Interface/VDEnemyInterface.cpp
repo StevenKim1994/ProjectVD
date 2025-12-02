@@ -12,6 +12,12 @@ UVDEnemyAnimInstance* IVDEnemyInterface::PrepareAnimMontagePlay()
 	return nullptr;
 }
 
+UVDEnemyAnimInstance* IVDEnemyInterface::DefaultAttackMontagePlay() 
+{
+	// DESC :: 자식에서 오버라이드 해서 사용
+	return nullptr;
+}
+
 UAnimMontage* IVDEnemyInterface::GetFindPlayerAnimMontage() const
 {
 	// DESC :: 자식에서 오버라이드 해서 사용

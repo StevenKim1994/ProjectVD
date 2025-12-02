@@ -7,9 +7,11 @@
 #include "Engine/DamageEvents.h"
 #include "System/VDCutSceneSubSystem.h"
 #include "Animation/VDEnemyAnimInstance.h"
+#include "Components/CapsuleComponent.h"
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
+#include "DrawDebugHelpers.h"
 
 AVDEnemyGrux::AVDEnemyGrux()
 {
@@ -17,6 +19,13 @@ AVDEnemyGrux::AVDEnemyGrux()
 	BaseStatsComponent = CreateDefaultSubobject<UVDEnemyStatsBaseComponent>(TEXT("BaseStatsComponent"));
 	BaseStatsComponent->RegisterComponent();
 
+	WeakPointCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("WeakPointCollision"));
+	WeakPointCollision->SetupAttachment(GetMesh(), TEXT("WeakPoint"));
+	WeakPointCollision->SetRelativeLocation(FVector(-20.000000, 0.000000,-50.000000));
+	WeakPointCollision->SetRelativeRotation(FRotator::ZeroRotator);
+	WeakPointCollision->SetCapsuleHalfHeight(60.f);
+	WeakPointCollision->SetCapsuleRadius(30.f);
+		
 	// TODO :: 테이블 로드 기능 추가시 수정 필요
 
 	BaseStatsComponent
@@ -109,6 +118,19 @@ void AVDEnemyGrux::BeginPlay()
 void AVDEnemyGrux::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+#if !UE_BUILD_SHIPPING
+	if (WeakPointCollision)
+	{
+		const FVector Center = WeakPointCollision->GetComponentLocation();
+		const FQuat Rotation = WeakPointCollision->GetComponentQuat();
+		const float HalfHeight = WeakPointCollision->GetScaledCapsuleHalfHeight();
+		const float Radius = WeakPointCollision->GetScaledCapsuleRadius();
+
+		// 프레임마다 WeakPoint 캡슐을 시각화
+		DrawDebugCapsule(GetWorld(), Center, HalfHeight, Radius, Rotation, FColor::Red, false, 0.0f, 0, 1.5f);
+	}
+#endif
 }
 
 void AVDEnemyGrux::SetComboInputOn(bool bIsOn)
