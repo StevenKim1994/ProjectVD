@@ -104,7 +104,7 @@ void UVDCutSceneSubSystem::ShowNamePlate(const FName& InName) // DESC :: 레벨 
 	UVDUISubsystem* UISubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UVDUISubsystem>();
 	if (UISubsystem)
 	{
-
+		UISubsystem->ShowCutSceneNamePlateWidget(FText::FromName(InName));
 	}
 }
 
@@ -113,7 +113,7 @@ void UVDCutSceneSubSystem::HideNamePlate() // DESC ::레벨 시퀀스에서 블�
 	UVDUISubsystem* UISubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UVDUISubsystem>();
 	if (UISubsystem)
 	{
-
+		UISubsystem->HideCutSceneNamePlateWidget();
 	}
 }
 

@@ -12,6 +12,7 @@ class UVDResourceSystem;
 class APlayerController; 
 class UVDLoadingPanelUserWidget;
 class UVDToastContainer;
+class UVDCutSceneNamePlateWidget;
 
 DECLARE_DELEGATE_OneParam(FOnUIWidgetLoadedDelegate, UUserWidget* /*LoadedUIWidget*/);
 
@@ -43,10 +44,15 @@ private:
 	TObjectPtr<UVDToastContainer> ToastContainerWidget;
 
 	UPROPERTY()
+	TObjectPtr< UVDCutSceneNamePlateWidget> CutSceneNamePlateWidget;
+
+	UPROPERTY()
 	TArray<TObjectPtr<UUserWidget>> ModalUIWidgetStack;
 
 	UPROPERTY()
 	TWeakObjectPtr<APlayerController> CachedPlayerController;
+
+
 
 public:
 	UVDUISubsystem();
@@ -65,10 +71,12 @@ public:
 
 	void PopModalUIWidget();
 	void AllModalUIWidgetClear();
-
 	void ShowToastMessage(const FText& Message);
 
 	TSoftClassPtr<UUserWidget> GetUIWidgetClassPathByName(const FName& WidgetName);
+
+	void ShowCutSceneNamePlateWidget(const FText& InText);
+	void HideCutSceneNamePlateWidget();
 
 	FORCEINLINE bool IsModalUIWidgetStackEmpty() const { return ModalUIWidgetStack.Num() == 0; }
 	FORCEINLINE int GetModalUIWidgetCount() const { return ModalUIWidgetStack.Num(); }

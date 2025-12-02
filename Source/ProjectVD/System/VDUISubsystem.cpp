@@ -11,6 +11,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "UI/Global/VDToastContainer.h"
+#include "UI/Stage/VDCutSceneNamePlateWidget.h"
 
 UVDUISubsystem::UVDUISubsystem()
 {
@@ -332,6 +333,37 @@ TSoftClassPtr<UUserWidget> UVDUISubsystem::GetUIWidgetClassPathByName(const FNam
 		return UIRegistry->GetWidgetClassByName(WidgetName);
 	}
 	return nullptr;
+}
+
+void UVDUISubsystem::ShowCutSceneNamePlateWidget(const FText& InText)
+{
+	if (!CutSceneNamePlateWidget)
+	{
+		TSoftClassPtr<UUserWidget> WidgetClassPtr = GetUIWidgetClassPathByName(VDConstants::CutSceneNamePlateWidget);
+		UClass* WidgetClass = ResourceSystem->LoadResource(WidgetClassPtr.ToString());
+		CutSceneNamePlateWidget = CreateWidget<UVDCutSceneNamePlateWidget>(GetWorld(), WidgetClass);
+		if (CutSceneNamePlateWidget && RootUIWidget)
+		{
+			UCanvasPanel* RootContent = Cast<UCanvasPanel>(RootUIWidget->GetRootWidget());
+			UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(RootContent->AddChild(CutSceneNamePlateWidget));
+			Slot->SetAnchors(FAnchors(0.f, 0.f, 1.f, 1.f));
+			Slot->SetOffsets(FMargin(0.f));
+		}
+	}
+
+	if(CutSceneNamePlateWidget)
+	{
+		CutSceneNamePlateWidget->SetNamePlateText(InText);
+		CutSceneNamePlateWidget->SetNamePlateVisibility(true);
+	}
+}
+
+void UVDUISubsystem::HideCutSceneNamePlateWidget()
+{
+	if(CutSceneNamePlateWidget)
+	{
+		CutSceneNamePlateWidget->SetNamePlateVisibility(false);
+	}
 }
 
 void UVDUISubsystem::PopModalUIWidget()
