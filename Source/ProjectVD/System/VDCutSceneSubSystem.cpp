@@ -13,6 +13,8 @@
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
 #include "CineCameraActor.h"
+#include "CineCameraComponent.h"
+#include "CineCameraSettings.h"
 #include "Game/StageLevel/VDStagePlayerController.h"
 #include "System/VDUISubsystem.h"
 
@@ -69,6 +71,11 @@ void UVDCutSceneSubSystem::ResumeCutScene()
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("CutScene Resumed"));
+}
+
+void UVDCutSceneSubSystem::OnCameraCut()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Camera Cut Occurred"));
 }
 
 void UVDCutSceneSubSystem::OnWorldBeginPlay(UWorld& InWorld)
@@ -180,13 +187,15 @@ void UVDCutSceneSubSystem::StartCutScene(IVDSequenceable* CutSceneActor, FOnCutS
 		}
 	}
 
+	FCameraLookatTrackingSettings& LootAtSetting = CameraActor->LookatTrackingSettings;
+	LootAtSetting.ActorToTrack = Cast<AActor>(CutSceneActor);
+
 	CutSceneActor->OnSequenceStart();
 	PlayerController->SetCutSceneCamera(CameraActor);
 
 	SequencePlayer->OnFinished.AddDynamic(this, &UVDCutSceneSubSystem::FinishCutScene);
 	SequencePlayer->OnPause.AddDynamic(this, &UVDCutSceneSubSystem::PauseCutScene);
 	SequencePlayer->OnStop.AddDynamic(this, &UVDCutSceneSubSystem::CleanupCutScene);
-	//SequencePlayer->ProcessEvent(this->FindFunction(TEXT("ShowNamePlate")), "TEST");
 	// 컷신에서 특정 메서드 호출방법 연구하기
 	SequencePlayer->Play();
 	StartCutScene();

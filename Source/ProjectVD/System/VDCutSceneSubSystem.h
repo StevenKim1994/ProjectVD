@@ -44,6 +44,9 @@ private:
 	UFUNCTION()
 	void ResumeCutScene();
 
+	UFUNCTION()
+	void OnCameraCut();
+
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 	virtual void OnWorldEndPlay(UWorld& InWorld) override;
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
