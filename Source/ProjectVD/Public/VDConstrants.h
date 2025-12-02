@@ -30,11 +30,11 @@ namespace VDConstants
 	// UI 위젯 이름들
 	extern const FName CutSceneNamePlateWidget;
 	extern const FName RootUIWidget;
-	extern const FName ConfirmPopup;
 	extern const FName TitlePanel;
 	extern const FName LoadingPanel;
 	extern const FName PauseMenuWidget;
 	extern const FName InventoryPanelWidget;
+	extern const FName ConfirmPopupWidget;
 	extern const FName ToastContainer;
 #pragma endregion 
 #pragma region UI_TEXT

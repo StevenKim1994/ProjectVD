@@ -14,6 +14,8 @@ public class ProjectVDEditorTarget : TargetRules
 
 
         // DESC :: 내가 추가한 모듈들
-        ExtraModuleNames.Add("ProjectVD");
+        ExtraModuleNames.AddRange(new string[] { 
+            "ProjectVD", 
+            "EditorModule" });
 	}
 }

@@ -186,10 +186,7 @@ UUserWidget* UVDUISubsystem::ShowUIWidget(const FName& WidgetName, bool bAutoHUD
 		}
 	}
 
-	ensure(ResourceSystem);
-
 	TSoftClassPtr<UUserWidget> WidgetClassPtr = GetUIWidgetClassPathByName(WidgetName);
-	ensure(!WidgetClassPtr.IsValid() || !WidgetClassPtr.IsNull());
 
 	if (ActiveWidgetInstanceMap.Contains(WidgetName))
 	{
@@ -310,7 +307,11 @@ void UVDUISubsystem::HideUIWidget(const FName& WidgetName, bool bAutoHUDOn)
 
 void UVDUISubsystem::HideUIWidget(UUserWidget* Widget, bool bAutoHUDOn)
 {
-	if (!Widget) return;
+	if (!Widget)
+	{
+		return;
+	}
+
 	Widget->RemoveFromParent();
 	if (ModalUIWidgetStack.Contains(Widget))
 	{

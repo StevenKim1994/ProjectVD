@@ -83,6 +83,8 @@ void AVDEquipItemVisualActor::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedC
 
 		OnDetectedHitColiderTarget.ExecuteIfBound(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("AVDEquipItemVisualActor::OnBoxBeginOverlap OtherActor : %s"), *OtherActor->GetName());
 }
 
 void AVDEquipItemVisualActor::OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

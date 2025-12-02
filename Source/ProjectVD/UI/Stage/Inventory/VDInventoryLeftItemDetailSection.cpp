@@ -5,6 +5,8 @@
 #include "Object/VDInventoryInfo.h"
 #include "System/VDInventorySubSystem.h"
 #include "System/VDPlayerSubsystem.h"
+#include "System/VDUISubsystem.h"
+#include "UI/Global/VDConfirmPopup.h"
 #include "System/VDDataTableSubSystem.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
@@ -72,10 +74,42 @@ void UVDInventoryLeftItemDetailSection::OnClickedUseButton()
 
 void UVDInventoryLeftItemDetailSection::OnClickedDeleteButton()
 {
-	UVDInventorySubSystem* InventorySubSystem = GetGameInstance()->GetSubsystem<UVDInventorySubSystem>();
-	if (InventorySubSystem)
+	UGameInstance* GameInstance = GetGameInstance();
+	if (GameInstance == nullptr)
 	{
-		InventorySubSystem->RemoveInventoryItemBySlot(CurrentInventoryInfo->GetSlot());
+		return;
+	}
+	UVDUISubsystem* UISubSystem = GameInstance->GetSubsystem<UVDUISubsystem>();
+	if (UISubSystem == nullptr)
+	{
+		return;
+	}
+
+	UVDConfirmPopup* ConfirmPopup = Cast<UVDConfirmPopup>(UISubSystem->ShowUIWidget(VDConstants::ConfirmPopupWidget));
+	if (ConfirmPopup && CurrentInventoryInfo.IsValid())
+	{
+		const FText DescriptionText = FText::Format(
+			NSLOCTEXT("Inventory", "DestroyItemConfirmDescription", "정말로 {0} 아이템을 파괴하시겠습니까?"),
+			FText::FromName(CurrentInventoryInfo.Get()->GetItemID())
+		);
+
+		ConfirmPopup
+			->SetDescriptionText(DescriptionText)
+			->SetTitleText(NSLOCTEXT("Inventory", "DestroyItemTitle", "아이템 파괴"))
+			->SetConfirmButtonText(NSLOCTEXT("Inventory", "DestroyItemConfirmButton", "파괴"))
+			->SetCancelButtonText(NSLOCTEXT("Inventory", "DestroyItemCancelButton", "취소"));
+
+		ConfirmPopup->OnClickEvent().BindLambda([this](EConfirmPopupResult Result)
+		{
+			if (Result == EConfirmPopupResult::Confirm)
+			{
+				UVDInventorySubSystem* InventorySubSystem = GetGameInstance()->GetSubsystem<UVDInventorySubSystem>();
+				if (InventorySubSystem && CurrentInventoryInfo.IsValid())
+				{
+					InventorySubSystem->RemoveInventoryItemBySlot(CurrentInventoryInfo->GetSlot());
+				}
+			}
+		});
 	}
 }
 

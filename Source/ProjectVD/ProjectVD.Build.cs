@@ -16,6 +16,7 @@ public class ProjectVD : ModuleRules
             "LevelSequence",  "MovieScene", "MovieSceneTracks"
         });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" , "AssetTools"});
+
 	}
 }
