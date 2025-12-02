@@ -58,7 +58,10 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	FORCEINLINE bool IsBossEnemy() const { return bIsBossEnemy; }
+
+	UFUNCTION(BlueprintCallable, Category = "EnemyInfo")
 	FORCEINLINE FName GetEnemyName() const { return EnemyName; }
+
 	FORCEINLINE UVDEnemyStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent.Get(); }
 
 	// IVDEnemyInterface을(를) 통해 상속됨

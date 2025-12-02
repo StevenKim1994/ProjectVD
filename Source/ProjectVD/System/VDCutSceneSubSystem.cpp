@@ -99,23 +99,21 @@ void UVDCutSceneSubSystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-void UVDCutSceneSubSystem::ShowNamePlate(const FName& InName)
+void UVDCutSceneSubSystem::ShowNamePlate(const FName& InName) // DESC :: 레벨 시퀀스에서 블루프린트로 호출됨
 {
 	UVDUISubsystem* UISubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UVDUISubsystem>();
 	if (UISubsystem)
 	{
-		//UISubsystem->ShowNamePlate(InName);
-		//UE_LOG(LogTemp, Warning, TEXT("Show Name Plate: %s"), InName);
+
 	}
 }
 
-void UVDCutSceneSubSystem::HideNamePlate()
+void UVDCutSceneSubSystem::HideNamePlate() // DESC ::레벨 시퀀스에서 블루프린트로 호출됨
 {
 	UVDUISubsystem* UISubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UVDUISubsystem>();
 	if (UISubsystem)
 	{
-		//UISubsystem->HideNamePlate();
-		UE_LOG(LogTemp, Warning, TEXT("Hide Name Plate"));
+
 	}
 }
 
