@@ -5,6 +5,7 @@
 #include "Actor/ActorComponent/VDEnemyStatsBaseComponent.h"
 #include "Actor/Enemy/AIController/VDEnemyAIController.h"
 #include "Engine/DamageEvents.h"
+#include "Engine/OverlapResult.h"
 #include "System/VDCutSceneSubSystem.h"
 #include "Animation/VDEnemyAnimInstance.h"
 #include "Components/CapsuleComponent.h"
@@ -154,7 +155,66 @@ void AVDEnemyGrux::SetComboInputOn(bool bIsOn)
 
 void AVDEnemyGrux::DefaultAttackHit()
 {
+	const float AttackRange = BaseStatsComponent ? BaseStatsComponent->GetAttackRange() : 0.f;
+	if (AttackRange <= 0.f)
+	{
+		return;
+	}
 
+	const float AttackAngleDegrees = 60.f;
+	const int32 SegmentCount = 24;
+	const FColor SectorColor = FColor::Orange;
+	const float LineThickness = 1.5f;
+
+	const FVector Origin = FVector(GetActorLocation().X, GetActorLocation().Y, 0.0f);
+	const FVector Forward = GetActorForwardVector();
+	const FVector Up = FVector::UpVector;
+	const float HalfAngleRad = FMath::DegreesToRadians(AttackAngleDegrees * 0.5f);
+
+	const FVector LeftDir = Forward.RotateAngleAxis(-AttackAngleDegrees * 0.5f, Up);
+	const FVector RightDir = Forward.RotateAngleAxis(AttackAngleDegrees * 0.5f, Up);
+	const FVector LeftEnd = Origin + LeftDir * AttackRange;
+	const FVector RightEnd = Origin + RightDir * AttackRange;
+
+	DrawDebugLine(GetWorld(), Origin, LeftEnd, SectorColor, false, 2.0f, 0, LineThickness);
+	DrawDebugLine(GetWorld(), Origin, RightEnd, SectorColor, false, 2.0f, 0, LineThickness);
+
+	FVector PrevPoint = LeftEnd;
+	for (int32 i = 1; i <= SegmentCount; ++i)
+	{
+		const float T = static_cast<float>(i) / static_cast<float>(SegmentCount);
+		const float Angle = FMath::Lerp(-HalfAngleRad, HalfAngleRad, T);
+		const FVector Dir = Forward.RotateAngleAxis(FMath::RadiansToDegrees(Angle), Up);
+		const FVector Point = Origin + Dir * AttackRange;
+
+		DrawDebugLine(GetWorld(), PrevPoint, Point, SectorColor, false, 2.0f, 0, LineThickness);
+		PrevPoint = Point;
+	}
+
+	TArray<FOverlapResult> OverlapResults;
+	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(AttackRange);
+
+	GetWorld()->OverlapMultiByObjectType(
+		OverlapResults,
+		Origin,
+		FQuat::Identity,
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_Pawn),
+		CollisionShape
+	);
+
+	for (const FOverlapResult& Result : OverlapResults)
+	{
+		AActor* OverlappedActor = Result.GetActor();
+		if (OverlappedActor == this) // DESC :: 자기자신은 무시함.
+		{
+			continue;
+		}
+
+		if (OverlappedActor)
+		{
+			OverlappedActor->TakeDamage(BaseStatsComponent->GetAttackPower(), FDamageEvent(), GetController(), this);
+		}
+	}
 }
 
 float AVDEnemyGrux::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

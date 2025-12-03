@@ -110,6 +110,14 @@ void AVDCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 float AVDCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if(BaseStatsComponent)
+	{
+		BaseStatsComponent->SetHealth(BaseStatsComponent->GetHealth() - DamageAmount);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("AVDCharacterBase::TakeDamage Current Health : %f"), BaseStatsComponent->GetHealth());
+
 	return DamageAmount;
 }
 
