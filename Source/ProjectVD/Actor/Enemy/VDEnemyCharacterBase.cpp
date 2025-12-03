@@ -54,7 +54,7 @@ UVDEnemyAnimInstance* AVDEnemyCharacterBase::PrepareAnimMontagePlay()
 	return nullptr;
 }
 
-UVDEnemyAnimInstance* AVDEnemyCharacterBase::DefaultAttackMontagePlay()
+UVDEnemyAnimInstance* AVDEnemyCharacterBase::DefaultAttackMontagePlay(FOnAttackMontageEnded AttackMontageEndedDelegate)
 {
 	if (DefaultAttackAM)
 	{
@@ -62,7 +62,15 @@ UVDEnemyAnimInstance* AVDEnemyCharacterBase::DefaultAttackMontagePlay()
 		UVDEnemyAnimInstance* AnimInstance = Cast<UVDEnemyAnimInstance>(GetMesh()->GetAnimInstance());
 		if (AnimInstance)
 		{
+			FOnMontageEnded EndDelegate;
+			EndDelegate.BindLambda([AttackMontageEndedDelegate](UAnimMontage* InMontage, bool bInterrupted)
+			{
+				AttackMontageEndedDelegate.ExecuteIfBound();
+			});
+
+			AnimInstance->Montage_SetEndDelegate(EndDelegate, DefaultAttackAM);
 			AnimInstance->Montage_Play(DefaultAttackAM);
+
 			return AnimInstance;
 		}
 	}
@@ -72,6 +80,21 @@ UVDEnemyAnimInstance* AVDEnemyCharacterBase::DefaultAttackMontagePlay()
 UAnimMontage* AVDEnemyCharacterBase::GetFindPlayerAnimMontage() const
 {
 	return FindPlayerAM;
+}
+
+UVDEnemyStatsBaseComponent* AVDEnemyCharacterBase::GetStatsComp() const
+{
+	return BaseStatsComponent;
+}
+
+void AVDEnemyCharacterBase::SetComboInputOn(bool bIsOn)
+{
+
+}
+
+void AVDEnemyCharacterBase::DefaultAttackHit()
+{
+
 }
 
 float AVDEnemyCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

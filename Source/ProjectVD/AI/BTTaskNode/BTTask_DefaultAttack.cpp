@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "AI/BTTaskNode/BTTask_DefaultAttack.h"
 #include "BehaviorTree/BehaviorTree.h"	
 #include "BehaviorTree/BehaviorTreeComponent.h"
@@ -11,6 +10,7 @@
 #include "Public/VDBlackboardInfo.h"
 #include "Interface/VDEnemyInterface.h"
 #include "Actor/Character/VDCharacterBase.h"
+#include "Animation/VDEnemyAnimInstance.h"
 
 UBTTask_DefaultAttack::UBTTask_DefaultAttack()
 {
@@ -21,7 +21,7 @@ EBTNodeResult::Type UBTTask_DefaultAttack::ExecuteTask(UBehaviorTreeComponent& O
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	APawn* ControlledPawn = OwnerComp.GetAIOwner()->GetPawn();
+	APawn* ControlledPawn = OwnerComp.GetAIOwner() ? OwnerComp.GetAIOwner()->GetPawn() : nullptr;
 	if (nullptr == ControlledPawn)
 	{
 		return EBTNodeResult::Failed;
@@ -35,26 +35,62 @@ EBTNodeResult::Type UBTTask_DefaultAttack::ExecuteTask(UBehaviorTreeComponent& O
 
 	UBehaviorTreeComponent& BTComp = OwnerComp;
 	UBlackboardComponent* BlackboardComp = BTComp.GetBlackboardComponent();
-	UObject* Target = BlackboardComp->GetValueAsObject(VDBB_KEY_TARGET);
-	float AttackRange = BlackboardComp->GetValueAsFloat(VDBB_KEY_ATTACK_RANGE);
-	if (Target)
+	if (nullptr == BlackboardComp)
 	{
-		AVDCharacterBase* TargetCharacter = Cast<AVDCharacterBase>(Target);
-		if (TargetCharacter)
-		{
-			if (ControlledPawn->GetDistanceTo(TargetCharacter) > AttackRange)
-			{
-				return EBTNodeResult::Failed;
-			}
-			else
-			{
-				EnemyInterface->DefaultAttackMontagePlay();
-				return EBTNodeResult::Succeeded;
-			}
-		}
 		return EBTNodeResult::Failed;
 	}
 
+	UObject* Target = BlackboardComp->GetValueAsObject(VDBB_KEY_TARGET);
 
-	return Result;
+	if (Target == nullptr)
+	{
+		return EBTNodeResult::Failed;
+	}
+	const float AttackRange = BlackboardComp->GetValueAsFloat(VDBB_KEY_ATTACK_RANGE);
+	AVDCharacterBase* TargetCharacter = Cast<AVDCharacterBase>(Target);
+	if (TargetCharacter)
+	{
+		if (ControlledPawn->GetDistanceTo(TargetCharacter) > AttackRange)
+		{
+			return EBTNodeResult::Failed;
+		}
+		else
+		{
+			// 공격 몽타주 재생 시작
+			FOnAttackMontageEnded AttackMontageEndedDelegate;
+			AttackMontageEndedDelegate.BindLambda([this, &OwnerComp]()
+			{
+				// 몽타주 종료 시점에 태스크 종료
+				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+			});
+
+			CurrentAnimInstance = EnemyInterface->DefaultAttackMontagePlay(AttackMontageEndedDelegate);
+			CurrentAttackAM = CurrentAnimInstance->GetCurrentActiveMontage();
+			// 몽타주 종료까지 대기하기 위해 InProgress 반환
+			return EBTNodeResult::InProgress;
+		}
+	}
+
+	return EBTNodeResult::Failed;
+}
+
+void UBTTask_DefaultAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
+
+	if (CurrentAnimInstance == nullptr)
+	{
+		return;
+	}
+
+	if (!CurrentAnimInstance->Montage_IsPlaying(CurrentAttackAM.Get()))
+	{
+		// 몽타주가 재생되지 않으면 태스크 종료
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	}
+	else
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::InProgress);
+	}
+
 }

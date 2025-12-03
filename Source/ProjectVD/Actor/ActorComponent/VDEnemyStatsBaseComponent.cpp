@@ -69,6 +69,12 @@ UVDEnemyStatsBaseComponent* UVDEnemyStatsBaseComponent::SetTurnSpeed(float InTur
 	return this;
 }
 
+UVDEnemyStatsBaseComponent* UVDEnemyStatsBaseComponent::SetMaxMovementSpeed(float InMaxMovementSpeed)
+{
+	MaxMovementSpeed = InMaxMovementSpeed;
+	return this;
+}
+
 void UVDEnemyStatsBaseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Actor/ActorComponent/VDEnemyStatsBaseComponent.h"
 #include "Interface/VDEnemyInterface.h"
+#include "Interface/VDAttackable.h"
 #include "VDEnemyCharacterBase.generated.h"
 
 class UAnimMontage;
@@ -13,7 +14,7 @@ class UVDEnemyAnimInstance;
 class AVDEnemyAIController;
 
 UCLASS(Abstract)
-class PROJECTVD_API AVDEnemyCharacterBase : public ACharacter, public IVDEnemyInterface
+class PROJECTVD_API AVDEnemyCharacterBase : public ACharacter, public IVDEnemyInterface, public IVDAttackable
 {
 	GENERATED_BODY()
 
@@ -55,8 +56,6 @@ protected:
 public:	
 	AVDEnemyCharacterBase();
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-
 	FORCEINLINE bool IsBossEnemy() const { return bIsBossEnemy; }
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyInfo")
@@ -64,10 +63,17 @@ public:
 
 	FORCEINLINE UVDEnemyStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent.Get(); }
 
+	// IVDAttackable을(를) 통해 상속됨
+	virtual void SetComboInputOn(bool bIsOn) override;
+	virtual void DefaultAttackHit() override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 	// IVDEnemyInterface을(를) 통해 상속됨
 	virtual UVDEnemyAnimInstance* PrepareAnimMontagePlay() override;
-	virtual UVDEnemyAnimInstance* DefaultAttackMontagePlay() override;
+	virtual UVDEnemyAnimInstance* DefaultAttackMontagePlay(FOnAttackMontageEnded AttackMontageEndedDelegate = nullptr) override;
 	virtual UAnimMontage* GetFindPlayerAnimMontage() const override;
+	virtual UVDEnemyStatsBaseComponent* GetStatsComp() const override;
+
 	float GetPatrolRadius() const override;
 	float GetPatrolWaitTime() const override;
 	float GetFindingRange() const override;

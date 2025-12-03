@@ -39,7 +39,7 @@ AVDCharacterBase::AVDCharacterBase()
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	Movement->JumpZVelocity = 700.0f;
 	Movement->AirControl = 0.35f;
-	Movement->MaxWalkSpeed = 500.0f;
+	Movement->MaxWalkSpeed = 500.0f; // TODO :: 속도 테이블로 빼기
 	Movement->MinAnalogWalkSpeed = 20.0f;
 	Movement->BrakingDecelerationWalking = 2000.0f;
 	Movement->bOrientRotationToMovement = true;

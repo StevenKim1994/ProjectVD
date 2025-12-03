@@ -12,3 +12,5 @@
 #define VDBB_KEY_FIND_PLAYER_RANGE TEXT("FindPlayerRange")
 #define	VDBB_KEY_ATTACK_RANGE TEXT("AttackRange")
 #define VDBB_KEY_RETURN_TO_SPAWNPOS TEXT("ReturnSpawnPos")
+#define VDBB_KEY_IS_ATTACK_TIME  TEXT("IsAttackTime")
+#define VDBB_KEY_MAX_ATTACK_TIME  TEXT("MaxAttackTime")

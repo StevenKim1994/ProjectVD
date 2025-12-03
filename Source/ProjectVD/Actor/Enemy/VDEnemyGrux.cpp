@@ -11,7 +11,10 @@
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "DrawDebugHelpers.h"
+#include "DataTable/VDEnemyStatsInfo.h"
+#include "System/VDDataTableSubsystem.h"
 
 AVDEnemyGrux::AVDEnemyGrux()
 {
@@ -26,18 +29,8 @@ AVDEnemyGrux::AVDEnemyGrux()
 	WeakPointCollision->SetCapsuleHalfHeight(60.f);
 	WeakPointCollision->SetCapsuleRadius(30.f);
 		
-	// TODO :: 테이블 로드 기능 추가시 수정 필요
 
-	BaseStatsComponent
-		->SetFindPlayerRange(1250.f)
-		->SetPatrolRange(500.f)
-		->SetPatrolWaitTime(2.f)
-		->SetTurnSpeed(5.f)
-		->SetAttackRange(100.f)
-		->SetAttackSpeed(1.0f)
-		->SetAttackPower(15.f)
-		->SetMaxHealth(110.f)
-		->SetHealth(110.f);
+	
 }
 
 void AVDEnemyGrux::FindPlayer()
@@ -111,6 +104,28 @@ void AVDEnemyGrux::HitReact(const FVector& HitPos)
 void AVDEnemyGrux::BeginPlay()
 {
 	Super::BeginPlay();
+	FVDEnemyStatsInfo* DataTableInfo = GetGameInstance()->GetSubsystem<UVDDataTableSubSystem>()->GetDataTableRow<FVDEnemyStatsInfo>(FName(TEXT("EnemyStatsInfo")), FName(TEXT("Grux")));
+
+	if (DataTableInfo)
+	{
+		BaseStatsComponent
+			->SetFindPlayerRange(DataTableInfo->FindPlayerRange)
+			->SetPatrolRange(DataTableInfo->PatrolRange)
+			->SetPatrolWaitTime(DataTableInfo->PatrolWaitTime)
+			->SetTurnSpeed(DataTableInfo->TurnSpeed)
+			->SetMaxMovementSpeed(DataTableInfo->MaxMovementSpeed)
+			->SetAttackRange(DataTableInfo->AttackRange)
+			->SetAttackSpeed(DataTableInfo->AttackSpeed)
+			->SetAttackPower(DataTableInfo->AttackPower)
+			->SetMaxHealth(DataTableInfo->MaxHealth)
+			->SetHealth(DataTableInfo->MaxHealth);
+
+	}
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+	Movement->bOrientRotationToMovement = true;
+	Movement->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
+	Movement->MinAnalogWalkSpeed = 50.f;
+	Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxMovementSpeed();
 
 	StartCutScene();
 }
