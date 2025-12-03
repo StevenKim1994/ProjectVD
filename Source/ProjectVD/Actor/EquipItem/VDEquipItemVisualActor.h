@@ -7,8 +7,7 @@
 #include "VDEquipItemVisualActor.generated.h"
 
 class UNiagaraComponent;
-
-DECLARE_DELEGATE_SixParams(FOnDetectedHitColiderTarget, UPrimitiveComponent* , AActor* , UPrimitiveComponent* , int32 , bool , const FHitResult& );
+DECLARE_DELEGATE_TwoParams(FOnDetectedHitColiderTarget, AActor* , const FVector& );
 
 class UStaticMeshComponent;
 class UBoxComponent;
@@ -21,7 +20,7 @@ private:
 	UPROPERTY()
 	TArray<AActor*> DetectedActors;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EquipItem", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EquipItem", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UNiagaraComponent> EquipEffectComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="EquipItem", Meta = (AllowPrivateAccess ="true"))
@@ -32,7 +31,11 @@ private:
 
 	FOnDetectedHitColiderTarget OnDetectedHitColiderTarget;
 protected:
+
+	UFUNCTION()
 	virtual void OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
 	virtual void OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
 	// Called when the game starts or when spawned
@@ -43,6 +46,6 @@ public:
 	AVDEquipItemVisualActor();
 	
 	void SetColider(bool bEnable);
-
+	void SetDectedHitListReset();
 	FORCEINLINE FOnDetectedHitColiderTarget& GetOnDetectedHitColiderTarget() { return OnDetectedHitColiderTarget; }
 };

@@ -33,8 +33,10 @@ EBTNodeResult::Type UBTTask_DefaultAttack::ExecuteTask(UBehaviorTreeComponent& O
 		return EBTNodeResult::Failed;
 	}
 
-	UObject* Target = OwnerComp.GetBlackboardComponent()->GetValueAsObject(VDBB_KEY_TARGET);
-	float AttackRange = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(VDBB_KEY_ATTACK_RANGE);
+	UBehaviorTreeComponent& BTComp = OwnerComp;
+	UBlackboardComponent* BlackboardComp = BTComp.GetBlackboardComponent();
+	UObject* Target = BlackboardComp->GetValueAsObject(VDBB_KEY_TARGET);
+	float AttackRange = BlackboardComp->GetValueAsFloat(VDBB_KEY_ATTACK_RANGE);
 	if (Target)
 	{
 		AVDCharacterBase* TargetCharacter = Cast<AVDCharacterBase>(Target);

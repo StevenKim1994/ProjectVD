@@ -70,7 +70,7 @@ protected:
 	virtual void Inventory(const FInputActionValue& Value);
 
 	UFUNCTION()
-	virtual void WeaponColiderHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint);
 
 	virtual void Tick(float DeltaTime) override;
 

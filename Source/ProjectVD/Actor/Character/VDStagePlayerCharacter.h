@@ -99,13 +99,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetEquippedWeapon(AVDEquipItemVisualActor* ItemPropActor) override;
+	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint) override;
 public:
 
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-	
 
 	void SetComboInputOn(bool bIsOn);
 	void DefaultAttackHit() override;

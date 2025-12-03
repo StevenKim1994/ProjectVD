@@ -65,6 +65,33 @@ void AVDStagePlayerCharacter::SetEquippedWeapon(AVDEquipItemVisualActor* VisualA
 	Super::SetEquippedWeapon(VisualActor);
 }
 
+void AVDStagePlayerCharacter::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)
+{
+	//Super::WeaponColiderHit(OtherActor, ContactPoint); DESC :: 부모함수 호출안함. 
+
+	if (AVDEnemyCharacterBase* HitEnemy = Cast<AVDEnemyCharacterBase>(OtherActor))
+	{
+
+		FDamageEvent DamageEvent;
+		float TakeDamage = 0.0f;
+
+		if (HitEnemy->IsBossEnemy())
+		{
+			AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+			if (VDPC)
+			{
+				VDPC->ShowBossStateBar(HitEnemy);
+			}
+		}
+
+		TakeDamage = HitEnemy->TakeDamage(BaseStatsComponent->GetAttackPower(), DamageEvent, Controller, this);
+
+		// TODO :: 나이아가라 이펙트 별도 월드 서브시스템으로 분리시켜아함
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), AttackHitEffect, ContactPoint, FRotator::ZeroRotator, FVector::OneVector, true, true,
+			ENCPoolMethod::AutoRelease, true);
+	}
+}
+
 void AVDStagePlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -120,73 +147,13 @@ float AVDStagePlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const
 void AVDStagePlayerCharacter::SetComboInputOn(bool bIsOn)
 {
 	bIsNextComboInputOn = bIsOn;
+	EquippedWeapon->SetColider(bIsOn);
+	EquippedWeapon->SetDectedHitListReset();
 }
 
 void AVDStagePlayerCharacter::DefaultAttackHit()
 {
-	if (UAnimInstance* UAI = GetMesh()->GetAnimInstance())
-	{
-		UWorld* World = GetWorld();
-		FHitResult HitResult;
-		FCollisionQueryParams CollisionParams(SCENE_QUERY_STAT(DefaultAttack), false, this);
 
-		// TODO :: 추후 별도로 스탯정보로 뻄
-		const float AttackRange = BaseStatsComponent->GetAttackRange();
-		const float AttackRadius = 50.0f;
-		const float AttackDamage = BaseStatsComponent->GetAttackPower();
-		const FVector Start = GetActorLocation() + (GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius() );
-		const FVector End = Start + (GetActorForwardVector() * AttackRange);
-
-		if (EquippedWeapon)
-		{
-			EquippedWeapon->SetColider(true);
-		}
-		return;
-		if (World)
-		{
-			bool bIsHitCheck = World->SweepSingleByChannel(HitResult,
-				Start,
-				End,
-				FQuat::Identity,
-				CCHANNEL_PROFILE_CHACRACTER_ACTION,
-				FCollisionShape::MakeSphere(50.0f), CollisionParams);
-
-			FVector DebugDrawLocation = Start + (End - Start) * 0.5f;
-			float DebugCapsuleHeight = AttackRange * 0.5f;
-			FColor DebugColor = bIsHitCheck ? FColor::Red : FColor::Green;
-
-			DrawDebugCapsule(World, DebugDrawLocation, DebugCapsuleHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DebugColor, false, 2.0f);
-
-			if (bIsHitCheck)
-			{
-				if (HitResult.GetActor())
-				{
-					if(AVDEnemyCharacterBase* HitEnemy = Cast<AVDEnemyCharacterBase>(HitResult.GetActor()))
-					{ 
-						UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
-
-						FDamageEvent DamageEvent;
-						float TakeDamage = 0.0f;
-
-						if (HitEnemy->IsBossEnemy())
-						{
-							AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
-							if (VDPC)
-							{
-								VDPC->ShowBossStateBar(HitEnemy);
-							}
-						}
-						
-						TakeDamage = HitEnemy->TakeDamage(AttackDamage, DamageEvent, Controller, this);
-
-						// TODO :: 나이아가라 이펙트 별도 월드 서브시스템으로 분리시켜아함
-						UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),  AttackHitEffect, HitResult.ImpactPoint, FRotator::ZeroRotator,FVector::OneVector, true, true,
-							ENCPoolMethod::AutoRelease, true);
-					}
-				}
-			}
-		}
-	}
 }
 
 void AVDStagePlayerCharacter::Move(const FInputActionValue& Value)

@@ -22,12 +22,7 @@ AVDEquipItemVisualActor::AVDEquipItemVisualActor()
 
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
 	BoxComp->SetupAttachment(RootComponent);
-	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	BoxComp->SetGenerateOverlapEvents(true);
-	BoxComp->SetCollisionProfileName(CPROFILE_CHARACTER_CAPSULE);
-	BoxComp->SetCollisionResponseToAllChannels(ECR_Ignore);
-	BoxComp->SetCollisionObjectType(CCHANNEL_PROFILE_CHACRACTER_ACTION);
-	BoxComp->SetCollisionResponseToChannel(CCHANNEL_PROFILE_CHACRACTER_ACTION, ECR_Overlap);
+	BoxComp->SetCollisionProfileName(CPROFILE_WEAPON_OVERLAP_TRIGGER);
 	BoxComp->IgnoreActorWhenMoving(GetOwner(), true);
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &AVDEquipItemVisualActor::OnBoxBeginOverlap);
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &AVDEquipItemVisualActor::OnBoxEndOverlap);
@@ -39,28 +34,14 @@ void AVDEquipItemVisualActor::SetColider(bool bEnable)
 {
 	if (BoxComp)
 	{
+		BoxComp->SetGenerateOverlapEvents(bEnable);
 		BoxComp->SetCollisionEnabled(bEnable ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
-		
-		if (bEnable)
-		{
-			DrawDebugBox(
-				GetWorld(),
-				BoxComp->GetComponentLocation(),
-				BoxComp->GetScaledBoxExtent(),
-				BoxComp->GetComponentQuat(),
-				FColor::Green,
-				false,
-				2.0f, 
-				0,
-				2.0f 
-			);
-		}
-
-		if (bEnable == false)
-		{
-			DetectedActors.Empty();
-		}
 	}
+}
+
+void AVDEquipItemVisualActor::SetDectedHitListReset()
+{
+	DetectedActors.Empty();
 }
 
 void AVDEquipItemVisualActor::BeginPlay()
@@ -72,23 +53,31 @@ void AVDEquipItemVisualActor::BeginPlay()
 void AVDEquipItemVisualActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AVDEquipItemVisualActor::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (OtherActor == GetOwner())
+	{
+		return;
+	}
+
 	if (DetectedActors.Contains(OtherActor) == false)
 	{
 		DetectedActors.Add(OtherActor);
 
-		OnDetectedHitColiderTarget.ExecuteIfBound(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-	}
+		FVector ContactPoint = FVector::ZeroVector; // DESC :: 오버랩 이벤트에선 접촉지점 정보를 제공하지 않으므로, 대략적인 접촉지점을 계산함.
+		FVector ClosestOnOther;
+		float DistOnOther;
+		DistOnOther = OtherComp->GetClosestPointOnCollision(BoxComp->GetComponentLocation(), ClosestOnOther);
+		ContactPoint = (ClosestOnOther + BoxComp->GetComponentLocation()) * 0.5f;
 
-	UE_LOG(LogTemp, Warning, TEXT("AVDEquipItemVisualActor::OnBoxBeginOverlap OtherActor : %s"), *OtherActor->GetName());
+		OnDetectedHitColiderTarget.ExecuteIfBound(OtherActor, ContactPoint);
+	}
 }
 
 void AVDEquipItemVisualActor::OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	// Overlap 종료 처리
+
 }
 
