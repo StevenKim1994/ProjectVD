@@ -15,6 +15,7 @@ class UVDBaseStaminaComponent;
 class UVDInventoryComponent;
 class AVDItemPropActorBase;
 class AVDEquipItemVisualActor;
+class UVDAnimInstance;
 class UVDInventoryInfo;
 
 enum class EVDEquipType: uint8;
@@ -47,6 +48,9 @@ protected:
 	TObjectPtr<AVDEquipItemVisualActor> EquippedWeapon;
 
 	UPROPERTY()
+	TObjectPtr<UVDAnimInstance> CastingAnimInstance;
+
+	UPROPERTY()
 	TMap<EVDEquipType, FName> EquippedArmorMap;
 
 	virtual void BeginPlay() override;
@@ -68,6 +72,9 @@ protected:
 
 	UFUNCTION()
 	virtual void Inventory(const FInputActionValue& Value);
+
+	UFUNCTION()
+	virtual void LockOnTarget(const FInputActionValue& Value);
 
 	UFUNCTION()
 	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint);

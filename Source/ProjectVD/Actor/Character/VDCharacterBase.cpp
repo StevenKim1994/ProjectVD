@@ -3,6 +3,7 @@
 #include "Actor/Character/VDCharacterBase.h"
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Actor/ActorComponent/VDInventoryComponent.h"
+#include "Actor/ActorComponent/VDBaseStaminaComponent.h"
 #include "Actor/ItemProp/VDItemPropActorBase.h"
 #include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "Engine/DamageEvents.h"
@@ -63,6 +64,17 @@ AVDCharacterBase::AVDCharacterBase()
 
 	BaseStatsComponent = CreateDefaultSubobject<UVDCharacterStatsBaseComponent>(TEXT("BaseStatsComponent"));
 	BaseStatsComponent->RegisterComponent();
+
+	StaminaComponent = CreateDefaultSubobject<UVDBaseStaminaComponent>(TEXT("StaminaComponent"));
+	StaminaComponent->RegisterComponent();
+	StaminaComponent->SetMaxStamina(100.0f);
+	StaminaComponent->SetCurrentStamina(100.0f);
+	StaminaComponent->SetStaminaRecovery(true);
+
+	if (UAnimInstance* AnimIns = GetMesh()->GetAnimInstance())
+	{
+		CastingAnimInstance = Cast<UVDAnimInstance>(AnimIns);
+	}
 }
 
 void AVDCharacterBase::BeginPlay()
@@ -84,7 +96,7 @@ bool AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
 
 	if (InventoryComponent->AddItemToInventory(Item))
 	{
-		Item->SetMeshHidden(true); // TODO :: 풀링변경 필요
+		Item->Destroy(true); // TODO :: 풀링변경 필요
 
 		return true;
 	}
@@ -215,6 +227,11 @@ void AVDCharacterBase::Inventory(const FInputActionValue& Value)
 	{
 		VDPC->OnInventory(Value);
 	}
+}
+
+void AVDCharacterBase::LockOnTarget(const FInputActionValue& Value)
+{
+	
 }
 
 void AVDCharacterBase::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)

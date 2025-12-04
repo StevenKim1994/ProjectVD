@@ -7,7 +7,9 @@
 #include "Interface/VDAttackable.h"
 #include "VDKnightPlayerCharacter.generated.h"
 
+enum class EVDLockOnStateType : uint8;
 class AVDStagePlayerController;
+class AActor;
 
 UCLASS()
 class PROJECTVD_API AVDKnightPlayerCharacter : public AVDCharacterBase, public IVDAttackable
@@ -19,12 +21,31 @@ private:
 	TObjectPtr<AVDStagePlayerController> CastPlayerController;
 
 protected:
+	EVDLockOnStateType bIsTargetLocked;
+
+	UPROPERTY()
+	TWeakObjectPtr<AActor> LockedTargetActor;
+
+	UPROPERTY()
+	int32 CurrentAttackComboCount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackCombo", Meta = (AllowPrivateAccess = "true"))
+	int32 MaxAttackComboCount = 3;
+
+	UPROPERTY()
+	bool bIsNextComboInputOn = false;
+
 	virtual void BeginPlay() override;
 	virtual void Look(const FInputActionValue& Value) override;
-
 	virtual void Move(const FInputActionValue& Value) override;
 	virtual void DefaultAttack(const FInputActionValue& Value) override;
 	virtual void Zoom(const FInputActionValue& Value) override;
+
+	virtual void LockOnTarget(const FInputActionValue& Value) override;
+
+	void TargetLockOn(AActor* TargetActor);
+	void TargetLockOff();
+
 public:
 	AVDKnightPlayerCharacter();
 	virtual void Tick(float DeltaTime) override;

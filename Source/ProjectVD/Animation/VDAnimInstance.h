@@ -17,6 +17,8 @@ class PROJECTVD_API UVDAnimInstance : public UAnimInstance
 public:
 	UVDAnimInstance();
 
+	void SetIsLockOnTarget(uint8 bIsLockOn);
+
 protected:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
@@ -34,6 +36,9 @@ protected:
 	float GroundSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
+	float Direction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
 	uint8 bIsIdle : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
@@ -48,4 +53,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
 	float JumpingThreshold;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat");
+	uint8 bIsLockOnTarget : 1;
 };

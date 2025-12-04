@@ -28,11 +28,7 @@
 
 AVDStagePlayerCharacter::AVDStagePlayerCharacter() 
 {
-	StaminaComponent = CreateDefaultSubobject<UVDBaseStaminaComponent>(TEXT("StaminaComponent"));
-	StaminaComponent->RegisterComponent();
-	StaminaComponent->SetMaxStamina(100.0f);
-	StaminaComponent->SetCurrentStamina(100.0f);
-	StaminaComponent->SetStaminaRecovery(true);
+
 
 }
 
