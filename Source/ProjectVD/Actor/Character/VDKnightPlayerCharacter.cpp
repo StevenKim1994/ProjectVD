@@ -31,6 +31,11 @@ AVDKnightPlayerCharacter::AVDKnightPlayerCharacter()
 	Movement->bOrientRotationToMovement = true;
 }
 
+void AVDKnightPlayerCharacter::SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon)
+{
+	Super::SetEquippedWeapon(NewWeapon);
+}
+
 void AVDKnightPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -176,6 +181,11 @@ void AVDKnightPlayerCharacter::Jump()
 
 		CastingAnimInstance->Montage_Play(FowardRollingAM);
 	}
+}
+
+void AVDKnightPlayerCharacter::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)
+{
+	Super::WeaponColiderHit(OtherActor, ContactPoint);
 }
 
 void AVDKnightPlayerCharacter::TargetLockOn(AActor* TargetActor)

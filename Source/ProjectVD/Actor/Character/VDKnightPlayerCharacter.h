@@ -46,16 +46,17 @@ protected:
 	virtual void LockOnTarget(const FInputActionValue& Value) override;
 	virtual void GetRootingItem(const FInputActionValue& Value) override;
 	virtual void Jump() override;
+	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint) override;
 
 	void TargetLockOn(AActor* TargetActor);
 	void TargetLockOff();
 
 public:
 	AVDKnightPlayerCharacter();
+	virtual void SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-
 	virtual void SetComboInputOn(bool bIsOn) override;
 	virtual void DefaultAttackHit() override;
 };

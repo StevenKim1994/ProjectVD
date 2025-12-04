@@ -53,6 +53,9 @@ protected:
 	UPROPERTY()
 	TMap<EVDEquipType, FName> EquippedArmorMap;
 
+	UPROPERTY()
+	TArray<TWeakObjectPtr<AVDItemPropActorBase>> OverlappingItemList;
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
@@ -84,11 +87,14 @@ protected:
 	
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
+	virtual void FirstOverlappingItemPickUp();
 public:	
 	AVDCharacterBase();
 
 	UFUNCTION()
 	virtual void SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon);
+
+	virtual void AddOverlappingItem(AVDItemPropActorBase* Item);
 	virtual bool PickItem(AVDItemPropActorBase* Item);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount,struct FDamageEvent const& DamageEvent,class AController* EventInstigator, AActor* DamageCauser) override;

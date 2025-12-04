@@ -82,6 +82,19 @@ void AVDCharacterBase::PostInitializeComponents()
 	}
 }
 
+void AVDCharacterBase::FirstOverlappingItemPickUp()
+{
+	if (OverlappingItemList.Num() == 0)
+	{
+		return;
+	}
+
+	if (InventoryComponent == nullptr)
+	{
+		return;
+	}
+}
+
 
 void AVDCharacterBase::BeginPlay()
 {
@@ -91,6 +104,20 @@ void AVDCharacterBase::BeginPlay()
 void AVDCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AVDCharacterBase::AddOverlappingItem(AVDItemPropActorBase* Item)
+{
+	if (Item)
+	{
+		if (OverlappingItemList.Contains(Item))
+		{
+			return;
+		}
+
+		OverlappingItemList.Add(Item);
+		// TODO :: UI로 오버랩아이템 아이템 말풍선 표시하기 및 줍기 키 표시하기
+	}
 }
 
 bool AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
@@ -106,17 +133,7 @@ bool AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
 
 		return true;
 	}
-	/*
-	UClass* LoadedClass = VisualActor.LoadSynchronous();
-	if (LoadedClass)
-	{
-		AVDEquipItemVisualActor* SpawnedVisualActor = GetWorld()->SpawnActor<AVDEquipItemVisualActor>(LoadedClass);
-		if (SpawnedVisualActor)
-		{
-			SetEquippedWeapon(SpawnedVisualActor);
-		}
-	}
-	*/
+
 	return false;
 }
 
@@ -251,7 +268,7 @@ void AVDCharacterBase::WeaponColiderHit(AActor* OtherActor, const FVector& Conta
 
 	if (OtherActor && OtherActor != this)
 	{
-		OtherActor->TakeDamage(10.0f, FDamageEvent(), GetController(), this);
+		OtherActor->TakeDamage(BaseStatsComponent->GetAttackPower(), FDamageEvent(), GetController(), this);
 	}
 }
 
