@@ -44,6 +44,7 @@ protected:
 	virtual void DefaultAttack(const FInputActionValue& Value) override;
 	virtual void Zoom(const FInputActionValue& Value) override;
 	virtual void LockOnTarget(const FInputActionValue& Value) override;
+	virtual void GetRootingItem(const FInputActionValue& Value) override;
 	virtual void Jump() override;
 
 	void TargetLockOn(AActor* TargetActor);

@@ -240,6 +240,11 @@ void AVDCharacterBase::LockOnTarget(const FInputActionValue& Value)
 	
 }
 
+void AVDCharacterBase::GetRootingItem(const FInputActionValue& Value)
+{
+	// TODO :: 현재 충돌된 아이템이 있는지 체크 이후 처리
+}
+
 void AVDCharacterBase::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)
 {
 	UE_LOG(LogTemp, Log, TEXT("Weapon Colider Hit Actor : %s"), *OtherActor->GetName());

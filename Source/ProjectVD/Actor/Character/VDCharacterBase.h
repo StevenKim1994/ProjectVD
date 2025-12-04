@@ -77,6 +77,9 @@ protected:
 	virtual void LockOnTarget(const FInputActionValue& Value);
 
 	UFUNCTION()
+	virtual void GetRootingItem(const FInputActionValue& Value);
+
+	UFUNCTION()
 	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint);
 	
 	virtual void Tick(float DeltaTime) override;

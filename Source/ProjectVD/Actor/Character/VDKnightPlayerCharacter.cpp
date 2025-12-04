@@ -89,8 +89,10 @@ void AVDKnightPlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 		{
 			CurrentAttackComboCount = 1;
 		}
-		FName SectionName = FName(*FString::Printf(TEXT("Attack%d"), CurrentAttackComboCount));
-		CastingAnimInstance->Montage_JumpToSection(SectionName, DefaultAttackAM);
+
+		CastingAnimInstance->Montage_Play(DefaultAttackAM);
+		//FName SectionName = FName(*FString::Printf(TEXT("Attack%d"), CurrentAttackComboCount));
+		//CastingAnimInstance->Montage_JumpToSection(SectionName, DefaultAttackAM);
 	}
 
 }
@@ -156,12 +158,22 @@ void AVDKnightPlayerCharacter::LockOnTarget(const FInputActionValue& Value)
 	}
 }
 
+void AVDKnightPlayerCharacter::GetRootingItem(const FInputActionValue& Value)
+{
+	// TODO :: 충돌된 아이템 체크이후 아이템 획득 애님 진행
+}
+
 void AVDKnightPlayerCharacter::Jump()
 {
 	// DESC :: 점프 비활성화
 
 	if (FowardRollingAM)
 	{
+		if(CastingAnimInstance->Montage_IsPlaying(FowardRollingAM))
+		{
+			return;
+		}
+
 		CastingAnimInstance->Montage_Play(FowardRollingAM);
 	}
 }
