@@ -21,10 +21,12 @@ private:
 	TObjectPtr<AVDStagePlayerController> CastPlayerController;
 
 protected:
-	EVDLockOnStateType bIsTargetLocked;
 
 	UPROPERTY()
 	TWeakObjectPtr<AActor> LockedTargetActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="FowardRolling", Meta = (AllowPrivateAccess ="true"))
+	TObjectPtr<UAnimMontage> FowardRollingAM;
 
 	UPROPERTY()
 	int32 CurrentAttackComboCount = 0;
@@ -34,14 +36,15 @@ protected:
 
 	UPROPERTY()
 	bool bIsNextComboInputOn = false;
+	EVDLockOnStateType bIsTargetLocked;
 
 	virtual void BeginPlay() override;
 	virtual void Look(const FInputActionValue& Value) override;
 	virtual void Move(const FInputActionValue& Value) override;
 	virtual void DefaultAttack(const FInputActionValue& Value) override;
 	virtual void Zoom(const FInputActionValue& Value) override;
-
 	virtual void LockOnTarget(const FInputActionValue& Value) override;
+	virtual void Jump() override;
 
 	void TargetLockOn(AActor* TargetActor);
 	void TargetLockOff();

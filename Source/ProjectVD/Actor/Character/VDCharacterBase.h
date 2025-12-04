@@ -78,9 +78,9 @@ protected:
 
 	UFUNCTION()
 	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint);
-
+	
 	virtual void Tick(float DeltaTime) override;
-
+	virtual void PostInitializeComponents() override;
 public:	
 	AVDCharacterBase();
 

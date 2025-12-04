@@ -70,12 +70,18 @@ AVDCharacterBase::AVDCharacterBase()
 	StaminaComponent->SetMaxStamina(100.0f);
 	StaminaComponent->SetCurrentStamina(100.0f);
 	StaminaComponent->SetStaminaRecovery(true);
+}
+
+void AVDCharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 
 	if (UAnimInstance* AnimIns = GetMesh()->GetAnimInstance())
 	{
 		CastingAnimInstance = Cast<UVDAnimInstance>(AnimIns);
 	}
 }
+
 
 void AVDCharacterBase::BeginPlay()
 {

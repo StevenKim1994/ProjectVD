@@ -36,6 +36,11 @@ void AVDKnightPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	FVDCharacterDefaultStats* DataTableInfo = GetGameInstance()->GetSubsystem<UVDDataTableSubSystem>()->GetDataTableRow<FVDCharacterDefaultStats>(FName(TEXT("CharacterDefaultStats")), FName(TEXT("1")));
 
+	if (CastingAnimInstance)
+	{
+		CastingAnimInstance->RootMotionMode = ERootMotionMode::RootMotionFromMontagesOnly;
+	}
+
 	if (DataTableInfo)
 	{
 		BaseStatsComponent
@@ -69,16 +74,23 @@ void AVDKnightPlayerCharacter::Move(const FInputActionValue& Value)
 
 void AVDKnightPlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
-	if (nullptr == EquippedWeapon)
+	if (EquippedWeapon == nullptr)
 	{
 		GetGameInstance()->GetSubsystem<UVDUISubsystem>()->ShowToastMessage(FText::FromString(TEXT("무기가 장착되어 있지 않습니다.")));
 		return;
 	}
 
 	const float StaminaCost = 0.0f;//15.0f;
-	if (!StaminaComponent->HasStamina(StaminaCost))
+
+	if (DefaultAttackAM)
 	{
-		return;
+		CurrentAttackComboCount++;
+		if (CurrentAttackComboCount > MaxAttackComboCount)
+		{
+			CurrentAttackComboCount = 1;
+		}
+		FName SectionName = FName(*FString::Printf(TEXT("Attack%d"), CurrentAttackComboCount));
+		CastingAnimInstance->Montage_JumpToSection(SectionName, DefaultAttackAM);
 	}
 
 }
@@ -141,6 +153,16 @@ void AVDKnightPlayerCharacter::LockOnTarget(const FInputActionValue& Value)
 	else
 	{
 		bIsTargetLocked = EVDLockOnStateType::LockOff;
+	}
+}
+
+void AVDKnightPlayerCharacter::Jump()
+{
+	// DESC :: 점프 비활성화
+
+	if (FowardRollingAM)
+	{
+		CastingAnimInstance->Montage_Play(FowardRollingAM);
 	}
 }
 
@@ -239,4 +261,5 @@ void AVDKnightPlayerCharacter::SetComboInputOn(bool bIsOn)
 
 void AVDKnightPlayerCharacter::DefaultAttackHit()
 {
+	
 }
