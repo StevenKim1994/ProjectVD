@@ -9,29 +9,12 @@
 
 void UVDPlayerHUDStateWidget::ShowPerformanceTween()
 {
-	/*
-	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this](float DeltaTime)
-	{
-		float CurrentHPPercent = HPBar->GetPercent();
-		float TargetHPPercent = HPBar->GetPercent();
-		float NewHPPercent = FMath::FInterpTo(CurrentHPPercent, TargetHPPercent, DeltaTime, 3.0f);
-		HPBar->SetPercent(NewHPPercent);
-		float CurrentMPPercent = MPBar->GetPercent();
-		float TargetMPPercent = MPBar->GetPercent();
-		float NewMPPercent = FMath::FInterpTo(CurrentMPPercent, TargetMPPercent, DeltaTime, 3.0f);
-		MPBar->SetPercent(NewMPPercent);
-		bool bIsHPFinished = FMath::IsNearlyEqual(NewHPPercent, TargetHPPercent, KINDA_SMALL_NUMBER);
-		bool bIsMPFinished = FMath::IsNearlyEqual(NewMPPercent, TargetMPPercent, KINDA_SMALL_NUMBER);
-		return !(bIsHPFinished && bIsMPFinished);
-	}), 0.0f);
-	*/
+
 }
 
 void UVDPlayerHUDStateWidget::SetCharacterState(UVDCharacterStatsBaseComponent* BaseStats)
 {
-	//PlayerName->SetText(FText::FromString(BaseStats->GetOwner()->GetName()));
 	PlayerName->SetVisibility(ESlateVisibility::Collapsed); // 임시로 이름 숨김
-
 	HPBar->SetPercent(BaseStats->GetHealth() / BaseStats->GetMaxHealth());
 	HPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), BaseStats->GetHealth(), BaseStats->GetMaxHealth())));
 
@@ -39,5 +22,18 @@ void UVDPlayerHUDStateWidget::SetCharacterState(UVDCharacterStatsBaseComponent* 
 	{
 		MPBar->SetPercent(CastStats->GetMana() / CastStats->GetMaxMana());
 		MPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CastStats->GetMana(), CastStats->GetMaxMana())));
+
+		CastStats->GetOnChangeHealth().AddUObject(this, &UVDPlayerHUDStateWidget::SetHPBarPercent);
 	}
+}
+
+void UVDPlayerHUDStateWidget::SetHPBarPercent(float CurrentHP, float MaxHP)
+{
+	HPBar->SetPercent(CurrentHP / MaxHP);
+	HPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentHP, MaxHP)));
+}
+
+void UVDPlayerHUDStateWidget::SetMPBarPercent(float CurrentMP, float MaxMP)
+{
+
 }

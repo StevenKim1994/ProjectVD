@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "VDBaseStatsComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnChangeStateStats, UVDBaseStatsComponent*);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChangeStateStats, float, float);
 
 UCLASS(Abstract , ClassGroup=("Stats"))
 class PROJECTVD_API UVDBaseStatsComponent : public UActorComponent

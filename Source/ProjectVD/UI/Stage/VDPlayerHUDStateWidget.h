@@ -10,7 +10,8 @@ class UProgressBar;
 class UTextBlock;
 class UVDCharacterStatsBaseComponent;
 
-DECLARE_DELEGATE_OneParam(FOnSetCharacterState, UVDCharacterStatsBaseComponent*);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSetCharacterState, float, float);
+
 UCLASS()
 class PROJECTVD_API UVDPlayerHUDStateWidget : public UUserWidget
 {
@@ -38,6 +39,9 @@ public:
 
 	void ShowPerformanceTween();
 	void SetCharacterState(UVDCharacterStatsBaseComponent* BaseStats);
+
+	void SetHPBarPercent(float CurrentHP, float MaxHP);
+	void SetMPBarPercent(float CurrentMP, float MaxMP);
 
 	FORCEINLINE FOnSetCharacterState& GetOnSetCharacterStateDelegate() { return OnSetCharacterStateDelegate; }
 };

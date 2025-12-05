@@ -53,7 +53,7 @@ void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
 	if (UVDEnemyStatsBaseComponent* NewStats = BossActor->GetBaseStatsComponent())
 	{
 		NewStats->GetOnChangeHealth().RemoveAll(this);
-		NewStats->GetOnChangeHealth().AddUObject(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar);
+		//NewStats->GetOnChangeHealth().AddUObject(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar); TODO :: 딜리게이트 바꾸기
 	}
 
 	if (BossNameText)

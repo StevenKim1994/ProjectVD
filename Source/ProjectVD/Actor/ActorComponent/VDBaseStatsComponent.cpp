@@ -39,7 +39,7 @@ UVDBaseStatsComponent* UVDBaseStatsComponent::SetHealth(float InHealth)
 {
 	Health = FMath::Clamp(InHealth, 0.f, MaxHealth);
 
-	OnChangeHealth.Broadcast(this);
+	//OnChangeHealth.Broadcast(this);
 
 	return this;
 }
@@ -52,7 +52,7 @@ UVDBaseStatsComponent* UVDBaseStatsComponent::SetMaxHealth(float InMaxHealth, bo
 		Health = FMath::Clamp(Health, 0.f, MaxHealth);
 	}
 
-	OnChangeHealth.Broadcast(this);
+	//OnChangeHealth.Broadcast(this);
 
 	return this;
 }
@@ -61,7 +61,7 @@ UVDBaseStatsComponent* UVDBaseStatsComponent::AddHealth(float Delta)
 {
 	Health = FMath::Clamp(Health + Delta, 0.f, MaxHealth);
 
-	OnChangeHealth.Broadcast(this);
+	//OnChangeHealth.Broadcast(this);
 
 	return this;
 }

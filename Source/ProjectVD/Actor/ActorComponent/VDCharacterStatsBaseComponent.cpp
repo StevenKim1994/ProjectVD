@@ -47,6 +47,7 @@ UVDCharacterStatsBaseComponent* UVDCharacterStatsBaseComponent::SetHealth(float 
 {
 	Super::SetHealth(InHealth);
 
+	OnChangeHealth.Broadcast(Health, MaxHealth);
 	return this;
 }
 
@@ -54,6 +55,7 @@ UVDCharacterStatsBaseComponent* UVDCharacterStatsBaseComponent::SetMaxHealth(flo
 {
 	Super::SetMaxHealth(InMaxHealth, bClampCurrent);
 
+	OnChangeHealth.Broadcast(Health, MaxHealth);
 	return this;	
 }
 
