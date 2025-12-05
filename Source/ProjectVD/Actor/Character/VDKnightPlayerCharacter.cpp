@@ -41,7 +41,7 @@ void AVDKnightPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-
+	CastPlayerController->SetCharacter(this);
 }
 
 void AVDKnightPlayerCharacter::Look(const FInputActionValue& Value)
@@ -293,7 +293,7 @@ void AVDKnightPlayerCharacter::PostInitializeComponents()
 	}
 
 	CurrentAttackComboCount = 0;
-	CastPlayerController->SetCharacter(this);
+
 }
 
 void AVDKnightPlayerCharacter::Tick(float DeltaTime)
