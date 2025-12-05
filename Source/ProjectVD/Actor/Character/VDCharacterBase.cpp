@@ -7,6 +7,7 @@
 #include "Actor/ItemProp/VDItemPropActorBase.h"
 #include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "Engine/DamageEvents.h"
+#include "Animation/VDAnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
 #include "Game/StageLevel/VDStagePlayerController.h"
@@ -298,6 +299,31 @@ void AVDCharacterBase::LockOnTarget(const FInputActionValue& Value)
 
 void AVDCharacterBase::Rooting(const FInputActionValue& Value)
 {
+	if (RootingAM)
+	{
+		if (!CastingAnimInstance->Montage_IsPlaying(RootingAM))
+		{
+			GetCharacterMovement()->StopMovementImmediately();
+			GetCharacterMovement()->MovementMode = EMovementMode::MOVE_None;
+			CastingAnimInstance->Montage_Play(RootingAM);
+			TWeakObjectPtr<AVDCharacterBase> SelfWeak = this;
+
+			FOnMontageEnded EndDel;
+			EndDel.BindWeakLambda(this, [SelfWeak](UAnimMontage* Montage, bool bInterrupted)
+				{
+					if (!SelfWeak.IsValid())
+					{
+						return;
+					}
+
+					AVDCharacterBase* Self = SelfWeak.Get();
+					Self->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+				});
+
+			CastingAnimInstance->Montage_SetEndDelegate(EndDel);
+		}
+	}
+
 	FirstOverlappingItemPickUp();
 }
 

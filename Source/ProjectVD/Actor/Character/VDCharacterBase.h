@@ -28,7 +28,10 @@ class PROJECTVD_API AVDCharacterBase : public ACharacter
 protected:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DefaultAttackAM;
-	// 플레이어 전용 컴포넌트
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> RootingAM;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraSpringArmComponent;
 
