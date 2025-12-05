@@ -94,6 +94,19 @@ void AVDCharacterBase::FirstOverlappingItemPickUp()
 	{
 		return;
 	}
+
+	for (TWeakObjectPtr<AVDItemPropActorBase> ItemPtr : OverlappingItemList)
+	{
+		AVDItemPropActorBase* Item = ItemPtr.Get();
+		if (Item)
+		{
+			if (InventoryComponent->AddItemToInventory(Item))
+			{
+				Item->Destroy(true); // TODO :: 풀링변경 필요
+				break;
+			}
+		}
+	}
 }
 
 
@@ -117,7 +130,32 @@ void AVDCharacterBase::AddOverlappingItem(AVDItemPropActorBase* Item)
 		}
 
 		OverlappingItemList.Add(Item);
-		// TODO :: UI로 오버랩아이템 아이템 말풍선 표시하기 및 줍기 키 표시하기
+		
+		AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+		if(VDPC)
+		{
+			VDPC->ShowInteractionWidget(FText::FromString(TEXT("아이템줍기")), FText::FromString(TEXT("G")));
+		}
+	}
+}
+
+void AVDCharacterBase::RemoveOverlappingItem(AVDItemPropActorBase* Item)
+{
+	if (Item)
+	{
+		if (OverlappingItemList.Contains(Item))
+		{
+			OverlappingItemList.Remove(Item);
+		}
+	}
+
+	if (OverlappingItemList.Num() == 0)
+	{
+		AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+		if(VDPC)
+		{
+			VDPC->HideInteractionWidget();
+		}
 	}
 }
 
@@ -258,9 +296,9 @@ void AVDCharacterBase::LockOnTarget(const FInputActionValue& Value)
 	
 }
 
-void AVDCharacterBase::GetRootingItem(const FInputActionValue& Value)
+void AVDCharacterBase::Rooting(const FInputActionValue& Value)
 {
-	// TODO :: 현재 충돌된 아이템이 있는지 체크 이후 처리
+	FirstOverlappingItemPickUp();
 }
 
 void AVDCharacterBase::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)

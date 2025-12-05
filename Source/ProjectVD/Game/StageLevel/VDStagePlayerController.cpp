@@ -194,6 +194,22 @@ void AVDStagePlayerController::ClearCutSceneCamera()
 	}
 }
 
+void AVDStagePlayerController::ShowInteractionWidget(const FText& InText, const FText& InKeyText)
+{
+	if (HUDWidget)
+	{
+		HUDWidget->ShowInteractionWidget(InText, InKeyText);
+	}
+}
+
+void AVDStagePlayerController::HideInteractionWidget()
+{
+	if(HUDWidget)
+	{
+		HUDWidget->HideInteractionWidget();
+	}
+}
+
 void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 {
 

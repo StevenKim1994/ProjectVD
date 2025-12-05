@@ -2,9 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "VDWeaponInfoTable.generated.h"
-
-class AVDEquipItemVisualActor;
 
 USTRUCT(BlueprintType)
 struct FVDWeaponInfoTable : public FTableRowBase

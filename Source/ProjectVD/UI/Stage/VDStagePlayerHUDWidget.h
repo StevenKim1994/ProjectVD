@@ -9,6 +9,7 @@
 class UVDPlayerHUDEnemyStatusWidget;
 class UVDStagePlayerHUDToastWidget;
 class UVDPlayerHUDStateWidget;
+class UVDHUDInteractionWidget;
 class UVDHUDStaminaWidget;
 class AVDCharacterBase;
 class AVDEnemyCharacterBase;
@@ -28,6 +29,9 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UVDHUDStaminaWidget> StaminaIndicator;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UVDHUDInteractionWidget> InteractionWidget;
+
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
@@ -37,5 +41,7 @@ private:
 public:
 	void ShowBossStatus(AVDEnemyCharacterBase* Boss);
 	void SetCharacter(AVDCharacterBase* Character);
+	void ShowInteractionWidget(const FText& InText, const FText& InKeyText);
+	void HideInteractionWidget();
 	void HideBossStatus();
 };

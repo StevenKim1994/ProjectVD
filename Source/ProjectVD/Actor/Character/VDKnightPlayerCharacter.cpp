@@ -207,9 +207,9 @@ void AVDKnightPlayerCharacter::LockOnTarget(const FInputActionValue& Value)
 	}
 }
 
-void AVDKnightPlayerCharacter::GetRootingItem(const FInputActionValue& Value)
+void AVDKnightPlayerCharacter::Rooting(const FInputActionValue& Value)
 {
-	// TODO :: 충돌된 아이템 체크이후 아이템 획득 애님 진행
+	Super::Rooting(Value);
 }
 
 void AVDKnightPlayerCharacter::Jump()

@@ -5,6 +5,7 @@
 #include "UI/Stage/VDPlayerHUDEnemyStatusWidget.h"
 #include "UI/Stage/VDPlayerHUDStateWidget.h"
 #include "UI/Stage/VDHUDStaminaWidget.h"
+#include "UI/Stage/VDHUDInteractionWidget.h"
 #include "Actor/Character/VDCharacterBase.h"
 #include "Actor/ActorComponent/VDBaseStaminaComponent.h"
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
@@ -30,6 +31,11 @@ void UVDStagePlayerHUDWidget::InitializeWidget()
 	if(BossState)
 	{
 		BossState->SetVisibility(ESlateVisibility::Collapsed);
+	}
+
+	if(InteractionWidget)
+	{
+		InteractionWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 
@@ -70,6 +76,28 @@ void UVDStagePlayerHUDWidget::SetCharacter(AVDCharacterBase* Character)
 			State->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
+}
+
+void UVDStagePlayerHUDWidget::ShowInteractionWidget(const FText& InText, const FText& InKeyText)
+{
+	if (!InteractionWidget)
+	{
+		return;
+	}
+
+	InteractionWidget->SetInteractionText(InText);
+	InteractionWidget->SetInteractionKeyText(InKeyText);
+	InteractionWidget->ShowInteractionWidget(true);
+}
+
+void UVDStagePlayerHUDWidget::HideInteractionWidget()
+{
+	if (!InteractionWidget)
+	{
+		return;
+	}
+
+	InteractionWidget->ShowInteractionWidget(false);
 }
 
 void UVDStagePlayerHUDWidget::HideBossStatus()

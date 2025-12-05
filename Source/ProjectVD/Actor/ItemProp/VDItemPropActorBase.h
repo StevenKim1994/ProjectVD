@@ -11,7 +11,10 @@ class UStaticMeshComponent;
 class UBoxComponent;
 class UNiagaraSystem;
 class UNiagaraComponent;
+class UWidgetComponent;
+class AVDCharacterBase;
 class AVDEquipItemVisualActor;
+class UVDItemPropNamePlateWidget;
 
 UCLASS(Abstract)
 class PROJECTVD_API AVDItemPropActorBase : public AActor , public IVDPickable
@@ -23,6 +26,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemProp", Meta = (AllowPrivateAccess = "true"))
 	bool bIsHoverable = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ItemProp", Meta = (AllowPrivateAccess ="true"))
+	TObjectPtr<UWidgetComponent> NamePlateWidgetComp;
+
+	UPROPERTY()
+	TObjectPtr<UVDItemPropNamePlateWidget> NamePlateWidget;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="ItemProp", Meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UNiagaraComponent> PickedEffectComp;
 
@@ -31,6 +40,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemProp", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> ColiderComp;
+
+	UPROPERTY()
+	TWeakObjectPtr<AVDCharacterBase> PickerCharacter;
 
 	float HoverTime = 0.0f;
 	float HoverSpeed = 1.0f;
@@ -46,6 +58,12 @@ protected:
 
 	UFUNCTION()
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	virtual void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+	virtual void ShowNamePlateWidget(bool bIsShow);
 
 	UFUNCTION()
 	virtual void OnPickedEffectFinished(UNiagaraComponent* FinishedComponent);

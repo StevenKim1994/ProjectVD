@@ -80,7 +80,7 @@ protected:
 	virtual void LockOnTarget(const FInputActionValue& Value);
 
 	UFUNCTION()
-	virtual void GetRootingItem(const FInputActionValue& Value);
+	virtual void Rooting(const FInputActionValue& Value);
 
 	UFUNCTION()
 	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint);
@@ -93,8 +93,8 @@ public:
 
 	UFUNCTION()
 	virtual void SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon);
-
 	virtual void AddOverlappingItem(AVDItemPropActorBase* Item);
+	virtual void RemoveOverlappingItem(AVDItemPropActorBase* Item);
 	virtual bool PickItem(AVDItemPropActorBase* Item);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount,struct FDamageEvent const& DamageEvent,class AController* EventInstigator, AActor* DamageCauser) override;

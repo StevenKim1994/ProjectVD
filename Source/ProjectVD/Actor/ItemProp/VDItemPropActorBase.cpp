@@ -4,6 +4,7 @@
 #include "Actor/ItemProp/VDItemPropActorBase.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Public/VDPhysicInfo.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
@@ -11,13 +12,23 @@
 #include "Actor/Character/VDCharacterBase.h"
 #include "System/VDUISubsystem.h"
 #include "Public/VDConstrants.h"
+#include "Blueprint/UserWidget.h"
+#include "UI/InGame/VDItemPropNamePlateWidget.h"
+
 // Sets default values
 AVDItemPropActorBase::AVDItemPropActorBase()
 {
-	PrimaryActorTick.bCanEverTick = bIsHoverable;
 
 	ColiderComp = CreateDefaultSubobject<UBoxComponent>(TEXT("ColiderComp"));
 	RootComponent = ColiderComp;
+
+	NamePlateWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("NamePlateWidgetComp"));
+	NamePlateWidgetComp->SetupAttachment(RootComponent);
+	NamePlateWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+	NamePlateWidgetComp->SetDrawAtDesiredSize(true);
+	NamePlateWidgetComp->SetTwoSided(true);
+	NamePlateWidgetComp->SetPivot(FVector2D(0.5f, 1.0f));
+	NamePlateWidgetComp->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(RootComponent);
@@ -29,6 +40,9 @@ AVDItemPropActorBase::AVDItemPropActorBase()
 	PickedEffectComp->OnSystemFinished.AddDynamic(this, &AVDItemPropActorBase::OnPickedEffectFinished);
 	ColiderComp->SetCollisionProfileName(CPROFILE_PLACE_TRIGGER);
 	ColiderComp->OnComponentBeginOverlap.AddDynamic(this, &AVDItemPropActorBase::OnBeginOverlap);
+	ColiderComp->OnComponentEndOverlap.AddDynamic(this, &AVDItemPropActorBase::OnEndOverlap);
+
+	PrimaryActorTick.bCanEverTick = bIsHoverable;
 }
 
 FName AVDItemPropActorBase::GetItemInfoName()
@@ -44,6 +58,18 @@ void AVDItemPropActorBase::BeginPlay()
 	if (MeshComp)
 	{
 		InitialLocation = MeshComp->GetRelativeLocation();
+	}
+
+	if (NamePlateWidgetComp)
+	{
+		NamePlateWidget = Cast<UVDItemPropNamePlateWidget>(NamePlateWidgetComp->GetUserWidgetObject());
+		if (NamePlateWidget == nullptr)
+		{
+			return;
+		}
+
+		NamePlateWidget->SetItemNameText(FText::FromName(ItemInfoTableRowName.RowName));
+		NamePlateWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -68,12 +94,47 @@ void AVDItemPropActorBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, A
 {
 	if (AVDCharacterBase* Character = Cast<AVDCharacterBase>(OtherActor))
 	{
+		PickerCharacter = Character;
+		if (PickerCharacter.IsValid() == false)
+		{
+			return;
+		}
+
 		if (CanBePicked())
 		{
-			OnPicked(OtherActor);
+			PickerCharacter->AddOverlappingItem(this);
+			ShowNamePlateWidget(true);
 		}
 	}
 }
+
+void AVDItemPropActorBase::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (AVDCharacterBase* Character = Cast<AVDCharacterBase>(OtherActor))
+	{
+		if (PickerCharacter.IsValid())
+		{
+			PickerCharacter->RemoveOverlappingItem(this);
+			PickerCharacter = nullptr;
+			ShowNamePlateWidget(false);
+		}
+	}
+}
+
+void AVDItemPropActorBase::ShowNamePlateWidget(bool bIsShow)
+{
+	if(NamePlateWidget)
+	{
+		if (!NamePlateWidget->IsVisible())
+		{
+			NamePlateWidget->SetVisibility(ESlateVisibility::Visible);
+		}
+
+		NamePlateWidget->ShowNamePlate(bIsShow);
+	}
+}
+
+
 
 void AVDItemPropActorBase::OnPickedEffectFinished(UNiagaraComponent* FinishedComponent)
 {

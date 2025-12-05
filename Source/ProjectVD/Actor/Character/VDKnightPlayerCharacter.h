@@ -50,7 +50,7 @@ protected:
 	virtual void Move(const FInputActionValue& Value) override;
 	virtual void Zoom(const FInputActionValue& Value) override;
 	virtual void LockOnTarget(const FInputActionValue& Value) override;
-	virtual void GetRootingItem(const FInputActionValue& Value) override;
+	virtual void Rooting(const FInputActionValue& Value) override;
 	virtual void Jump() override;
 	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint) override;
 

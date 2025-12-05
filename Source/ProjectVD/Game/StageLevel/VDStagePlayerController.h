@@ -50,6 +50,8 @@ public:
 	void SetCutSceneCamera(ACineCameraActor* CineCamera); 
 	void ClearCutSceneCamera();
 
+	void ShowInteractionWidget(const FText& InText, const FText& InKeyText);
+	void HideInteractionWidget();
 	void ShakePlayerHitCameraEffect(float Scale = 1.0f);
 
 	UFUNCTION() 
