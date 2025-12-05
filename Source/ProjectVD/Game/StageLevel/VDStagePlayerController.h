@@ -54,6 +54,8 @@ public:
 	void HideInteractionWidget();
 	void ShakePlayerHitCameraEffect(float Scale = 1.0f);
 
+	void SetCharacter(AVDCharacterBase* NewCharacter);
+
 	UFUNCTION() 
 	void OnEscape(const FInputActionValue& Value);
 

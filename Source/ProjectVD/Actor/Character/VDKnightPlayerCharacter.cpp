@@ -47,7 +47,6 @@ void AVDKnightPlayerCharacter::BeginPlay()
 		CastingAnimInstance->RootMotionMode = ERootMotionMode::RootMotionFromMontagesOnly;
 	}
 
-
 	if (DataTableInfo)
 	{
 		BaseStatsComponent
@@ -65,6 +64,8 @@ void AVDKnightPlayerCharacter::BeginPlay()
 	}
 
 	CurrentAttackComboCount = 0;
+
+	CastPlayerController->SetCharacter(this);
 }
 
 void AVDKnightPlayerCharacter::Look(const FInputActionValue& Value)

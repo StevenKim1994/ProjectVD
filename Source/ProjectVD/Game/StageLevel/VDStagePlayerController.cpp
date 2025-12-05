@@ -1,6 +1,6 @@
 #include "Game/StageLevel/VDStagePlayerController.h"
-#include "Actor/Character/VDStagePlayerCharacter.h"
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
+#include "Actor/Character/VDCharacterBase.h"
 #include "System/VDUISubsystem.h"
 #include "System/VDPlayerSubsystem.h"
 #include "EnhancedInputComponent.h"
@@ -28,23 +28,7 @@ void AVDStagePlayerController::BeginPlay()
 
 	FInputModeGameAndUI InputMode;
 	SetInputMode(InputMode);
-	UGameInstance* GameInstance = GetGameInstance();
-	if (UVDUISubsystem* UISubsystem = GameInstance->GetSubsystem<UVDUISubsystem>())
-	{
-		UISubsystem->SetPlayerControllerRootUIWidget(this);
-		UISubsystem->SetCurrentHUDWidget(VDConstants::StagePlayerHUD);
-
-		HUDWidget = Cast<UVDStagePlayerHUDWidget>(UISubsystem->GetCurrentHUDWidget());
-		if (HUDWidget)
-		{
-			HUDWidget->SetCharacter(Cast<AVDCharacterBase>(GetCharacter()));
-		}
-	}
-
-	if (UVDPlayerSubsystem* PlayerSubsytem = GameInstance->GetSubsystem<UVDPlayerSubsystem>())
-	{
-		PlayerSubsytem->SetCurrentCharacter(Cast<AVDCharacterBase>(GetCharacter()));
-	}
+	
 }
 
 void AVDStagePlayerController::SetupInputComponent()
@@ -170,6 +154,27 @@ void AVDStagePlayerController::ShakePlayerHitCameraEffect(float Scale)
 		{
 			PlayerCameraManager->StartCameraShake(CameraShakeEffect, Scale);
 		}
+	}
+}
+
+void AVDStagePlayerController::SetCharacter(AVDCharacterBase* NewCharacter)
+{
+	UGameInstance* GameInstance = GetGameInstance();
+	if (UVDUISubsystem* UISubsystem = GameInstance->GetSubsystem<UVDUISubsystem>())
+	{
+		UISubsystem->SetPlayerControllerRootUIWidget(this);
+		UISubsystem->SetCurrentHUDWidget(VDConstants::StagePlayerHUD);
+
+		HUDWidget = Cast<UVDStagePlayerHUDWidget>(UISubsystem->GetCurrentHUDWidget());
+		if (HUDWidget)
+		{
+			HUDWidget->SetCharacter(NewCharacter);
+		}
+	}
+
+	if (UVDPlayerSubsystem* PlayerSubsytem = GameInstance->GetSubsystem<UVDPlayerSubsystem>())
+	{
+		PlayerSubsytem->SetCurrentCharacter(NewCharacter);
 	}
 }
 
