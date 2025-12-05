@@ -38,18 +38,23 @@ protected:
 	bool bIsNextComboInputOn = false;
 	EVDLockOnStateType bIsTargetLocked;
 
+	void TargetLockOn(AActor* TargetActor);
+	void TargetLockOff();
+	void DefaultAttack(const FInputActionValue& Value) override;
+	void DefaultAttackCombo();
+	void DefaultAttackComboEnded(UAnimMontage* AnimMontage, bool IsEndedCombo);
+	void CheckComboInput();
+
 	virtual void BeginPlay() override;
 	virtual void Look(const FInputActionValue& Value) override;
 	virtual void Move(const FInputActionValue& Value) override;
-	virtual void DefaultAttack(const FInputActionValue& Value) override;
 	virtual void Zoom(const FInputActionValue& Value) override;
 	virtual void LockOnTarget(const FInputActionValue& Value) override;
 	virtual void GetRootingItem(const FInputActionValue& Value) override;
 	virtual void Jump() override;
 	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint) override;
 
-	void TargetLockOn(AActor* TargetActor);
-	void TargetLockOff();
+	virtual void PostInitializeComponents() override;
 
 public:
 	AVDKnightPlayerCharacter();

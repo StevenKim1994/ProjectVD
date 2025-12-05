@@ -11,6 +11,7 @@ class UVDStagePlayerHUDWidget;
 class UInputMappingContext;
 class AVDEnemyCharacterBase;
 class ACineCameraActor;
+class UCameraShakeBase;
 
 UCLASS()
 class PROJECTVD_API AVDStagePlayerController : public APlayerController
@@ -29,8 +30,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> UIControllerIMC;
 
-	UPROPERTY()
+	UPROPERTY(VisibleInstanceOnly, Category = "Input", meta = (AllowPrivateAccess ="true"))
 	TObjectPtr<UInputMappingContext> CurrentInputContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta= (AllowPrivateAccess ="true"))
+	TSubclassOf<UCameraShakeBase> CameraShakeEffect;
 
 	void InitializeInputContext();
 
@@ -45,6 +49,8 @@ public:
 	void ChangeToggleInputContext();
 	void SetCutSceneCamera(ACineCameraActor* CineCamera); 
 	void ClearCutSceneCamera();
+
+	void ShakePlayerHitCameraEffect(float Scale = 1.0f);
 
 	UFUNCTION() 
 	void OnEscape(const FInputActionValue& Value);

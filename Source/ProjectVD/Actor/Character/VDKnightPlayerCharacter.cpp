@@ -22,6 +22,7 @@
 #include "System/VDUISubsystem.h"
 #include "DataTable/VDCharacterDefaultStats.h"
 #include "Public/VDLockOnStateType.h"
+#include "Actor/Enemy/VDEnemyCharacterBase.h"
 
 AVDKnightPlayerCharacter::AVDKnightPlayerCharacter()
 {
@@ -46,6 +47,7 @@ void AVDKnightPlayerCharacter::BeginPlay()
 		CastingAnimInstance->RootMotionMode = ERootMotionMode::RootMotionFromMontagesOnly;
 	}
 
+
 	if (DataTableInfo)
 	{
 		BaseStatsComponent
@@ -56,10 +58,10 @@ void AVDKnightPlayerCharacter::BeginPlay()
 			->SetMaxMana(DataTableInfo->MaxMana)
 			->SetHealth(DataTableInfo->MaxHealth)
 			->SetMana(DataTableInfo->MaxMana);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AVDStagePlayerCharacter::BeginPlay() DataTableInfo is nullptr"));
+
+		UCharacterMovementComponent* Movement = GetCharacterMovement();
+		Movement->MaxWalkSpeed = DataTableInfo->MaxMovementSpeed;
+		Movement->MinAnalogWalkSpeed = DataTableInfo->MinMovementAnalogSpeed;
 	}
 
 	CurrentAttackComboCount = 0;
@@ -68,12 +70,15 @@ void AVDKnightPlayerCharacter::BeginPlay()
 void AVDKnightPlayerCharacter::Look(const FInputActionValue& Value)
 {
 	Super::Look(Value);
-
-	UE_LOG(LogTemp, Warning, TEXT("AVDKnightPlayerCharacter::Look"));
 }
 
 void AVDKnightPlayerCharacter::Move(const FInputActionValue& Value)
 {
+	if (CastingAnimInstance->Montage_IsPlaying(FowardRollingAM))
+	{
+		return;
+	}
+
 	Super::Move(Value);
 }
 
@@ -89,17 +94,56 @@ void AVDKnightPlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 
 	if (DefaultAttackAM)
 	{
-		CurrentAttackComboCount++;
-		if (CurrentAttackComboCount > MaxAttackComboCount)
+		if (CurrentAttackComboCount == 0)
 		{
-			CurrentAttackComboCount = 1;
+			DefaultAttackCombo();
+			return;
 		}
-
-		CastingAnimInstance->Montage_Play(DefaultAttackAM);
-		//FName SectionName = FName(*FString::Printf(TEXT("Attack%d"), CurrentAttackComboCount));
-		//CastingAnimInstance->Montage_JumpToSection(SectionName, DefaultAttackAM);
+		else
+		{
+			if (bIsNextComboInputOn)
+			{
+				CheckComboInput();
+			}
+		}
 	}
 
+}
+
+void AVDKnightPlayerCharacter::DefaultAttackCombo()
+{
+	CurrentAttackComboCount = 1;
+
+	if (DefaultAttackAM)
+	{
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUObject(this, &AVDKnightPlayerCharacter::DefaultAttackComboEnded);
+		CastingAnimInstance->Montage_Play(DefaultAttackAM, BaseStatsComponent->GetAttackSpeed());
+		CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, DefaultAttackAM);
+	}
+}
+
+void AVDKnightPlayerCharacter::DefaultAttackComboEnded(UAnimMontage* AnimMontage, bool IsEndedCombo)
+{
+	if (AnimMontage != DefaultAttackAM)
+	{
+		return;
+	}
+
+	CurrentAttackComboCount = 0;
+	bIsNextComboInputOn = false;
+
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+}
+
+void AVDKnightPlayerCharacter::CheckComboInput()
+{
+	CurrentAttackComboCount = FMath::Clamp(CurrentAttackComboCount + 1, 1, DefaultAttackAM->GetNumSections());
+	FName NextSection = *FString::Printf(TEXT("Attack%d"), CurrentAttackComboCount);
+	CastingAnimInstance->Montage_JumpToSection(NextSection, DefaultAttackAM);
+	bIsNextComboInputOn = false;
+
+	UE_LOG(LogTemp, Log, TEXT("AVDKnightPlayerCharacter::CheckComboInput : %d, ComboIsOn: %s"), CurrentAttackComboCount, bIsNextComboInputOn ? TEXT("true") : TEXT("false"));
 }
 
 void AVDKnightPlayerCharacter::Zoom(const FInputActionValue& Value)
@@ -170,7 +214,7 @@ void AVDKnightPlayerCharacter::GetRootingItem(const FInputActionValue& Value)
 
 void AVDKnightPlayerCharacter::Jump()
 {
-	// DESC :: 점프 비활성화
+	// DESC :: 점프 비활성화 이캐릭터는 점프대신 구르기 가능 
 
 	if (FowardRollingAM)
 	{
@@ -178,14 +222,42 @@ void AVDKnightPlayerCharacter::Jump()
 		{
 			return;
 		}
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindWeakLambda(this, [this](UAnimMontage* Montage, bool bInterrupted)
+			{
+				// TODO :: 구르기 끝나면 처리해야할것들 EX-> 이제부터 스태미나 회복같은거
+				UE_LOG(LogTemp, Log, TEXT("VDKnghtCharacter::Foward Rolling Ended"));
+			});
 
 		CastingAnimInstance->Montage_Play(FowardRollingAM);
+		CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, FowardRollingAM);
+
+		bIsNextComboInputOn = false;
+		CurrentAttackComboCount = 0;
 	}
 }
 
 void AVDKnightPlayerCharacter::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)
 {
 	Super::WeaponColiderHit(OtherActor, ContactPoint);
+
+	if (AVDEnemyCharacterBase* HitEnemy = Cast<AVDEnemyCharacterBase>(OtherActor))
+	{
+
+		FDamageEvent DamageEvent;
+		float TakeDamage = 0.0f;
+
+		if (HitEnemy->IsBossEnemy())
+		{
+			AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+			if (VDPC)
+			{
+				VDPC->ShowBossStateBar(HitEnemy);
+			}
+		}
+
+		TakeDamage = HitEnemy->TakeDamage(BaseStatsComponent->GetAttackPower(), DamageEvent, Controller, this);
+	}
 }
 
 void AVDKnightPlayerCharacter::TargetLockOn(AActor* TargetActor)
@@ -211,6 +283,12 @@ void AVDKnightPlayerCharacter::TargetLockOff()
 	{
 		CastingAnimInstance->SetIsLockOnTarget(false);
 	}
+}
+
+void AVDKnightPlayerCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	
 }
 
 void AVDKnightPlayerCharacter::Tick(float DeltaTime)
@@ -270,6 +348,9 @@ void AVDKnightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Player
 float AVDKnightPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Result = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	CastPlayerController->ShakePlayerHitCameraEffect();
+	// TODO :: 방향에 따른 피격애님몽타주 재생 및 맞은 방향에 따른 넉백 처리
 
 	return Result;
 }

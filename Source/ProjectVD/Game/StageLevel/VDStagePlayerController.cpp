@@ -15,6 +15,8 @@
 #include "System/VDLevelSystem.h"
 #include "CineCameraActor.h"	
 #include "Kismet/GameplayStatics.h"
+#include "Camera/PlayerCameraManager.h"
+#include "Camera/CameraShakeBase.h"
 	
 AVDStagePlayerController::AVDStagePlayerController()
 {
@@ -156,6 +158,17 @@ void AVDStagePlayerController::SetCutSceneCamera(ACineCameraActor* CineCamera)
 			{
 				UISubsystem->HideCurrentHUDWidget();
 			}
+		}
+	}
+}
+
+void AVDStagePlayerController::ShakePlayerHitCameraEffect(float Scale)
+{
+	if (PlayerCameraManager)
+	{
+		if (CameraShakeEffect)
+		{
+			PlayerCameraManager->StartCameraShake(CameraShakeEffect, Scale);
 		}
 	}
 }

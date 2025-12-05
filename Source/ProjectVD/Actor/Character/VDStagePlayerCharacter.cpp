@@ -137,6 +137,9 @@ float AVDStagePlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	// 공격받은 방향 알아내기
+	CastPlayerController->ShakePlayerHitCameraEffect(1.0f);
+
 	return DamageAmount;
 }
 
@@ -379,7 +382,10 @@ void AVDStagePlayerCharacter::DefaultAttackCombo()
 
 void AVDStagePlayerCharacter::DefaultAttackComboEnded(UAnimMontage* AnimMontage, bool IsEndedCombo)
 {
-	if (AnimMontage != DefaultAttackAM) return;
+	if (AnimMontage != DefaultAttackAM)
+	{
+		return;
+	}
 
 	CurrentAttackComboCount = 0;
 	bIsNextComboInputOn = false;

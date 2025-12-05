@@ -35,12 +35,13 @@ AVDCharacterBase::AVDCharacterBase()
 	SkeletalMesh->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, -90.0f, 0.0f));
 	SkeletalMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	SkeletalMesh->SetCollisionProfileName(CPROFILE_NO_COLLISION);
+	SkeletalMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -Capsule->GetScaledCapsuleHalfHeight()));
 
 	// Movement 기본 설정
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	Movement->JumpZVelocity = 700.0f;
 	Movement->AirControl = 0.35f;
-	Movement->MaxWalkSpeed = 500.0f; // TODO :: 속도 테이블로 빼기
+	Movement->MaxWalkSpeed = 500.0f; 
 	Movement->MinAnalogWalkSpeed = 20.0f;
 	Movement->BrakingDecelerationWalking = 2000.0f;
 	Movement->bOrientRotationToMovement = true;
