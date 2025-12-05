@@ -17,6 +17,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Camera/CameraShakeBase.h"
+#include "Game/StageLevel/VDStageGameMode.h"
 	
 AVDStagePlayerController::AVDStagePlayerController()
 {
@@ -153,6 +154,21 @@ void AVDStagePlayerController::ShakePlayerHitCameraEffect(float Scale)
 		if (CameraShakeEffect)
 		{
 			PlayerCameraManager->StartCameraShake(CameraShakeEffect, Scale);
+		}
+	}
+}
+
+void AVDStagePlayerController::SetGameOver()
+{
+	SetIgnoreMoveInput(true);
+	if (UVDUISubsystem* UISubsystem = GetGameInstance()->GetSubsystem<UVDUISubsystem>())
+	{
+		UISubsystem->ShowUIWidgetAsync(TEXT("StageGameOverWidget"));
+
+		AVDStageGameMode* GM = Cast<AVDStageGameMode>(UGameplayStatics::GetGameMode(this));
+		if (GM)
+		{
+			GM->OnPlayerDeath();
 		}
 	}
 }

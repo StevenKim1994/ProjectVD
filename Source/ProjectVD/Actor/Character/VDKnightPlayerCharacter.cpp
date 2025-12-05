@@ -40,32 +40,8 @@ void AVDKnightPlayerCharacter::SetEquippedWeapon(AVDEquipItemVisualActor* NewWea
 void AVDKnightPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	FVDCharacterDefaultStats* DataTableInfo = GetGameInstance()->GetSubsystem<UVDDataTableSubSystem>()->GetDataTableRow<FVDCharacterDefaultStats>(FName(TEXT("CharacterDefaultStats")), FName(TEXT("1")));
+	
 
-	if (CastingAnimInstance)
-	{
-		CastingAnimInstance->RootMotionMode = ERootMotionMode::RootMotionFromMontagesOnly;
-	}
-
-	if (DataTableInfo)
-	{
-		BaseStatsComponent
-			->SetAttackRange(DataTableInfo->AttackRange)
-			->SetAttackSpeed(DataTableInfo->AttackSpeed)
-			->SetAttackPower(DataTableInfo->AttackPower)
-			->SetMaxHealth(DataTableInfo->MaxHealth)
-			->SetMaxMana(DataTableInfo->MaxMana)
-			->SetHealth(DataTableInfo->MaxHealth)
-			->SetMana(DataTableInfo->MaxMana);
-
-		UCharacterMovementComponent* Movement = GetCharacterMovement();
-		Movement->MaxWalkSpeed = DataTableInfo->MaxMovementSpeed;
-		Movement->MinAnalogWalkSpeed = DataTableInfo->MinMovementAnalogSpeed;
-	}
-
-	CurrentAttackComboCount = 0;
-
-	CastPlayerController->SetCharacter(this);
 }
 
 void AVDKnightPlayerCharacter::Look(const FInputActionValue& Value)
@@ -290,6 +266,34 @@ void AVDKnightPlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
+	UVDDataTableSubSystem* DS = GetGameInstance()->GetSubsystem<UVDDataTableSubSystem>();
+	if (DS)
+	{
+		FVDCharacterDefaultStats* DataTableInfo = DS->GetDataTableRow<FVDCharacterDefaultStats>(FName(TEXT("CharacterDefaultStats")), FName(TEXT("1")));
+		if (DataTableInfo)
+		{
+			BaseStatsComponent
+				->SetAttackRange(DataTableInfo->AttackRange)
+				->SetAttackSpeed(DataTableInfo->AttackSpeed)
+				->SetAttackPower(DataTableInfo->AttackPower)
+				->SetMaxHealth(DataTableInfo->MaxHealth)
+				->SetMaxMana(DataTableInfo->MaxMana)
+				->SetHealth(DataTableInfo->MaxHealth)
+				->SetMana(DataTableInfo->MaxMana);
+
+			UCharacterMovementComponent* Movement = GetCharacterMovement();
+			Movement->MaxWalkSpeed = DataTableInfo->MaxMovementSpeed;
+			Movement->MinAnalogWalkSpeed = DataTableInfo->MinMovementAnalogSpeed;
+		}
+	}
+
+	if (CastingAnimInstance)
+	{
+		CastingAnimInstance->RootMotionMode = ERootMotionMode::RootMotionFromMontagesOnly;
+	}
+
+	CurrentAttackComboCount = 0;
+	CastPlayerController->SetCharacter(this);
 }
 
 void AVDKnightPlayerCharacter::Tick(float DeltaTime)

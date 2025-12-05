@@ -32,6 +32,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> RootingAM;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> DeathAM;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraSpringArmComponent;
 

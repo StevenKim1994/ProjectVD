@@ -26,11 +26,21 @@ void UVDHUDInteractionWidget::ShowInteractionWidget(bool bIsShow)
 	{
 		SetVisibility(ESlateVisibility::Visible);
 		StopAnimation(HideInteractionAnim);
+		if (IsAnimationPlaying(ShowInteractionAnim))
+		{
+			return;
+		}
+
 		PlayAnimation(ShowInteractionAnim);
 	}
 	else
 	{
 		StopAnimation(ShowInteractionAnim);
+		if (IsAnimationPlaying(HideInteractionAnim))
+		{
+			return;
+		}
+
 		PlayAnimation(HideInteractionAnim);
 	}
 }
@@ -39,9 +49,19 @@ void UVDHUDInteractionWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	FWidgetAnimationDynamicEvent HideDelegate;
-	HideDelegate.BindDynamic(this, &UVDHUDInteractionWidget::OnHideInteractionAnimFinished);
-	BindToAnimationFinished(HideInteractionAnim, HideDelegate);
+	if(ShowInteractionAnim)
+	{
+		FWidgetAnimationDynamicEvent ShowDelegate;
+		ShowDelegate.BindDynamic(this, &UVDHUDInteractionWidget::NativeConstruct);
+		BindToAnimationFinished(ShowInteractionAnim, ShowDelegate);
+	}
+
+	if (HideInteractionAnim)
+	{
+		FWidgetAnimationDynamicEvent HideDelegate;
+		HideDelegate.BindDynamic(this, &UVDHUDInteractionWidget::NativeDestruct);// OnHideInteractionAnimFinished);
+		BindToAnimationFinished(HideInteractionAnim, HideDelegate);
+	}
 }
 
 void UVDHUDInteractionWidget::NativeConstruct()

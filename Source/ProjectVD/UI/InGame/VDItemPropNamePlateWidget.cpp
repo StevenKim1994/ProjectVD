@@ -15,7 +15,7 @@ void UVDItemPropNamePlateWidget::ShowNamePlate(bool bIsShow)
 			return;
 		}
 
-		PlayAnimation(ShowNamePlateAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
+		PlayAnimation(ShowNamePlateAnim);
 	}
 	else
 	{
@@ -24,7 +24,7 @@ void UVDItemPropNamePlateWidget::ShowNamePlate(bool bIsShow)
 		{
 			return;
 		}
-		PlayAnimation(HideNamePlateAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
+		PlayAnimation(HideNamePlateAnim);
 	}
 }
 

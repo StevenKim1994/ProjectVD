@@ -9,6 +9,11 @@ AVDStageGameMode::AVDStageGameMode()
 
 }
 
+void AVDStageGameMode::OnPlayerDeath()
+{
+
+}
+
 void AVDStageGameMode::BeginPlay()
 {
 	Super::BeginPlay();

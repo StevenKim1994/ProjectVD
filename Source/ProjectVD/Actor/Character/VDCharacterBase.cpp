@@ -114,6 +114,34 @@ void AVDCharacterBase::FirstOverlappingItemPickUp()
 void AVDCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (BaseStatsComponent)
+	{
+		BaseStatsComponent->GetOnChangeHealth().AddWeakLambda(this, [this](float CurrentHealth, float MaxHealth)
+		{
+			if (CurrentHealth <= 0.0f)
+			{
+				// TODO :: 캐릭터 사망 처리
+				if (DeathAM)
+				{
+					UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+					if (AnimInstance && !AnimInstance->Montage_IsPlaying(DeathAM))
+					{
+						AnimInstance->Montage_Play(DeathAM);
+					}
+
+					GetCharacterMovement()->DisableMovement();
+				
+				}
+
+				FTimerHandle DeathTimerHandle;
+				AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+				VDPC->SetGameOver();
+
+				UE_LOG(LogTemp, Warning, TEXT("AVDCharacterBase::BeginPlay Character Dead"));
+			}
+		});
+	}
 }
 
 void AVDCharacterBase::Tick(float DeltaTime)

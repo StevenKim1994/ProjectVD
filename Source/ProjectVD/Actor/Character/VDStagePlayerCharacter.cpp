@@ -138,7 +138,7 @@ float AVDStagePlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	// 공격받은 방향 알아내기
-	CastPlayerController->ShakePlayerHitCameraEffect(1.0f);
+	CastPlayerController->ShakePlayerHitCameraEffect(DamageAmount);
 
 	return DamageAmount;
 }

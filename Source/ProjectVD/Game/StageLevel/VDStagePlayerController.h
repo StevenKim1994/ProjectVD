@@ -54,6 +54,7 @@ public:
 	void HideInteractionWidget();
 	void ShakePlayerHitCameraEffect(float Scale = 1.0f);
 
+	void SetGameOver();
 	void SetCharacter(AVDCharacterBase* NewCharacter);
 
 	UFUNCTION() 

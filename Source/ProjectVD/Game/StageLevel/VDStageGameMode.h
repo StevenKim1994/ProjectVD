@@ -16,6 +16,7 @@ class PROJECTVD_API AVDStageGameMode : public AGameModeBase
 
 public:
 	AVDStageGameMode();
+	void OnPlayerDeath();
 
 	virtual void BeginPlay() override;
 };
