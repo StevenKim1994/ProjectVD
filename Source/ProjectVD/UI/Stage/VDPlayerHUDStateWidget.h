@@ -16,7 +16,21 @@ UCLASS()
 class PROJECTVD_API UVDPlayerHUDStateWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+public:
+
+	void ShowPerformanceTween();
+	void SetCharacterState(UVDCharacterStatsBaseComponent* BaseStats);
+
+	void SetHPBarPercent(float CurrentHP, float MaxHP);
+	void SetMPBarPercent(float CurrentMP, float MaxMP);
+
+	FORCEINLINE FOnSetCharacterState& GetOnSetCharacterStateDelegate() { return OnSetCharacterStateDelegate; }
+
+protected:
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UProgressBar> HPBar;
@@ -35,13 +49,10 @@ private:
 
 	FOnSetCharacterState OnSetCharacterStateDelegate;
 
-public:
+	float TargetHPPercent;
+	bool bIsHPTweenPlaying;
 
-	void ShowPerformanceTween();
-	void SetCharacterState(UVDCharacterStatsBaseComponent* BaseStats);
+	float TargetMPPercent;
+	bool bIsMPTweenPlaying;
 
-	void SetHPBarPercent(float CurrentHP, float MaxHP);
-	void SetMPBarPercent(float CurrentMP, float MaxMP);
-
-	FORCEINLINE FOnSetCharacterState& GetOnSetCharacterStateDelegate() { return OnSetCharacterStateDelegate; }
 };

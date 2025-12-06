@@ -29,11 +29,45 @@ void UVDPlayerHUDStateWidget::SetCharacterState(UVDCharacterStatsBaseComponent* 
 
 void UVDPlayerHUDStateWidget::SetHPBarPercent(float CurrentHP, float MaxHP)
 {
-	HPBar->SetPercent(CurrentHP / MaxHP);
+	TargetHPPercent = CurrentHP / MaxHP;
+	bIsHPTweenPlaying = true;
+
 	HPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentHP, MaxHP)));
 }
 
+
+
 void UVDPlayerHUDStateWidget::SetMPBarPercent(float CurrentMP, float MaxMP)
 {
+	TargetMPPercent = CurrentMP / MaxMP;
+	bIsMPTweenPlaying = true;
 
+	MPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentMP, MaxMP)));
+}
+
+void UVDPlayerHUDStateWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (bIsHPTweenPlaying)
+	{
+		float CurrentPercent = HPBar->GetPercent();
+		float NewPercent = FMath::FInterpTo(CurrentPercent, TargetHPPercent, InDeltaTime, 5.0f);
+		HPBar->SetPercent(NewPercent);
+		if (FMath::IsNearlyEqual(NewPercent, TargetHPPercent, 0.001f))
+		{
+			HPBar->SetPercent(TargetHPPercent);
+			bIsHPTweenPlaying = false;
+		}
+	}
+	if (bIsMPTweenPlaying)
+	{
+		float CurrentPercent = MPBar->GetPercent();
+		float NewPercent = FMath::FInterpTo(CurrentPercent, TargetMPPercent, InDeltaTime, 5.0f);
+		MPBar->SetPercent(NewPercent);
+		if (FMath::IsNearlyEqual(NewPercent, TargetMPPercent, 0.001f))
+		{
+			MPBar->SetPercent(TargetMPPercent);
+			bIsMPTweenPlaying = false;
+		}
+	}
 }
