@@ -109,4 +109,5 @@ public:
 
 	void SetComboInputOn(bool bIsOn);
 	void DefaultAttackHit() override;
+	void ResetHitList() override;
 };

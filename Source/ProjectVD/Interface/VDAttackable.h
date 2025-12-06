@@ -25,4 +25,5 @@ public:
 
 	virtual void SetComboInputOn(bool bIsOn);
 	virtual void DefaultAttackHit();
+	virtual void ResetHitList();
 };

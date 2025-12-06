@@ -257,6 +257,7 @@ void AVDCharacterBase::SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon)
 		EquippedWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
 		EquippedWeapon->GetOnDetectedHitColiderTarget().Unbind();
 		EquippedWeapon->GetOnDetectedHitColiderTarget().BindUObject(this, &AVDCharacterBase::WeaponColiderHit);
+		EquippedWeapon->SetColider(false);
 		GetGameInstance()->GetSubsystem<UVDUISubsystem>()->ShowToastMessage(FText::FromString(TEXT("무기 장착 완료")));
 	}
 }

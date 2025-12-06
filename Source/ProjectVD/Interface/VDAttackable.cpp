@@ -14,3 +14,8 @@ void IVDAttackable::DefaultAttackHit()
 {
 	// DESC :: 기본 구현 없음 - 상속받은 클래스에서 구현
 }
+
+void IVDAttackable::ResetHitList()
+{
+	// DESC :: 기본 구현 없음 - 상속받은 클래스에서 구현
+}

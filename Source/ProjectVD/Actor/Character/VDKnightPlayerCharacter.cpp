@@ -41,7 +41,6 @@ void AVDKnightPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CastPlayerController->SetCharacter(this);
 }
 
 void AVDKnightPlayerCharacter::Look(const FInputActionValue& Value)
@@ -115,9 +114,11 @@ void AVDKnightPlayerCharacter::DefaultAttackComboEnded(UAnimMontage* AnimMontage
 
 void AVDKnightPlayerCharacter::CheckComboInput()
 {
+	FName CurrentSection = *FString::Printf(TEXT("Attack%d"), CurrentAttackComboCount);
 	CurrentAttackComboCount = FMath::Clamp(CurrentAttackComboCount + 1, 1, DefaultAttackAM->GetNumSections());
 	FName NextSection = *FString::Printf(TEXT("Attack%d"), CurrentAttackComboCount);
-	CastingAnimInstance->Montage_JumpToSection(NextSection, DefaultAttackAM);
+	CastingAnimInstance->Montage_SetNextSection(CurrentSection, NextSection, DefaultAttackAM);
+
 	bIsNextComboInputOn = false;
 
 	UE_LOG(LogTemp, Log, TEXT("AVDKnightPlayerCharacter::CheckComboInput : %d, ComboIsOn: %s"), CurrentAttackComboCount, bIsNextComboInputOn ? TEXT("true") : TEXT("false"));
@@ -335,6 +336,7 @@ void AVDKnightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Player
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (CastPlayerController && EnhancedInputComponent)
 	{
+		CastPlayerController->SetCharacter(this);
 		UInputMappingContext* DefaultMappingContext = CastPlayerController->GetCharacterControllerIMC();
 		if (DefaultMappingContext)
 		{
@@ -369,11 +371,15 @@ float AVDKnightPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent cons
 void AVDKnightPlayerCharacter::SetComboInputOn(bool bIsOn)
 {
 	bIsNextComboInputOn = bIsOn;
-	EquippedWeapon->SetColider(bIsOn);
-	EquippedWeapon->SetDectedHitListReset();
 }
 
 void AVDKnightPlayerCharacter::DefaultAttackHit()
 {
-	
+	EquippedWeapon->SetDectedHitListReset();
+	EquippedWeapon->SetColider(true);
+}
+
+void AVDKnightPlayerCharacter::ResetHitList()
+{
+	EquippedWeapon->SetDectedHitListReset();
 }

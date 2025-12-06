@@ -155,6 +155,11 @@ void AVDStagePlayerCharacter::DefaultAttackHit()
 
 }
 
+void AVDStagePlayerCharacter::ResetHitList()
+{
+	EquippedWeapon->SetDectedHitListReset();
+}
+
 void AVDStagePlayerCharacter::Move(const FInputActionValue& Value)
 {
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
