@@ -1,6 +1,6 @@
 outs:
-- md5: fbec2aa95fc55c265733a42b400b75cd.dir
-  size: 5533798
+- md5: 42acb864e7c619056fe17fe53f0a533a.dir
+  size: 5532237
   nfiles: 10
   hash: md5
   path: Health_potion
