@@ -16,14 +16,14 @@ void UVDEnemyStatsBaseComponent::InitializeComponent()
 UVDEnemyStatsBaseComponent* UVDEnemyStatsBaseComponent::SetHealth(float InHealth)
 {
 	Super::SetHealth(InHealth);
-
+	OnChangeHealth.Broadcast(Health, MaxHealth);
 	return this;
 }
 
 UVDEnemyStatsBaseComponent* UVDEnemyStatsBaseComponent::SetMaxHealth(float InMaxHealth, bool bClampCurrent)
 {
 	Super::SetMaxHealth(InMaxHealth, bClampCurrent);
-
+	OnChangeHealth.Broadcast(Health, MaxHealth);
 	return this;
 }
 

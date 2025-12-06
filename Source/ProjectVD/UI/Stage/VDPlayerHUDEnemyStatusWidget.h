@@ -9,7 +9,7 @@
 class UTextBlock;
 class UProgressBar;
 class AVDEnemyCharacterBase;
-class UVDBaseStatsComponent;
+class UVDEnemyStatsBaseComponent;
 
 UCLASS()
 class PROJECTVD_API UVDPlayerHUDEnemyStatusWidget : public UUserWidget
@@ -29,12 +29,17 @@ private:
 	UPROPERTY()
 	TWeakObjectPtr<AVDEnemyCharacterBase> BossActor;
 
-	void UpdateBossHealthBar(UVDBaseStatsComponent* BossStats);
+	float TargetBossHPPercent;
+	bool bIsBossHPTweenPlaying;
 
+	void UpdateBossHealthBar(float CurrentHP, float MaxHP);
 public:
 	void SetBossActor(AVDEnemyCharacterBase* Boss);
 	
+
+protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 };

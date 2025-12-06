@@ -8,17 +8,19 @@
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 
-void UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar(UVDBaseStatsComponent* BossStats)
+void UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar(float CurrentHP , float MaxHP)
 {
-	if (BossHealthBar && BossStats && BossStats->GetMaxHealth() > 0.f)
+	if (BossHealthBar)
 	{
-		BossHealthBar->SetPercent(BossStats->GetHealth() / BossStats->GetMaxHealth());
+		TargetBossHPPercent = CurrentHP / MaxHP;
+		bIsBossHPTweenPlaying = true;
+		//BossHealthBar->SetPercent(CurrentHP / MaxHP);
 
 		if (BossHealthBarText)
 		{
 			BossHealthBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"),
-				BossStats->GetHealth(),
-				BossStats->GetMaxHealth())));
+				CurrentHP,
+				MaxHP)));
 		}
 	}
 }
@@ -53,7 +55,7 @@ void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
 	if (UVDEnemyStatsBaseComponent* NewStats = BossActor->GetBaseStatsComponent())
 	{
 		NewStats->GetOnChangeHealth().RemoveAll(this);
-		//NewStats->GetOnChangeHealth().AddUObject(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar); TODO :: 딜리게이트 바꾸기
+		NewStats->GetOnChangeHealth().AddUObject(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar);
 	}
 
 	if (BossNameText)
@@ -112,4 +114,24 @@ void UVDPlayerHUDEnemyStatusWidget::NativeDestruct()
 		}
 	}
 	Super::NativeDestruct();
+}
+
+void UVDPlayerHUDEnemyStatusWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (bIsBossHPTweenPlaying)
+	{
+		if (BossHealthBar)
+		{
+			float CurrentPercent = BossHealthBar->GetPercent();
+			float NewPercent = FMath::FInterpTo(CurrentPercent, TargetBossHPPercent, InDeltaTime, 5.0f);
+			BossHealthBar->SetPercent(NewPercent);
+			if (FMath::IsNearlyEqual(NewPercent, TargetBossHPPercent, 0.001f))
+			{
+				BossHealthBar->SetPercent(TargetBossHPPercent);
+				bIsBossHPTweenPlaying = false;
+			}
+		}
+	}
 }

@@ -106,6 +106,12 @@ void AVDKnightPlayerCharacter::DefaultAttackComboEnded(UAnimMontage* AnimMontage
 		return;
 	}
 
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->SetColider(false);
+		EquippedWeapon->SetDectedHitListReset();
+	}
+
 	CurrentAttackComboCount = 0;
 	bIsNextComboInputOn = false;
 
@@ -371,6 +377,11 @@ float AVDKnightPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent cons
 void AVDKnightPlayerCharacter::SetComboInputOn(bool bIsOn)
 {
 	bIsNextComboInputOn = bIsOn;
+	if (!bIsNextComboInputOn)
+	{
+		EquippedWeapon->SetColider(false);
+		EquippedWeapon->SetDectedHitListReset();
+	}
 }
 
 void AVDKnightPlayerCharacter::DefaultAttackHit()
