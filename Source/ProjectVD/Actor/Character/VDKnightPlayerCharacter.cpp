@@ -266,7 +266,13 @@ void AVDKnightPlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
-	UVDDataTableSubSystem* DS = GetGameInstance()->GetSubsystem<UVDDataTableSubSystem>();
+	UGameInstance* GI = GetGameInstance();
+	if (GI == nullptr)
+	{
+		return;
+	}
+
+	UVDDataTableSubSystem* DS = GI->GetSubsystem<UVDDataTableSubSystem>();
 	if (DS)
 	{
 		FVDCharacterDefaultStats* DataTableInfo = DS->GetDataTableRow<FVDCharacterDefaultStats>(FName(TEXT("CharacterDefaultStats")), FName(TEXT("1")));
