@@ -3,6 +3,14 @@
 
 #include "DataAsset/VDUIRegistry.h"
 
+TSoftClassPtr<UUserWidget> UVDUIRegistry::GetWidgetClassByName(const FName& WidgetName) const
+{
+	if (const TSoftClassPtr<UUserWidget>* FoundClass = UIWidgetClasses.Find(WidgetName))
+	{
+		return *FoundClass;
+	}
+	return nullptr;
+}
 #if WITH_EDITOR
 static FName MakeKeyFromPath(const FSoftObjectPath& Path)
 {
@@ -13,14 +21,6 @@ static FName MakeKeyFromPath(const FSoftObjectPath& Path)
 	return FName(*Base);
 }
 
-TSoftClassPtr<UUserWidget> UVDUIRegistry::GetWidgetClassByName(const FName& WidgetName) const
-{
-	if (const TSoftClassPtr<UUserWidget>* FoundClass = UIWidgetClasses.Find(WidgetName))
-	{
-		return *FoundClass;
-	}
-	return nullptr;
-}
 
 void UVDUIRegistry::PostEditChangeProperty(FPropertyChangedEvent& E)
 {

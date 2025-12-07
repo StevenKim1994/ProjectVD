@@ -53,7 +53,6 @@ AVDCharacterBase::AVDCharacterBase()
 	bUseControllerRotationYaw = false;
 
 	InventoryComponent = CreateDefaultSubobject<UVDInventoryComponent>(TEXT("InventoryComponent"));
-	InventoryComponent->RegisterComponent();
 
 	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
 	CameraSpringArmComponent->SetupAttachment(RootComponent);
@@ -65,10 +64,8 @@ AVDCharacterBase::AVDCharacterBase()
 	FollowCameraComponent->bUsePawnControlRotation = false;
 
 	BaseStatsComponent = CreateDefaultSubobject<UVDCharacterStatsBaseComponent>(TEXT("BaseStatsComponent"));
-	BaseStatsComponent->RegisterComponent();
 
 	StaminaComponent = CreateDefaultSubobject<UVDBaseStaminaComponent>(TEXT("StaminaComponent"));
-	StaminaComponent->RegisterComponent();
 	StaminaComponent->SetMaxStamina(100.0f);
 	StaminaComponent->SetCurrentStamina(100.0f);
 	StaminaComponent->SetStaminaRecovery(true);

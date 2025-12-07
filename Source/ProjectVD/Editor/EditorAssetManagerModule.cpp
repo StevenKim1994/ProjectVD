@@ -1,3 +1,4 @@
+#if WITH_EDITOR
 #include "EditorAssetManagerModule.h"
 #include "CoreMinimal.h"
 #include "Engine/AssetManager.h"
@@ -24,3 +25,4 @@ void FEditorAssetManagerModule::OnEditorInitialized()
 }
 
 //IMPLEMENT_MODULE(FEditorAssetManagerModule, EditorAssetManager)
+#endif

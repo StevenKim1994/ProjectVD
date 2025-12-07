@@ -1,3 +1,4 @@
+#if WITH_EDITOR
 #pragma once
 
 #include "CoreMinimal.h"
@@ -12,3 +13,4 @@ public:
 private:
 	void OnEditorInitialized();
 };
+#endif

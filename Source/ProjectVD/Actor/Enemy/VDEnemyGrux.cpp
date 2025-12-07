@@ -21,7 +21,6 @@ AVDEnemyGrux::AVDEnemyGrux()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	BaseStatsComponent = CreateDefaultSubobject<UVDEnemyStatsBaseComponent>(TEXT("BaseStatsComponent"));
-	BaseStatsComponent->RegisterComponent();
 
 	WeakPointCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("WeakPointCollision"));
 	WeakPointCollision->SetupAttachment(GetMesh(), TEXT("WeakPoint"));
@@ -29,9 +28,6 @@ AVDEnemyGrux::AVDEnemyGrux()
 	WeakPointCollision->SetRelativeRotation(FRotator::ZeroRotator);
 	WeakPointCollision->SetCapsuleHalfHeight(60.f);
 	WeakPointCollision->SetCapsuleRadius(30.f);
-		
-
-	
 }
 
 void AVDEnemyGrux::FindPlayer()

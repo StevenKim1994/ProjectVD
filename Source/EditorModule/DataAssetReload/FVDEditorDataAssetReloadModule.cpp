@@ -16,7 +16,7 @@ void FVDEditorDataAssetReloadModule::StartupModule()
 
     FARFilter Filter;
     Filter.PackagePaths.Add(AssetFolderPath);
-    Filter.ClassNames.Add(UDataAsset::StaticClass()->GetFName());
+    Filter.ClassPaths.Add(UDataAsset::StaticClass()->GetClassPathName());
     Filter.bRecursivePaths = true;
 
     TArray<FAssetData> AssetDataList;
