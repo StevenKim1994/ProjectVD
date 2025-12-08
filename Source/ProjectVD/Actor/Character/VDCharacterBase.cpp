@@ -371,7 +371,8 @@ void AVDCharacterBase::DrinkPotion(const FInputActionValue& Value)
 		{
 			GetCharacterMovement()->StopMovementImmediately();
 			GetCharacterMovement()->MovementMode = EMovementMode::MOVE_None;
-			CastingAnimInstance->Montage_Play(DrinkPotionAM);
+			CastingAnimInstance->Montage_Play(DrinkPotionAM); 
+			CastingAnimInstance->Montage_JumpToSection(FName("Drink"), DrinkPotionAM); // DESC :: 애니가 길어서 짜름
 			TWeakObjectPtr<AVDCharacterBase> SelfWeak = this;
 			FOnMontageEnded EndDel;
 			EndDel.BindWeakLambda(this, [IncreaseHealthAmount, SelfWeak](UAnimMontage* Montage, bool bInterrupted)
