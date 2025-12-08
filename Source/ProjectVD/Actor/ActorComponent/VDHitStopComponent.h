@@ -15,7 +15,7 @@ public:
 	// Sets default values for this component's properties
 	UVDHitStopComponent();
 
-	void SetHitStop(float InHitStopTime, float TimeDilation);
+	void SetHitStop(float TimeDilation, float InHitStopTime);
 	void StopHitStop();
 protected:
 	

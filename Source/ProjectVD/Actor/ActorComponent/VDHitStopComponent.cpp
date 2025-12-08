@@ -8,19 +8,32 @@ UVDHitStopComponent::UVDHitStopComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UVDHitStopComponent::SetHitStop(float InHitStopTime, float TimeDilation)
+void UVDHitStopComponent::SetHitStop( float TimeDilation, float InHitStopTime)
 {
-	if (HitStopTimerHandle.IsValid())
-	{
-		GetOwner()->GetWorldTimerManager().ClearTimer(HitStopTimerHandle);
-	}
+    // 이미 히트스톱 중이면 중복 적용 방지 (선택사항)
+	AActor* OwnerActor = GetOwner();
+    if (OwnerActor == nullptr)
+    {
+        return;
+    }
 
-	if (AActor* Owner = GetOwner())
-	{
-		Owner->CustomTimeDilation = TimeDilation;
-		FTimerDelegate TimerDel = FTimerDelegate::CreateUObject(this, &UVDHitStopComponent::EndHitStop);
-		Owner->GetWorldTimerManager().SetTimer(HitStopTimerHandle,TimerDel, InHitStopTime, false);
-	}
+    if (OwnerActor->CustomTimeDilation != 1.0f)
+    {
+        return;
+    }
+
+    OwnerActor->CustomTimeDilation = TimeDilation; 
+
+    if (UWorld* World = GetWorld())
+    {
+        World->GetTimerManager().SetTimer(
+            HitStopTimerHandle,
+            this,
+            &UVDHitStopComponent::EndHitStop,
+            InHitStopTime,
+            false
+        );
+    }
 }
 
 void UVDHitStopComponent::StopHitStop()

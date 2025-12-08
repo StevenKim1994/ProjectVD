@@ -56,6 +56,17 @@ EBTNodeResult::Type UBTTask_DefaultAttack::ExecuteTask(UBehaviorTreeComponent& O
 		}
 		else
 		{
+			// Target 방향으로 회전
+			const FVector PawnLocation = ControlledPawn->GetActorLocation();
+			const FVector TargetLocation = TargetCharacter->GetActorLocation();
+			const FRotator LookAtRotation = (TargetLocation - PawnLocation).Rotation();
+			const FRotator NewPawnRotation(0.f, LookAtRotation.Yaw, 0.f);
+			ControlledPawn->SetActorRotation(NewPawnRotation);
+			if (AAIController* AICon = OwnerComp.GetAIOwner())
+			{
+				AICon->SetControlRotation(NewPawnRotation);
+			}
+
 			// 공격 몽타주 재생 시작
 			FOnAttackMontageEnded AttackMontageEndedDelegate;
 			AttackMontageEndedDelegate.BindLambda([this, &OwnerComp]()
