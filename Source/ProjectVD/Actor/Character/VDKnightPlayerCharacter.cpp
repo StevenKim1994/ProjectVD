@@ -191,11 +191,12 @@ void AVDKnightPlayerCharacter::WeaponColiderHit(AActor* OtherActor, const FVecto
 		}
 
 
-		TakeDamage = HitEnemy->TakeDamage(BaseStatsComponent->GetAttackPower(), DamageEvent, Controller, this);
+		CastPlayerController->ShakePlayerHitCameraEffect(15);
 
 		if (UVDHitStopComponent* HitStopComp = HitEnemy->GetComponentByClass<UVDHitStopComponent>())
 		{
-			HitStopComp->SetHitStop(0.1f, 0.05f);
+			HitStopComp->SetHitStop(0.05f, 0.1f);
+			TakeDamage = HitEnemy->TakeDamage(BaseStatsComponent->GetAttackPower(), DamageEvent, Controller, this);
 		}
 
 	}
@@ -325,7 +326,7 @@ float AVDKnightPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent cons
 {
 	float Result = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	CastPlayerController->ShakePlayerHitCameraEffect(33);
+	//CastPlayerController->ShakePlayerHitCameraEffect(33);
 	// TODO :: 방향에 따른 피격애님몽타주 재생 및 맞은 방향에 따른 넉백 처리
 
 	return Result;

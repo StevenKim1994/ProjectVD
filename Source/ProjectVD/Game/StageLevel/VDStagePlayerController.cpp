@@ -285,6 +285,7 @@ void AVDStagePlayerController::OnEscape(const FInputActionValue& Value)
 												if (UVDLevelSystem* LevelSystem = GI->GetSubsystem<UVDLevelSystem>())
 												{
 													LevelSystem->ChangeLevelByName("Title");
+													LevelSystem->LoadChangeLevel();
 												}
 											}
 										}
