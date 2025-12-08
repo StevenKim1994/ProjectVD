@@ -4,6 +4,7 @@
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Actor/ActorComponent/VDInventoryComponent.h"
 #include "Actor/ActorComponent/VDBaseStaminaComponent.h"
+#include "Actor/ActorComponent/VDTargetLockOnComponent.h"
 #include "Actor/ItemProp/VDItemPropActorBase.h"
 #include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "Engine/DamageEvents.h"
@@ -21,6 +22,7 @@
 #include "Public/VDItemType.h"
 #include "Public/VDEquipType.h"
 #include "DataTable/VDItemInfoTable.h"
+#include "Engine/OverlapResult.h"
 
 AVDCharacterBase::AVDCharacterBase()
 {
@@ -65,10 +67,14 @@ AVDCharacterBase::AVDCharacterBase()
 
 	BaseStatsComponent = CreateDefaultSubobject<UVDCharacterStatsBaseComponent>(TEXT("BaseStatsComponent"));
 
+	TargetLockOnComponent = CreateDefaultSubobject<UVDTargetLockOnComponent>(TEXT("TargetLockOnComponent"));
+
 	StaminaComponent = CreateDefaultSubobject<UVDBaseStaminaComponent>(TEXT("StaminaComponent"));
 	StaminaComponent->SetMaxStamina(100.0f);
 	StaminaComponent->SetCurrentStamina(100.0f);
 	StaminaComponent->SetStaminaRecovery(true);
+
+	Tags.Add(FName("Player"));
 }
 
 void AVDCharacterBase::PostInitializeComponents()
@@ -79,6 +85,8 @@ void AVDCharacterBase::PostInitializeComponents()
 	{
 		CastingAnimInstance = Cast<UVDAnimInstance>(AnimIns);
 	}
+
+	TargetLockOnComponent->ClearLockedOnTarget();
 }
 
 void AVDCharacterBase::FirstOverlappingItemPickUp()
@@ -320,7 +328,7 @@ void AVDCharacterBase::Inventory(const FInputActionValue& Value)
 
 void AVDCharacterBase::LockOnTarget(const FInputActionValue& Value)
 {
-	
+	TargetLockOnComponent->LockOnTarget();
 }
 
 void AVDCharacterBase::Rooting(const FInputActionValue& Value)

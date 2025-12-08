@@ -12,11 +12,11 @@
 AVDEnemyCharacterBase::AVDEnemyCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	BaseStatsComponent = CreateDefaultSubobject<UVDEnemyStatsBaseComponent>(TEXT("BaseStatsComponent"));
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	AIControllerClass = AVDEnemyAIController::StaticClass();
+	//AIControllerClass = AVDEnemyAIController::StaticClass();
 	EnemyAIController = Cast<AVDEnemyAIController>(GetController());
-
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
@@ -36,6 +36,8 @@ AVDEnemyCharacterBase::AVDEnemyCharacterBase()
 	Movement->MaxWalkSpeed = 300.0f; 
 	Movement->MinAnalogWalkSpeed = 20.0f;
 	Movement->BrakingDecelerationWalking = 2000.0f;
+
+	Tags.Add(FName("Enemy"));
 }
 
 UVDEnemyAnimInstance* AVDEnemyCharacterBase::PrepareAnimMontagePlay()

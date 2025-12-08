@@ -12,12 +12,12 @@ class USpringArmComponent;
 class UCameraComponent;
 class UVDCharacterStatsBaseComponent;
 class UVDBaseStaminaComponent;
+class UVDTargetLockOnComponent;
 class UVDInventoryComponent;
 class AVDItemPropActorBase;
 class AVDEquipItemVisualActor;
 class UVDAnimInstance;
 class UVDInventoryInfo;
-
 enum class EVDEquipType: uint8;
 
 UCLASS(Abstract)
@@ -49,6 +49,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UVDInventoryComponent> InventoryComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockOn", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UVDTargetLockOnComponent> TargetLockOnComponent;
 
 	UPROPERTY()
 	TObjectPtr<AVDEquipItemVisualActor> EquippedWeapon;

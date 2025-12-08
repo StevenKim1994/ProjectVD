@@ -20,7 +20,7 @@
 AVDEnemyGrux::AVDEnemyGrux()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	BaseStatsComponent = CreateDefaultSubobject<UVDEnemyStatsBaseComponent>(TEXT("BaseStatsComponent"));
+	
 
 	WeakPointCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("WeakPointCollision"));
 	WeakPointCollision->SetupAttachment(GetMesh(), TEXT("WeakPoint"));

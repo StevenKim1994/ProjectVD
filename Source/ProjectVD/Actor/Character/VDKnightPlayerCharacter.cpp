@@ -139,56 +139,7 @@ void AVDKnightPlayerCharacter::Zoom(const FInputActionValue& Value)
 
 void AVDKnightPlayerCharacter::LockOnTarget(const FInputActionValue& Value)
 {
-	AActor* TargetActor = nullptr;
-
-	const float MaxLockOnDistance = 1000.0f;
-	const FVector Origin = GetActorLocation();
-	UWorld* World = GetWorld();
-	if (World)
-	{
-		TArray<FOverlapResult> Overlaps;
-		FCollisionObjectQueryParams ObjQueryParams;
-		ObjQueryParams.AddObjectTypesToQuery(ECC_Pawn);
-
-		FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(LockOnOverlap), false, this);
-
-		const FCollisionShape SphereShape = FCollisionShape::MakeSphere(MaxLockOnDistance);
-		const bool bHasOverlaps = World->OverlapMultiByObjectType(Overlaps, Origin, FQuat::Identity, ObjQueryParams, SphereShape, QueryParams);
-
-		if (bHasOverlaps)
-		{
-			float ClosestDistSqr = TNumericLimits<float>::Max();
-			for (const FOverlapResult& Result : Overlaps)
-			{
-				AActor* OverlappedActor = Result.GetActor();
-				if (!OverlappedActor || OverlappedActor == this)
-				{
-					continue;
-				}
-
-				const float DistSqr = FVector::DistSquared(Origin, OverlappedActor->GetActorLocation());
-				if (DistSqr < ClosestDistSqr)
-				{
-					ClosestDistSqr = DistSqr;
-					TargetActor = OverlappedActor;
-				}
-			}
-		}
-	}
-
-	if (TargetActor)
-	{
-		bIsTargetLocked = (bIsTargetLocked == EVDLockOnStateType::LockOff) ? EVDLockOnStateType::LockOn : EVDLockOnStateType::LockOff;
-
-		if (bIsTargetLocked == EVDLockOnStateType::LockOn)
-		{
-			LockedTargetActor = TargetActor;
-		}
-	}
-	else
-	{
-		bIsTargetLocked = EVDLockOnStateType::LockOff;
-	}
+	Super::LockOnTarget(Value);
 }
 
 void AVDKnightPlayerCharacter::Rooting(const FInputActionValue& Value)

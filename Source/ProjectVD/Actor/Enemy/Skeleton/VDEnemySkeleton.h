@@ -13,5 +13,5 @@ UCLASS()
 class PROJECTVD_API AVDEnemySkeleton : public AVDEnemyCharacterBase
 {
 	GENERATED_BODY()
-	
+
 };

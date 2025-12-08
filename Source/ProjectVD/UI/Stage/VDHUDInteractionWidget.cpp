@@ -52,14 +52,14 @@ void UVDHUDInteractionWidget::NativeOnInitialized()
 	if(ShowInteractionAnim)
 	{
 		FWidgetAnimationDynamicEvent ShowDelegate;
-		ShowDelegate.BindDynamic(this, &UVDHUDInteractionWidget::NativeConstruct);
+		// TODO :: 콜백 필요시 람다
 		BindToAnimationFinished(ShowInteractionAnim, ShowDelegate);
 	}
 
 	if (HideInteractionAnim)
 	{
 		FWidgetAnimationDynamicEvent HideDelegate;
-		HideDelegate.BindDynamic(this, &UVDHUDInteractionWidget::NativeDestruct);// OnHideInteractionAnimFinished);
+		// TODO :: 콜백 필요시 람다 
 		BindToAnimationFinished(HideInteractionAnim, HideDelegate);
 	}
 }
