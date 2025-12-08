@@ -21,6 +21,10 @@ void UVDEnemyAnimInstance::NativeInitializeAnimation()
 	}
 
 }
+void UVDEnemyAnimInstance::SetIsDead(uint8 InIsDead)
+{
+	bIsDead = InIsDead;
+}
 
 void UVDEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
@@ -29,6 +33,6 @@ void UVDEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		Velocity = OwnerCharacterMovement->Velocity;
 		GroundSpeed = Velocity.Size2D();
-		bIsIdle = GroundSpeed < MovingThreshold;
+		bIsIdle = (GroundSpeed < MovingThreshold) && (bIsDead == false);
 	}
 }

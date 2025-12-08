@@ -182,6 +182,11 @@ void AVDStagePlayerCharacter::Move(const FInputActionValue& Value)
 	AddMovementInput(RightDirection, MovementVector.Y);
 }
 
+void AVDStagePlayerCharacter::DrinkPotion(const FInputActionValue& Value)
+{
+	Super::DrinkPotion(Value);
+}
+
 void AVDStagePlayerCharacter::Look(const FInputActionValue& Value)
 {
 	Super::Look(Value);

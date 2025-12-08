@@ -4,6 +4,7 @@
 #include "Game/StageLevel/VDStagePlayerController.h"
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Actor/ActorComponent/VDBaseStaminaComponent.h"
+#include "Actor/ActorComponent/VDHitStopComponent.h"
 #include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "Animation/VDAnimInstance.h"
 #include "Engine/World.h"
@@ -174,15 +175,13 @@ void AVDKnightPlayerCharacter::Jump()
 
 void AVDKnightPlayerCharacter::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)
 {
-	Super::WeaponColiderHit(OtherActor, ContactPoint);
-
+	//Super::WeaponColiderHit(OtherActor, ContactPoint);
 	if (AVDEnemyCharacterBase* HitEnemy = Cast<AVDEnemyCharacterBase>(OtherActor))
 	{
-
 		FDamageEvent DamageEvent;
 		float TakeDamage = 0.0f;
 
-		if (HitEnemy->IsBossEnemy())
+		//if (HitEnemy->IsBossEnemy())
 		{
 			AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
 			if (VDPC)
@@ -191,7 +190,14 @@ void AVDKnightPlayerCharacter::WeaponColiderHit(AActor* OtherActor, const FVecto
 			}
 		}
 
+
 		TakeDamage = HitEnemy->TakeDamage(BaseStatsComponent->GetAttackPower(), DamageEvent, Controller, this);
+
+		if (UVDHitStopComponent* HitStopComp = HitEnemy->GetComponentByClass<UVDHitStopComponent>())
+		{
+			HitStopComp->SetHitStop(0.1f, 0.1f);
+		}
+
 	}
 }
 
@@ -319,7 +325,7 @@ float AVDKnightPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent cons
 {
 	float Result = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	CastPlayerController->ShakePlayerHitCameraEffect();
+	CastPlayerController->ShakePlayerHitCameraEffect(33);
 	// TODO :: 방향에 따른 피격애님몽타주 재생 및 맞은 방향에 따른 넉백 처리
 
 	return Result;

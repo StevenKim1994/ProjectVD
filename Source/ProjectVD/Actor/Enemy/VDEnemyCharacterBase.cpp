@@ -13,6 +13,7 @@ AVDEnemyCharacterBase::AVDEnemyCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	BaseStatsComponent = CreateDefaultSubobject<UVDEnemyStatsBaseComponent>(TEXT("BaseStatsComponent"));
+	HitStopComponent = CreateDefaultSubobject<UVDHitStopComponent>(TEXT("HitStopComponent"));
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	//AIControllerClass = AVDEnemyAIController::StaticClass();
@@ -184,9 +185,10 @@ void AVDEnemyCharacterBase::Die()
 		UCharacterMovementComponent* Movement = GetCharacterMovement();
 		Movement->StopMovementImmediately();
 
-		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		UVDEnemyAnimInstance* AnimInstance = Cast<UVDEnemyAnimInstance>(GetMesh()->GetAnimInstance());
 		if (AnimInstance)
 		{
+			AnimInstance->SetIsDead(1);
 			FOnMontageEnded EndDelegate;
 			EndDelegate.BindUObject(this, &AVDEnemyCharacterBase::EndDieAM);
 			AnimInstance->Montage_SetEndDelegate(EndDelegate, DeathAM);
@@ -224,13 +226,17 @@ void AVDEnemyCharacterBase::HitReact(const FVector& HitPos)
 		return;
 	}
 
-	// TODO :: 히트 리액트 애니메이션은 자식에서 처리함. 공통으로 필요시 ( 방향 애니메이션이 다 존재하지 않으면 ) 여기에 구현 필요
 }
 
 void AVDEnemyCharacterBase::EndDieAM(UAnimMontage* AnimMontage, bool bInterept)
 {
 	FTimerHandle DeathTimerHandle;
-	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AVDEnemyCharacterBase::K2_DestroyActor, 3.0f, false);
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->StopAllMontages(0.0f);
+	}
 }
 
 void AVDEnemyCharacterBase::BeginPlay()

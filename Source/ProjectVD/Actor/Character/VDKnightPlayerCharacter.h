@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="FowardRolling", Meta = (AllowPrivateAccess ="true"))
 	TObjectPtr<UAnimMontage> FowardRollingAM;
 
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Category = "PositonDrink", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> PotionDrinkAM;
+
 	UPROPERTY()
 	int32 CurrentAttackComboCount = 0;
 

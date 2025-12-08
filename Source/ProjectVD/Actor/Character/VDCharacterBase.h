@@ -32,8 +32,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> RootingAM;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DeathAM;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> DrinkPotionAM;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraSpringArmComponent;
@@ -90,6 +93,9 @@ protected:
 
 	UFUNCTION()
 	virtual void Rooting(const FInputActionValue& Value);
+
+	UFUNCTION()
+	virtual void DrinkPotion(const FInputActionValue& Value);
 
 	UFUNCTION()
 	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint);

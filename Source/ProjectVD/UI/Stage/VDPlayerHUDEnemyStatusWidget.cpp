@@ -16,6 +16,8 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar(float CurrentHP , float 
 		bIsBossHPTweenPlaying = true;
 		//BossHealthBar->SetPercent(CurrentHP / MaxHP);
 
+		FTimerManager& TM = GetWorld()->GetTimerManager();
+
 		if (BossHealthBarText)
 		{
 			BossHealthBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"),
@@ -131,7 +133,28 @@ void UVDPlayerHUDEnemyStatusWidget::NativeTick(const FGeometry& MyGeometry, floa
 			{
 				BossHealthBar->SetPercent(TargetBossHPPercent);
 				bIsBossHPTweenPlaying = false;
+				if (TargetBossHPPercent <= 0.f)
+				{
+					if (BossHPVisibleTimerHandle.IsValid())
+					{
+						GetWorld()->GetTimerManager().ClearTimer(BossHPVisibleTimerHandle);
+					}
+					// 체력이 0이면 3초 후 위젯 숨김 처리
+					GetWorld()->GetTimerManager().SetTimer(
+						BossHPVisibleTimerHandle,
+						this,
+						&UVDPlayerHUDEnemyStatusWidget::OnBossHPHideTimerExpired,
+						3.0f,
+						false
+					);
+				}
 			}
 		}
 	}
+}
+
+void UVDPlayerHUDEnemyStatusWidget::OnBossHPHideTimerExpired()
+{
+	SetVisibility(ESlateVisibility::Collapsed);
+	GetWorld()->GetTimerManager().ClearTimer(BossHPVisibleTimerHandle);
 }

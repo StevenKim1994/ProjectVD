@@ -23,7 +23,10 @@ private:
 protected:
 
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
+	virtual void DefaultAttack() override;
+	virtual void DefaultAttackHit() override;
 public:
 	AVDEnemySkeletonMarauder();
 };

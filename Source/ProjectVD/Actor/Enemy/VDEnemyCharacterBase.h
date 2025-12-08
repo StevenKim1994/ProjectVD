@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Actor/ActorComponent/VDEnemyStatsBaseComponent.h"
+#include "Actor/Actorcomponent/VDHitStopComponent.h"
 #include "Interface/VDEnemyInterface.h"
 #include "Interface/VDAttackable.h"
 #include "VDEnemyCharacterBase.generated.h"
@@ -21,7 +22,6 @@ class PROJECTVD_API AVDEnemyCharacterBase : public ACharacter, public IVDEnemyIn
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyInfo", Meta = (AllowPrivateAccess = "true"))
 	FName EnemyName;
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyInfo", Meta = (AllowPrivateAccess = "true"))
 	bool bIsBossEnemy = false;
@@ -43,6 +43,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UVDEnemyStatsBaseComponent> BaseStatsComponent;
+
+	UPROPERTY()
+	TObjectPtr<UVDHitStopComponent> HitStopComponent;
 
 	virtual void FindPlayer();
 	virtual void Move(const FVector& Direction, float Value);

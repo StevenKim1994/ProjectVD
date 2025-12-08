@@ -36,6 +36,7 @@ protected:
 	virtual void HitReact(const FVector& HitPos) override;
 
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaTime) override;
 public:
 	AVDEnemyGrux();

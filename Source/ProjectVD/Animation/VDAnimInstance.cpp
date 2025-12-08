@@ -17,6 +17,11 @@ void UVDAnimInstance::SetIsLockOnTarget(uint8 bIsLockOn)
 	bIsLockOnTarget = bIsLockOn;
 }
 
+void UVDAnimInstance::SetIsDead(uint8 InIsDead)
+{
+	bIsDead = InIsDead;
+}
+
 void UVDAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
@@ -50,7 +55,7 @@ void UVDAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			// Direction이 음수일 시 GroundSpeed도 음수 처리
 			GroundSpeed = (Direction < 0.f) ? -FMath::Abs(GroundSpeed) : FMath::Abs(GroundSpeed);
 
-			bIsIdle = GroundSpeed < MovingThreshold;
+			bIsIdle = GroundSpeed < MovingThreshold && (bIsDead == false);
 			bIsFalling = OwnerCharacterMovement->IsFalling();
 			bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold);
 			UE_LOG(LogTemp, Log, TEXT("UVDAnimInstance::NativeUpdateAnimation() GroundSpeed: %f, Direction: %f, bIsIdle: %d, bIsFalling: %d, bIsJumping: %d"),
@@ -61,7 +66,7 @@ void UVDAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			Velocity = OwnerCharacterMovement->Velocity;
 			GroundSpeed = Velocity.Size2D();
 			Direction = UKismetAnimationLibrary::CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
-			bIsIdle = GroundSpeed < MovingThreshold;
+			bIsIdle = GroundSpeed < MovingThreshold && (bIsDead == false);
 			bIsFalling = OwnerCharacterMovement->IsFalling();
 			bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold);
 		}

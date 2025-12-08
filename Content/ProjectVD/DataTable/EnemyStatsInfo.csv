@@ -1,2 +1,3 @@
 ﻿Name,MaxHealth,AttackPower,AttackSpeed,AttackRange,FindPlayerRange,PatrolWaitTime,PatrolRange,TurnSpeed,MaxMovementSpeed
 Grux,1500,10,1,1200,2400,5,500,3,1000
+SkeletonMarauder,100,5,1,300,500,2.5,100,3,200

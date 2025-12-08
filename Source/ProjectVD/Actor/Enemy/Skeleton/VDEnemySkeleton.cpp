@@ -3,3 +3,12 @@
 
 #include "Actor/Enemy/Skeleton/VDEnemySkeleton.h"
 
+void AVDEnemySkeleton::DefaultAttack()
+{
+	Super::DefaultAttack();
+
+	if (DefaultAttackAM)
+	{
+		PlayAnimMontage(DefaultAttackAM);
+	}
+}

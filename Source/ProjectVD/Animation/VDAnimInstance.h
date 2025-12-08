@@ -18,6 +18,7 @@ public:
 	UVDAnimInstance();
 
 	void SetIsLockOnTarget(uint8 bIsLockOn);
+	void SetIsDead(uint8 InIsDead);
 
 protected:
 	virtual void NativeInitializeAnimation() override;
@@ -55,4 +56,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat");
 	uint8 bIsLockOnTarget : 1;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character");
+	uint8 bIsDead : 1;
 };

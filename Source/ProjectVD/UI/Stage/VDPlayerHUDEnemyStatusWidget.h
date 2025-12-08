@@ -31,8 +31,11 @@ private:
 
 	float TargetBossHPPercent;
 	bool bIsBossHPTweenPlaying;
+	FTimerHandle BossHPVisibleTimerHandle;
 
 	void UpdateBossHealthBar(float CurrentHP, float MaxHP);
+	void OnBossHPHideTimerExpired();
+
 public:
 	void SetBossActor(AVDEnemyCharacterBase* Boss);
 	

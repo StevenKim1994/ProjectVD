@@ -361,6 +361,35 @@ void AVDCharacterBase::Rooting(const FInputActionValue& Value)
 	FirstOverlappingItemPickUp();
 }
 
+void AVDCharacterBase::DrinkPotion(const FInputActionValue& Value)
+{
+	// TODO :: 현재 인벤토리의 포션슬롯에 포션정보가 존재할시 처리하는걸 추가해야함
+	const float IncreaseHealthAmount = 50.0f;
+	if (DrinkPotionAM)
+	{
+		if (!CastingAnimInstance->Montage_IsPlaying(DrinkPotionAM))
+		{
+			GetCharacterMovement()->StopMovementImmediately();
+			GetCharacterMovement()->MovementMode = EMovementMode::MOVE_None;
+			CastingAnimInstance->Montage_Play(DrinkPotionAM);
+			TWeakObjectPtr<AVDCharacterBase> SelfWeak = this;
+			FOnMontageEnded EndDel;
+			EndDel.BindWeakLambda(this, [IncreaseHealthAmount, SelfWeak](UAnimMontage* Montage, bool bInterrupted)
+				{
+					if (!SelfWeak.IsValid())
+					{
+						return;
+					}
+					AVDCharacterBase* Self = SelfWeak.Get();
+					Self->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+					Self->BaseStatsComponent->SetHealth(FMath::Min(Self->BaseStatsComponent->GetHealth() + IncreaseHealthAmount, Self->BaseStatsComponent->GetMaxHealth()));
+					// TODO :: 포션 사용 효과 처리
+				});
+			CastingAnimInstance->Montage_SetEndDelegate(EndDel);
+		}
+	}
+}
+
 void AVDCharacterBase::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)
 {
 	UE_LOG(LogTemp, Log, TEXT("Weapon Colider Hit Actor : %s"), *OtherActor->GetName());

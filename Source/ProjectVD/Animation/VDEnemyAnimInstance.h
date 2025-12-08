@@ -19,6 +19,7 @@ class PROJECTVD_API UVDEnemyAnimInstance : public UAnimInstance
 public:
 	UVDEnemyAnimInstance();
 
+	void SetIsDead(uint8 InIsDead);
 protected:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
@@ -40,4 +41,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
 	float MovingThreshold;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character");
+	uint8 bIsDead : 1;
 };

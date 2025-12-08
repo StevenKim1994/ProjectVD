@@ -101,7 +101,22 @@ void AVDEnemyGrux::HitReact(const FVector& HitPos)
 void AVDEnemyGrux::BeginPlay()
 {
 	Super::BeginPlay();
-	FVDEnemyStatsInfo* DataTableInfo = GetGameInstance()->GetSubsystem<UVDDataTableSubSystem>()->GetDataTableRow<FVDEnemyStatsInfo>(FName(TEXT("EnemyStatsInfo")), FName(TEXT("Grux")));
+	
+	StartCutScene();
+}
+
+void AVDEnemyGrux::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	UGameInstance* GameInstance = GetGameInstance();
+
+	if(GameInstance == nullptr)
+	{
+		return;
+	}
+
+	FVDEnemyStatsInfo* DataTableInfo = GameInstance->GetSubsystem<UVDDataTableSubSystem>()->GetDataTableRow<FVDEnemyStatsInfo>(FName(TEXT("EnemyStatsInfo")), FName(TEXT("Grux")));
 
 	if (DataTableInfo)
 	{
@@ -124,14 +139,13 @@ void AVDEnemyGrux::BeginPlay()
 	Movement->MinAnalogWalkSpeed = 50.f;
 	Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxMovementSpeed();
 
-	StartCutScene();
 }
 
 void AVDEnemyGrux::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-#if !UE_BUILD_SHIPPING
+#if WITH_EDITOR
 	if (WeakPointCollision)
 	{
 		const FVector Center = WeakPointCollision->GetComponentLocation();

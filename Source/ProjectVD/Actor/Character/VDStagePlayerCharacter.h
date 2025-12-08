@@ -92,6 +92,8 @@ protected:
 
 	virtual void Move(const FInputActionValue& Value) override;
 
+	virtual void DrinkPotion(const FInputActionValue& Value) override;
+
 
 public:
 	AVDStagePlayerCharacter();

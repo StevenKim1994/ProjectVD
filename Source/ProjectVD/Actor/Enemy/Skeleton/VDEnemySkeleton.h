@@ -14,4 +14,6 @@ class PROJECTVD_API AVDEnemySkeleton : public AVDEnemyCharacterBase
 {
 	GENERATED_BODY()
 
+protected:
+	virtual void DefaultAttack() override;
 };
