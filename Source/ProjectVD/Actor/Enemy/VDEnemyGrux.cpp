@@ -215,7 +215,7 @@ void AVDEnemyGrux::DefaultAttackHit()
 	for (const FOverlapResult& Result : OverlapResults)
 	{
 		AActor* OverlappedActor = Result.GetActor();
-		if (OverlappedActor == this) // DESC :: 자기자신은 무시함.
+		if (OverlappedActor == this || OverlappedActor->Tags.Contains("Enemy")) // DESC :: 자기자신은 무시함. 같은 편도 무시함.
 		{
 			continue;
 		}
