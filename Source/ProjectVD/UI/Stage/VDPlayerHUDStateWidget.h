@@ -10,34 +10,46 @@ class UProgressBar;
 class UTextBlock;
 class UVDCharacterStatsBaseComponent;
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSetCharacterState, float, float);
-
 UCLASS()
 class PROJECTVD_API UVDPlayerHUDStateWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-
-	void ShowPerformanceTween();
 	void SetCharacterState(UVDCharacterStatsBaseComponent* BaseStats);
-
-	void SetHPBarPercent(float CurrentHP, float MaxHP);
-	void SetMPBarPercent(float CurrentMP, float MaxMP);
-
-	FORCEINLINE FOnSetCharacterState& GetOnSetCharacterStateDelegate() { return OnSetCharacterStateDelegate; }
 
 protected:
 
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
 private:
+
+	struct FTweenInfo
+	{
+		float StartPercent;
+		float TargetPercent;
+		float ElapsedTime;
+		float DurationTime;
+		bool bIsPlaying;
+		FTweenInfo()
+			: StartPercent(0.0f)
+			, TargetPercent(0.0f)
+			, ElapsedTime(0.0f)
+			, DurationTime(1.0f)
+			, bIsPlaying(false)
+		{}
+	};
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> HPBarTween;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UProgressBar> HPBar;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> HPBarText;
 	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> MPBarTween;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UProgressBar> MPBar;
 
@@ -47,12 +59,15 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> PlayerName;
 
-	FOnSetCharacterState OnSetCharacterStateDelegate;
+	FTweenInfo HPTween;
+	FTweenInfo MPTween;
 
-	float TargetHPPercent;
-	bool bIsHPTweenPlaying;
+	FTimerHandle HPTweenHandle;
+	FTimerHandle MPTweenHandle;
 
-	float TargetMPPercent;
-	bool bIsMPTweenPlaying;
+	void SetHPBarPercent(float CurrentHP, float MaxHP);
+	void SetMPBarPercent(float CurrentMP, float MaxMP);
 
+	void UpdateHPBarTween();
+	void UpdateMPBarTween();
 };

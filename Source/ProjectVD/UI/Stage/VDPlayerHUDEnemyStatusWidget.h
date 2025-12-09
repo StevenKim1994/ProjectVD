@@ -30,6 +30,23 @@ protected:
 
 
 private:
+
+	struct FTweenInfo
+	{
+		float StartPercent;
+		float TargetPercent;
+		float ElapsedTime;
+		float DurationTime;
+		bool bIsPlaying;
+		FTweenInfo()
+			: StartPercent(0.0f)
+			, TargetPercent(0.0f)
+			, ElapsedTime(0.0f)
+			, DurationTime(1.0f)
+			, bIsPlaying(false)
+		{}
+	};
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> NameText;
 
@@ -42,25 +59,16 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr <UTextBlock> HealthBarText;
 
-	UPROPERTY(EditAnywhere, Category = "Enemy Health Bar Tween")
-	float TweenDuration = 1.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Enemy Health Bar Tween")
-	float TweenElapsedTime = 0.0f;
 	UPROPERTY()
 	TWeakObjectPtr<AVDEnemyCharacterBase> TargetEnemy;
 
-	float TargetBossHPPercent;
-	bool bIsHPTweenPlaying;
-
-	float TweenStartPercent;
-	float TweenTargetPercent;
+	FTweenInfo HPTween;
 
 	FTimerHandle BossHPVisibleTimerHandle;
 	FTimerHandle TweenTimerHandle;
 
-	void UpdateBossHealthBar(float CurrentHP, float MaxHP);
+	void UpdateEnemyHealthBar(float CurrentHP, float MaxHP);
 	void UpdateTweenBar();
 
-	void OnBossHPHideTimerExpired();
+	void OnEnemyHPHideTimerExpired();
 };

@@ -29,6 +29,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float AttackSpeed;
 
+	FOnChangeStateStats OnChangeMana;
+
 	virtual void BeginPlay() override;
 	virtual void InitializeComponent() override;
 
@@ -50,4 +52,5 @@ public:
 	FORCEINLINE float GetAttackPower() const { return AttackPower; }
 	FORCEINLINE float GetAttackRange() const { return AttackRange; }
 	FORCEINLINE float GetAttackSpeed() const { return AttackSpeed; }
+	FORCEINLINE FOnChangeStateStats& GetOnChangeMana() { return OnChangeMana; }
 };

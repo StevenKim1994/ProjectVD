@@ -8,7 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 
-void UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar(float CurrentHP , float MaxHP)
+void UVDPlayerHUDEnemyStatusWidget::UpdateEnemyHealthBar(float CurrentHP , float MaxHP)
 {
 	const float NewPercent = FMath::Clamp(CurrentHP / MaxHP, 0.f, 1.f);
 
@@ -33,7 +33,7 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar(float CurrentHP , float 
 
 		if (FMath::IsNearlyEqual(CurrentTweenPercent, NewPercent))
 		{
-			bIsHPTweenPlaying = false;
+			HPTween.bIsPlaying = false;
 			if (TweenTimerHandle.IsValid())
 			{
 				World->GetTimerManager().ClearTimer(TweenTimerHandle);
@@ -41,10 +41,10 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar(float CurrentHP , float 
 			return;
 		}
 
-		TweenStartPercent = CurrentTweenPercent;
-		TweenTargetPercent = NewPercent;
-		TweenElapsedTime = 0.0f;
-		bIsHPTweenPlaying = true;
+		HPTween.StartPercent = CurrentTweenPercent;
+		HPTween.TargetPercent = NewPercent;
+		HPTween.ElapsedTime = 0.0f;
+		HPTween.bIsPlaying = true;
 
 		World->GetTimerManager().ClearTimer(TweenTimerHandle);
 		World->GetTimerManager().SetTimer(TweenTimerHandle,
@@ -58,36 +58,33 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar(float CurrentHP , float 
 
 void UVDPlayerHUDEnemyStatusWidget::UpdateTweenBar()
 {
-	if (!bIsHPTweenPlaying || TweenDuration <= 0.0f)
-	{
-		if (UWorld* World = GetWorld())
-		{
-			World->GetTimerManager().ClearTimer(TweenTimerHandle);
-		}
-		return;
-	}
-
 	UWorld* World = GetWorld();
 	if (!World)
 	{
 		return;
 	}
 
-	const float DeltaTime = World->GetDeltaSeconds();
-	TweenElapsedTime += DeltaTime;
+	if (!HPTween.bIsPlaying || HPTween.DurationTime <= 0.0f)
+	{
+		World->GetTimerManager().ClearTimer(TweenTimerHandle);
+		return;
+	}
 
-	float RawAlpha = TweenElapsedTime / TweenDuration;
+	const float DeltaTime = World->GetDeltaSeconds();
+	HPTween.ElapsedTime += DeltaTime;
+
+	float RawAlpha = HPTween.ElapsedTime / HPTween.DurationTime ;
 	RawAlpha = FMath::Clamp(RawAlpha, 0.0f, 1.0f);
 
 	float EaseAlpha = RawAlpha;
 
-	const float NewValue = FMath::Lerp(TweenStartPercent, TweenTargetPercent, EaseAlpha);
+	const float NewValue = FMath::Lerp(HPTween.StartPercent , HPTween.TargetPercent, EaseAlpha);
 	HealthBarTweenBar->SetPercent(NewValue);
 
 	if (RawAlpha >= 1.0f)
 	{
-		bIsHPTweenPlaying = false;
-		HealthBarTweenBar->SetPercent(TweenTargetPercent);
+		HPTween.bIsPlaying = false;
+		HealthBarTweenBar->SetPercent(HPTween.TargetPercent);
 		World->GetTimerManager().ClearTimer(TweenTimerHandle);
 	}
 }
@@ -122,7 +119,7 @@ void UVDPlayerHUDEnemyStatusWidget::SetTargetEnemy(AVDEnemyCharacterBase* Enemy)
 	if (UVDEnemyStatsBaseComponent* NewStats = TargetEnemy->GetBaseStatsComponent())
 	{
 		NewStats->GetOnChangeHealth().RemoveAll(this);
-		NewStats->GetOnChangeHealth().AddUObject(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar);
+		NewStats->GetOnChangeHealth().AddUObject(this, &UVDPlayerHUDEnemyStatusWidget::UpdateEnemyHealthBar);
 	}
 
 	if (NameText)
@@ -144,7 +141,7 @@ void UVDPlayerHUDEnemyStatusWidget::SetTargetEnemy(AVDEnemyCharacterBase* Enemy)
 		{
 			if (StatsComp->GetMaxHealth() > 0.f)
 			{
-				UpdateBossHealthBar(StatsComp->GetHealth(), StatsComp->GetMaxHealth());
+				UpdateEnemyHealthBar(StatsComp->GetHealth(), StatsComp->GetMaxHealth());
 
 				
 			}
@@ -184,7 +181,7 @@ void UVDPlayerHUDEnemyStatusWidget::NativeTick(const FGeometry& MyGeometry, floa
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
-void UVDPlayerHUDEnemyStatusWidget::OnBossHPHideTimerExpired()
+void UVDPlayerHUDEnemyStatusWidget::OnEnemyHPHideTimerExpired()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
 	GetWorld()->GetTimerManager().ClearTimer(BossHPVisibleTimerHandle);
