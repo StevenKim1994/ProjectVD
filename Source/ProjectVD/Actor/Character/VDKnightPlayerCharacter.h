@@ -52,6 +52,9 @@ protected:
 	virtual void LockOnTarget(const FInputActionValue& Value) override;
 	virtual void Rooting(const FInputActionValue& Value) override;
 	virtual void Jump() override;
+
+	virtual void RollLeft(const FInputActionValue& Value) override;
+	virtual void RollRight(const FInputActionValue& Value) override;
 	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint) override;
 
 	virtual void PostInitializeComponents() override;

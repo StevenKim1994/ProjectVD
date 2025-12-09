@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "Actor/Character/VDStagePlayerCharacter.h"
 #include "VDStagePlayerController.generated.h"
 
 class UVDStagePlayerHUDWidget;
@@ -19,9 +18,6 @@ class PROJECTVD_API AVDStagePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 private:
-	UPROPERTY()
-	TObjectPtr<AVDStagePlayerCharacter> VDStagePlayerCharacter;
-
 	UPROPERTY()
 	TObjectPtr<UVDStagePlayerHUDWidget> HUDWidget;
 

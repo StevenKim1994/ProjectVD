@@ -4,7 +4,6 @@
 #include "UI/Stage/VDPlayerHUDStateWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-#include "Actor/Character/VDStagePlayerCharacter.h"
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 
 void UVDPlayerHUDStateWidget::SetCharacterState(UVDCharacterStatsBaseComponent* BaseStats)

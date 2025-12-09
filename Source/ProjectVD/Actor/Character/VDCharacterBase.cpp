@@ -411,6 +411,16 @@ void AVDCharacterBase::DrinkPotion(const FInputActionValue& Value)
 	}
 }
 
+void AVDCharacterBase::RollRight(const FInputActionValue& Value)
+{
+
+}
+
+void AVDCharacterBase::RollLeft(const FInputActionValue& Value)
+{
+
+}
+
 void AVDCharacterBase::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)
 {
 	UE_LOG(LogTemp, Log, TEXT("Weapon Colider Hit Actor : %s"), *OtherActor->GetName());

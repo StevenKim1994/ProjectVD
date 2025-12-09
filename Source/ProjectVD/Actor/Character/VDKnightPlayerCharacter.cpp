@@ -5,6 +5,7 @@
 #include "Actor/ActorComponent/VDCharacterStatsBaseComponent.h"
 #include "Actor/ActorComponent/VDBaseStaminaComponent.h"
 #include "Actor/ActorComponent/VDHitStopComponent.h"
+#include "Actor/ActorComponent/VDTargetLockOnComponent.h"
 #include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "Animation/VDAnimInstance.h"
 #include "Engine/World.h"
@@ -168,6 +169,82 @@ void AVDKnightPlayerCharacter::Jump()
 		bIsNextComboInputOn = false;
 		CurrentAttackComboCount = 0;
 	}
+}
+
+void AVDKnightPlayerCharacter::RollLeft(const FInputActionValue& Value)
+{
+	Super::RollLeft(Value);
+	UE_LOG(LogTemp, Warning, TEXT("AVDKnightPlayerCharacter::RollLeft"));
+
+	if (FowardRollingAM == nullptr || CastingAnimInstance == nullptr)
+	{
+		return;
+	}
+
+	// 이미 롤링 중이면 중복 재생 방지
+	if (CastingAnimInstance->Montage_IsPlaying(FowardRollingAM))
+	{
+		return;
+	}
+
+	TargetLockOnComponent->Deactivate();
+	// 현재 바라보는 방향에서 왼쪽(시계반대)으로 90도 회전하여 바라보게 설정
+	const FRotator CurrentRot = GetActorRotation();
+	const FRotator LeftFacingRot = FRotator(0.0f, CurrentRot.Yaw - 90.0f, 0.0f);
+	SetActorRotation(LeftFacingRot);
+
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindWeakLambda(this, [this, CurrentRot](UAnimMontage* Montage, bool bInterrupted)
+		{
+			UE_LOG(LogTemp, Log, TEXT("VDKnightCharacter::Left Rolling Ended"));
+			this->TargetLockOnComponent->Activate();
+			this->SetActorRotation(FRotator(0.0f, CurrentRot.Yaw, 0.0f));
+		});
+
+	CastingAnimInstance->Montage_Play(FowardRollingAM);
+	CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, FowardRollingAM);
+
+	// 콤보 입력 초기화
+	bIsNextComboInputOn = false;
+	CurrentAttackComboCount = 0;
+}
+
+void AVDKnightPlayerCharacter::RollRight(const FInputActionValue& Value)
+{
+
+	Super::RollRight(Value);
+	UE_LOG(LogTemp, Warning, TEXT("AVDKnightPlayerCharacter::RollRight"));
+
+	if (FowardRollingAM == nullptr || CastingAnimInstance == nullptr)
+	{
+		return;
+	}
+
+	// 이미 롤링 중이면 중복 재생 방지
+	if (CastingAnimInstance->Montage_IsPlaying(FowardRollingAM))
+	{
+		return;
+	}
+
+	TargetLockOnComponent->Deactivate();
+	const FRotator CurrentRot = GetActorRotation();
+	const FRotator LeftFacingRot = FRotator(0.0f, CurrentRot.Yaw + 90.0f, 0.0f);
+	SetActorRotation(LeftFacingRot);
+
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindWeakLambda(this, [this, CurrentRot](UAnimMontage* Montage, bool bInterrupted)
+		{
+			UE_LOG(LogTemp, Log, TEXT("VDKnightCharacter::Left Rolling Ended"));
+			this->SetActorRotation(FRotator(0.0f, CurrentRot.Yaw, 0.0f));
+			this->TargetLockOnComponent->Activate();
+		});
+
+	CastingAnimInstance->Montage_Play(FowardRollingAM);
+	CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, FowardRollingAM);
+
+	// 콤보 입력 초기화
+	bIsNextComboInputOn = false;
+	CurrentAttackComboCount = 0;
 }
 
 void AVDKnightPlayerCharacter::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)

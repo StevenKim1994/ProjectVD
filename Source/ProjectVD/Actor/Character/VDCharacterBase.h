@@ -98,6 +98,12 @@ protected:
 	virtual void DrinkPotion(const FInputActionValue& Value);
 
 	UFUNCTION()
+	virtual void RollRight(const FInputActionValue& Value);
+
+	UFUNCTION()
+	virtual void RollLeft(const FInputActionValue& Value);
+
+	UFUNCTION()
 	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint);
 	
 	virtual void Tick(float DeltaTime) override;
