@@ -8,6 +8,7 @@
 
 class UTextBlock;
 class UProgressBar;
+class UCurveFloat;
 class AVDEnemyCharacterBase;
 class UVDEnemyStatsBaseComponent;
 
@@ -16,28 +17,9 @@ class PROJECTVD_API UVDPlayerHUDEnemyStatusWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(meta =(BindWidget))
-	TObjectPtr<UTextBlock> BossNameText;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UProgressBar> BossHealthBar;
-	
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr <UTextBlock> BossHealthBarText;
-
-	UPROPERTY()
-	TWeakObjectPtr<AVDEnemyCharacterBase> BossActor;
-
-	float TargetBossHPPercent;
-	bool bIsBossHPTweenPlaying;
-	FTimerHandle BossHPVisibleTimerHandle;
-
-	void UpdateBossHealthBar(float CurrentHP, float MaxHP);
-	void OnBossHPHideTimerExpired();
 
 public:
-	void SetBossActor(AVDEnemyCharacterBase* Boss);
+	void SetTargetEnemy(AVDEnemyCharacterBase* Boss);
 	
 
 protected:
@@ -45,4 +27,40 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+
+private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> NameText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> HealthBar;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> HealthBarTweenBar;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr <UTextBlock> HealthBarText;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy Health Bar Tween")
+	float TweenDuration = 1.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy Health Bar Tween")
+	float TweenElapsedTime = 0.0f;
+	UPROPERTY()
+	TWeakObjectPtr<AVDEnemyCharacterBase> TargetEnemy;
+
+	float TargetBossHPPercent;
+	bool bIsBossHPTweenPlaying;
+
+	float TweenStartPercent;
+	float TweenTargetPercent;
+
+	FTimerHandle BossHPVisibleTimerHandle;
+	FTimerHandle TweenTimerHandle;
+
+	void UpdateBossHealthBar(float CurrentHP, float MaxHP);
+	void UpdateTweenBar();
+
+	void OnBossHPHideTimerExpired();
 };

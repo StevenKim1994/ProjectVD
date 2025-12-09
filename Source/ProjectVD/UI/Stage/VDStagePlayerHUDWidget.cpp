@@ -43,7 +43,7 @@ void UVDStagePlayerHUDWidget::ShowBossStatus(AVDEnemyCharacterBase* Boss)
 {
 	if(BossState)
 	{
-		BossState->SetBossActor(Boss);
+		BossState->SetTargetEnemy(Boss);
 		BossState->SetVisibility(ESlateVisibility::Visible);
 	}
 }

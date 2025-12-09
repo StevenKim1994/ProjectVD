@@ -10,61 +10,116 @@
 
 void UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar(float CurrentHP , float MaxHP)
 {
-	if (BossHealthBar)
+	const float NewPercent = FMath::Clamp(CurrentHP / MaxHP, 0.f, 1.f);
+
+	if (HealthBar)
 	{
-		TargetBossHPPercent = CurrentHP / MaxHP;
-		bIsBossHPTweenPlaying = true;
-		//BossHealthBar->SetPercent(CurrentHP / MaxHP);
-
-		FTimerManager& TM = GetWorld()->GetTimerManager();
-
-		if (BossHealthBarText)
-		{
-			BossHealthBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"),
-				CurrentHP,
-				MaxHP)));
-		}
+		HealthBar->SetPercent(NewPercent);
 	}
+
+	if (HealthBarTweenBar)
+	{
+		const float CurrentTweenPercent = HealthBarTweenBar->GetPercent();
+		UWorld* World = GetWorld();
+		if (!World)
+		{
+			return;
+		}
+
+		if (FMath::IsNearlyEqual(CurrentTweenPercent, NewPercent))
+		{
+			bIsBossHPTweenPlaying = false;
+			if (TweenTimerHandle.IsValid())
+			{
+				World->GetTimerManager().ClearTimer(TweenTimerHandle);
+			}
+			return;
+		}
+
+		World->GetTimerManager().ClearTimer(TweenTimerHandle);
+		World->GetTimerManager().SetTimer(TweenTimerHandle,
+			this,
+			&UVDPlayerHUDEnemyStatusWidget::UpdateTweenBar,
+			0.01f,
+			true);
+	}
+
 }
 
-void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
+void UVDPlayerHUDEnemyStatusWidget::UpdateTweenBar()
 {
-	if (BossActor == Boss)
+	if (!bIsBossHPTweenPlaying || TweenDuration <= 0.0f)
+	{
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(TweenTimerHandle);
+		}
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
 	{
 		return;
 	}
 
-	if (BossActor.IsValid())
+	const float DeltaTime = World->GetDeltaSeconds();
+	TweenElapsedTime += DeltaTime;
+
+	float RawAlpha = TweenElapsedTime / TweenDuration;
+	RawAlpha = FMath::Clamp(RawAlpha, 0.0f, 1.0f);
+
+	float EaseAlpha = RawAlpha;
+
+	const float NewValue = FMath::Lerp(TweenStartPercent, TweenTargetPercent, EaseAlpha);
+	HealthBarTweenBar->SetPercent(NewValue);
+
+	if (RawAlpha >= 1.0f)
 	{
-		if (UVDEnemyStatsBaseComponent* PrevStats = BossActor->GetBaseStatsComponent())
+		bIsBossHPTweenPlaying = false;
+		HealthBarTweenBar->SetPercent(TweenTargetPercent);
+		World->GetTimerManager().ClearTimer(TweenTimerHandle);
+	}
+}
+
+void UVDPlayerHUDEnemyStatusWidget::SetTargetEnemy(AVDEnemyCharacterBase* Enemy)
+{
+	if (TargetEnemy == Enemy)
+	{
+		return;
+	}
+
+	if (TargetEnemy.IsValid())
+	{
+		if (UVDEnemyStatsBaseComponent* PrevStats = TargetEnemy->GetBaseStatsComponent())
 		{
 			PrevStats->GetOnChangeHealth().RemoveAll(this);
 		}
 	}
 
-	BossActor = Boss;
+	TargetEnemy = Enemy;
 
-	if (Boss == nullptr)
+	if (TargetEnemy == nullptr)
 	{
-		if (BossNameText)
+		if (NameText)
 		{
-			BossNameText->SetText(FText::GetEmpty());
+			NameText->SetText(FText::GetEmpty());
 		}
 		SetVisibility(ESlateVisibility::Collapsed);
 		return;
 	}
 
-	if (UVDEnemyStatsBaseComponent* NewStats = BossActor->GetBaseStatsComponent())
+	if (UVDEnemyStatsBaseComponent* NewStats = TargetEnemy->GetBaseStatsComponent())
 	{
 		NewStats->GetOnChangeHealth().RemoveAll(this);
 		NewStats->GetOnChangeHealth().AddUObject(this, &UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar);
 	}
 
-	if (BossNameText)
+	if (NameText)
 	{
-		if (BossActor.IsValid())
+		if (TargetEnemy.IsValid())
 		{
-			BossNameText->SetText(FText::FromName(BossActor->GetEnemyName()));
+			NameText->SetText(FText::FromName(TargetEnemy->GetEnemyName()));
 		}
 		else
 		{
@@ -72,17 +127,17 @@ void UVDPlayerHUDEnemyStatusWidget::SetBossActor(AVDEnemyCharacterBase* Boss)
 		}
 	}
 
-	if (BossHealthBar)
+	if (HealthBar)
 	{
-		if (UVDEnemyStatsBaseComponent* StatsComp = BossActor->GetBaseStatsComponent())
+		if (UVDEnemyStatsBaseComponent* StatsComp = TargetEnemy->GetBaseStatsComponent())
 		{
 			if (StatsComp->GetMaxHealth() > 0.f)
 			{
-				BossHealthBar->SetPercent(StatsComp->GetHealth() / StatsComp->GetMaxHealth());
+				HealthBar->SetPercent(StatsComp->GetHealth() / StatsComp->GetMaxHealth());
 
-				if (BossHealthBarText)
+				if (HealthBarText)
 				{
-					BossHealthBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"),
+					HealthBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"),
 						StatsComp->GetHealth(),
 						StatsComp->GetMaxHealth())));
 				}
@@ -108,9 +163,9 @@ void UVDPlayerHUDEnemyStatusWidget::NativeConstruct()
 void UVDPlayerHUDEnemyStatusWidget::NativeDestruct()
 {
 	// 위젯 파괴 시 바인딩 정리
-	if (BossActor.IsValid())
+	if (TargetEnemy.IsValid())
 	{
-		if (UVDEnemyStatsBaseComponent* Stats = BossActor->GetBaseStatsComponent())
+		if (UVDEnemyStatsBaseComponent* Stats = TargetEnemy->GetBaseStatsComponent())
 		{
 			Stats->GetOnChangeHealth().RemoveAll(this);
 		}
@@ -121,36 +176,6 @@ void UVDPlayerHUDEnemyStatusWidget::NativeDestruct()
 void UVDPlayerHUDEnemyStatusWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (bIsBossHPTweenPlaying)
-	{
-		if (BossHealthBar)
-		{
-			float CurrentPercent = BossHealthBar->GetPercent();
-			float NewPercent = FMath::FInterpTo(CurrentPercent, TargetBossHPPercent, InDeltaTime, 5.0f);
-			BossHealthBar->SetPercent(NewPercent);
-			if (FMath::IsNearlyEqual(NewPercent, TargetBossHPPercent, 0.001f))
-			{
-				BossHealthBar->SetPercent(TargetBossHPPercent);
-				bIsBossHPTweenPlaying = false;
-				if (TargetBossHPPercent <= 0.f)
-				{
-					if (BossHPVisibleTimerHandle.IsValid())
-					{
-						GetWorld()->GetTimerManager().ClearTimer(BossHPVisibleTimerHandle);
-					}
-					// 체력이 0이면 3초 후 위젯 숨김 처리
-					GetWorld()->GetTimerManager().SetTimer(
-						BossHPVisibleTimerHandle,
-						this,
-						&UVDPlayerHUDEnemyStatusWidget::OnBossHPHideTimerExpired,
-						3.0f,
-						false
-					);
-				}
-			}
-		}
-	}
 }
 
 void UVDPlayerHUDEnemyStatusWidget::OnBossHPHideTimerExpired()
