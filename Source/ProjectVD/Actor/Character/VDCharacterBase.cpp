@@ -68,6 +68,7 @@ AVDCharacterBase::AVDCharacterBase()
 	BaseStatsComponent = CreateDefaultSubobject<UVDCharacterStatsBaseComponent>(TEXT("BaseStatsComponent"));
 
 	TargetLockOnComponent = CreateDefaultSubobject<UVDTargetLockOnComponent>(TEXT("TargetLockOnComponent"));
+	TargetLockOnComponent->OnTargetLockOnChanged.AddUObject(this, &AVDCharacterBase::OnChangeTargetLockOnActor);
 
 	StaminaComponent = CreateDefaultSubobject<UVDBaseStaminaComponent>(TEXT("StaminaComponent"));
 	StaminaComponent->SetMaxStamina(100.0f);
@@ -112,6 +113,25 @@ void AVDCharacterBase::FirstOverlappingItemPickUp()
 				break;
 			}
 		}
+	}
+}
+
+void AVDCharacterBase::OnChangeTargetLockOnActor(AActor* NewTargetActor, bool bIsLockOn)
+{
+	if (bIsLockOn)
+	{
+		if (NewTargetActor)
+		{
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+			FRotator LookAtRotation = (NewTargetActor->GetActorLocation() - GetActorLocation()).Rotation();
+			LookAtRotation.Pitch = 0.0f;
+			LookAtRotation.Roll = 0.0f;
+			SetActorRotation(LookAtRotation);
+		}
+	}
+	else
+	{
+		GetCharacterMovement()->bOrientRotationToMovement = true;
 	}
 }
 

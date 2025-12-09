@@ -30,6 +30,7 @@ namespace VDConstants
 	// UI 위젯 이름들
 	extern const FName CutSceneNamePlateWidget;
 	extern const FName RootUIWidget;
+	extern const FName LockOnTargetWidget;
 	extern const FName TitlePanel;
 	extern const FName LoadingPanel;
 	extern const FName PauseMenuWidget;

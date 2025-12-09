@@ -44,7 +44,7 @@ private:
 	TObjectPtr<UVDToastContainer> ToastContainerWidget;
 
 	UPROPERTY()
-	TObjectPtr< UVDCutSceneNamePlateWidget> CutSceneNamePlateWidget;
+	TObjectPtr<UVDCutSceneNamePlateWidget> CutSceneNamePlateWidget;
 
 	UPROPERTY()
 	TArray<TObjectPtr<UUserWidget>> ModalUIWidgetStack;

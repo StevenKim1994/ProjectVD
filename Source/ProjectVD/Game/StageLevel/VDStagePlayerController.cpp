@@ -1,6 +1,7 @@
 #include "Game/StageLevel/VDStagePlayerController.h"
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
 #include "Actor/Character/VDCharacterBase.h"
+#include "Actor/ActorComponent/VDTargetLockOnComponent.h"
 #include "System/VDUISubsystem.h"
 #include "System/VDPlayerSubsystem.h"
 #include "EnhancedInputComponent.h"
@@ -11,6 +12,7 @@
 #include "UI/Stage/VDStagePlayerHUDWidget.h"
 #include "UI/Stage/VDStagePauseWidget.h"
 #include "UI/Stage/Inventory/VDInventoryPanel.h"
+#include "UI/InGame/VDLockOnTargetWidget.h"
 #include "Game/VDGameInstance.h"
 #include "System/VDLevelSystem.h"
 #include "CineCameraActor.h"	
@@ -29,7 +31,20 @@ void AVDStagePlayerController::BeginPlay()
 
 	FInputModeGameAndUI InputMode;
 	SetInputMode(InputMode);
-	
+
+	LockOnTargetWidget = Cast<UVDLockOnTargetWidget>(GetGameInstance()->GetSubsystem<UVDUISubsystem>()->GetUIWidget(VDConstants::LockOnTargetWidget,true));
+	LockOnTargetWidget->AddToViewport(5);
+	LockOnTargetWidget->SetVisibility(ESlateVisibility::Collapsed);
+
+	AVDCharacterBase* PlayerCharacter = Cast<AVDCharacterBase>(GetPawn());
+	if (PlayerCharacter)
+	{
+		if (UVDTargetLockOnComponent* LockOnComponent = PlayerCharacter->FindComponentByClass<UVDTargetLockOnComponent>())
+		{
+			LockOnComponent->OnTargetLockOnStateChanged.AddUObject(this, &AVDStagePlayerController::OnTargetLockOnChanged);
+		}
+	}
+
 }
 
 void AVDStagePlayerController::SetupInputComponent()
@@ -322,6 +337,28 @@ void AVDStagePlayerController::OnInventory(const FInputActionValue& Value)
 					bShowMouseCursor = false;
 				}
 			}
+		}
+	}
+}
+
+void AVDStagePlayerController::OnTargetLockOnChanged(AActor* NewTargetActor, bool bIsLockOn)
+{
+	if (LockOnTargetWidget)
+	{
+		if (NewTargetActor && bIsLockOn)
+		{
+			if (!LockOnTargetWidget->IsInViewport())
+			{
+				LockOnTargetWidget->AddToViewport(5);
+			}
+
+			LockOnTargetWidget->SetVisibility(ESlateVisibility::Visible);
+			LockOnTargetWidget->OnTargetLockOnChanged(NewTargetActor, bIsLockOn);
+		}
+		else
+		{
+			LockOnTargetWidget->SetVisibility(ESlateVisibility::Collapsed);
+			LockOnTargetWidget->RemoveFromParent();
 		}
 	}
 }

@@ -39,10 +39,7 @@ protected:
 
 	UPROPERTY()
 	bool bIsNextComboInputOn = false;
-	EVDLockOnStateType bIsTargetLocked;
 
-	void TargetLockOn(AActor* TargetActor);
-	void TargetLockOff();
 	void DefaultAttack(const FInputActionValue& Value) override;
 	void DefaultAttackCombo();
 	void DefaultAttackComboEnded(UAnimMontage* AnimMontage, bool IsEndedCombo);

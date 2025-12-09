@@ -22,13 +22,10 @@
 #include "System/VDDataTableSubsystem.h"
 #include "System/VDUISubsystem.h"
 #include "DataTable/VDCharacterDefaultStats.h"
-#include "Public/VDLockOnStateType.h"
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
 
 AVDKnightPlayerCharacter::AVDKnightPlayerCharacter()
 {
-	bIsTargetLocked = EVDLockOnStateType::LockOff;
-
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	Movement->bOrientRotationToMovement = true;
 }
@@ -202,31 +199,6 @@ void AVDKnightPlayerCharacter::WeaponColiderHit(AActor* OtherActor, const FVecto
 	}
 }
 
-void AVDKnightPlayerCharacter::TargetLockOn(AActor* TargetActor)
-{
-	if (TargetActor)
-	{
-		UCharacterMovementComponent* Movement = GetCharacterMovement();
-		Movement->bOrientRotationToMovement = true;
-
-		if (CastingAnimInstance)
-		{
-			CastingAnimInstance->SetIsLockOnTarget(true);
-		}
-	}
-}
-
-void AVDKnightPlayerCharacter::TargetLockOff()
-{
-	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	Movement->bOrientRotationToMovement = false;
-
-	if (CastingAnimInstance)
-	{
-		CastingAnimInstance->SetIsLockOnTarget(false);
-	}
-}
-
 void AVDKnightPlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -270,26 +242,6 @@ void AVDKnightPlayerCharacter::PostInitializeComponents()
 void AVDKnightPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (bIsTargetLocked == EVDLockOnStateType::LockOn)
-	{
-		if (LockedTargetActor.IsValid())
-		{
-			FRotator LookAtRotation = (LockedTargetActor->GetActorLocation() - GetActorLocation()).Rotation();
-			LookAtRotation.Pitch = 0.0f;
-			LookAtRotation.Roll = 0.0f;
-
-			SetActorRotation(FMath::RInterpTo(GetActorRotation(), LookAtRotation, DeltaTime, 10.0f));
-			if (CastPlayerController)
-			{
-				CastPlayerController->SetControlRotation(LookAtRotation);
-			}
-		}
-		else
-		{
-			bIsTargetLocked = EVDLockOnStateType::LockOff;
-		}
-	}
 }
 
 void AVDKnightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

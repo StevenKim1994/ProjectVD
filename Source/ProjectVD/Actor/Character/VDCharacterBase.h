@@ -103,6 +103,8 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
 	virtual void FirstOverlappingItemPickUp();
+
+	virtual void OnChangeTargetLockOnActor(AActor* NewTargetActor, bool bIsLockOn);
 public:	
 	AVDCharacterBase();
 

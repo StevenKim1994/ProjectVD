@@ -12,6 +12,7 @@ class UInputMappingContext;
 class AVDEnemyCharacterBase;
 class ACineCameraActor;
 class UCameraShakeBase;
+class UVDLockOnTargetWidget;
 
 UCLASS()
 class PROJECTVD_API AVDStagePlayerController : public APlayerController
@@ -35,6 +36,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta= (AllowPrivateAccess ="true"))
 	TSubclassOf<UCameraShakeBase> CameraShakeEffect;
+
+	UPROPERTY()
+	TObjectPtr<UVDLockOnTargetWidget> LockOnTargetWidget;
 
 	void InitializeInputContext();
 
@@ -62,6 +66,9 @@ public:
 
 	UFUNCTION()
 	void OnInventory(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void OnTargetLockOnChanged(AActor* NewTargetActor, bool bIsLockOn);
 
 	FORCEINLINE TObjectPtr<UInputMappingContext> GetCharacterControllerIMC() const { return CharacterControllerIMC; }
 };

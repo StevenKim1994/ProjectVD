@@ -28,7 +28,6 @@ void UVDUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	ActiveWidgetInstanceMap.Empty();
 
 	RootUIWidget = GetUIWidget(VDConstants::RootUIWidget, true);
-
 	ToastContainerWidget = Cast<UVDToastContainer>(GetUIWidget(VDConstants::ToastContainer, true));
 }
 

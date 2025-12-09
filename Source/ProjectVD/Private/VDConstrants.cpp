@@ -9,6 +9,7 @@ namespace VDConstants
 	const FName CutSceneNamePlateWidget(TEXT("BossNamePlate"));
 	const FName LoadingPanel(TEXT("LoadingPanel"));
 	const FName RootUIWidget(TEXT("RootUIWidget"));
+	const FName LockOnTargetWidget(TEXT("LockOnTargetWidget"));
 	const FName ToastContainer(TEXT("ToastContainer"));
 	const FName PauseMenuWidget(TEXT("PauseMenuWidget"));
 	const FName InventoryPanelWidget(TEXT("InventoryPanel"));

@@ -9,10 +9,7 @@
 // Sets default values for this component's properties
 UVDTargetLockOnComponent::UVDTargetLockOnComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-
-	// ...
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
@@ -24,9 +21,11 @@ void UVDTargetLockOnComponent::BeginPlay()
 
 void UVDTargetLockOnComponent::ClearLockedOnTarget()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	SetComponentTickEnabled(false);
 	PotentialTargets.Empty();
 	LockedOnTarget = nullptr;
+
+	OnTargetLockOnStateChanged.Broadcast(nullptr, false);
 }
 
 void UVDTargetLockOnComponent::SetLockedOnTarget(AActor* NewTarget)
@@ -37,11 +36,19 @@ void UVDTargetLockOnComponent::SetLockedOnTarget(AActor* NewTarget)
 	}
 
 	LockedOnTarget = NewTarget;
-	PrimaryComponentTick.bCanEverTick = true;
+	SetComponentTickEnabled(true);
+
+	OnTargetLockOnStateChanged.Broadcast(LockedOnTarget.Get(), true);
 }
 
 void UVDTargetLockOnComponent::LockOnTarget()
 {
+	if (LockedOnTarget.IsValid())
+	{
+		ClearLockedOnTarget();
+		return;
+	}
+
 	PotentialTargets.Empty();
 	const float MaxLockOnDistance = 1000.0f;
 	const FVector Origin = GetOwner()->GetActorLocation();
@@ -74,21 +81,9 @@ void UVDTargetLockOnComponent::LockOnTarget()
 					// Enemy 태그가 있는 대상만 잠금 후보에 추가
 					if (OverlappedActor->ActorHasTag(TEXT("Enemy")))
 					{
-						const FName TargetSocketName(TEXT("LockOn"));
-						bool bHasTargetSocket = false;
-
-						if (USkeletalMeshComponent* SkeletalMeshComp = OverlappedActor->FindComponentByClass<USkeletalMeshComponent>())
-						{
-							bHasTargetSocket = SkeletalMeshComp->DoesSocketExist(TargetSocketName);
-						}
-
-						if (bHasTargetSocket)
-						{
-							PotentialTargets.Add(OverlappedActor);
-						}
-
+						PotentialTargets.Add(OverlappedActor);
 						// 가장 가까운 Enemy를 현재 잠금 대상에 설정
-						if (bHasTargetSocket && DistSqr < ClosestDistSqr)
+						if (DistSqr < ClosestDistSqr)
 						{
 							ClosestDistSqr = DistSqr;
 							LockedOnTarget = OverlappedActor;
@@ -107,13 +102,13 @@ void UVDTargetLockOnComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 	if (LockedOnTarget.IsValid())
 	{
-		FRotator LookAtRotation = (LockedOnTarget->GetActorLocation() - GetOwner()->GetActorLocation()).Rotation();
-		LookAtRotation.Pitch = 0.0f;
-		LookAtRotation.Roll = 0.0f;
-		GetOwner()->SetActorRotation(FMath::RInterpTo(GetOwner()->GetActorRotation(), LookAtRotation, DeltaTime, 10.0f));
+		OnTargetLockOnChanged.Broadcast(LockedOnTarget.Get(), true);
 	}
 	else
 	{
+		OnTargetLockOnChanged.Broadcast(nullptr, false);
+
+		SetComponentTickEnabled(false);
 		ClearLockedOnTarget();
 	}
 }
