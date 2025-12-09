@@ -17,6 +17,11 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar(float CurrentHP , float 
 		HealthBar->SetPercent(NewPercent);
 	}
 
+	if (HealthBarText)
+	{
+		HealthBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentHP, MaxHP)));
+	}
+
 	if (HealthBarTweenBar)
 	{
 		const float CurrentTweenPercent = HealthBarTweenBar->GetPercent();
@@ -28,13 +33,18 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar(float CurrentHP , float 
 
 		if (FMath::IsNearlyEqual(CurrentTweenPercent, NewPercent))
 		{
-			bIsBossHPTweenPlaying = false;
+			bIsHPTweenPlaying = false;
 			if (TweenTimerHandle.IsValid())
 			{
 				World->GetTimerManager().ClearTimer(TweenTimerHandle);
 			}
 			return;
 		}
+
+		TweenStartPercent = CurrentTweenPercent;
+		TweenTargetPercent = NewPercent;
+		TweenElapsedTime = 0.0f;
+		bIsHPTweenPlaying = true;
 
 		World->GetTimerManager().ClearTimer(TweenTimerHandle);
 		World->GetTimerManager().SetTimer(TweenTimerHandle,
@@ -48,7 +58,7 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateBossHealthBar(float CurrentHP , float 
 
 void UVDPlayerHUDEnemyStatusWidget::UpdateTweenBar()
 {
-	if (!bIsBossHPTweenPlaying || TweenDuration <= 0.0f)
+	if (!bIsHPTweenPlaying || TweenDuration <= 0.0f)
 	{
 		if (UWorld* World = GetWorld())
 		{
@@ -76,7 +86,7 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateTweenBar()
 
 	if (RawAlpha >= 1.0f)
 	{
-		bIsBossHPTweenPlaying = false;
+		bIsHPTweenPlaying = false;
 		HealthBarTweenBar->SetPercent(TweenTargetPercent);
 		World->GetTimerManager().ClearTimer(TweenTimerHandle);
 	}
@@ -129,18 +139,14 @@ void UVDPlayerHUDEnemyStatusWidget::SetTargetEnemy(AVDEnemyCharacterBase* Enemy)
 
 	if (HealthBar)
 	{
+
 		if (UVDEnemyStatsBaseComponent* StatsComp = TargetEnemy->GetBaseStatsComponent())
 		{
 			if (StatsComp->GetMaxHealth() > 0.f)
 			{
-				HealthBar->SetPercent(StatsComp->GetHealth() / StatsComp->GetMaxHealth());
+				UpdateBossHealthBar(StatsComp->GetHealth(), StatsComp->GetMaxHealth());
 
-				if (HealthBarText)
-				{
-					HealthBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"),
-						StatsComp->GetHealth(),
-						StatsComp->GetMaxHealth())));
-				}
+				
 			}
 			else
 			{

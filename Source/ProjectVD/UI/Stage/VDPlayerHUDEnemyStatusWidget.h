@@ -51,7 +51,7 @@ private:
 	TWeakObjectPtr<AVDEnemyCharacterBase> TargetEnemy;
 
 	float TargetBossHPPercent;
-	bool bIsBossHPTweenPlaying;
+	bool bIsHPTweenPlaying;
 
 	float TweenStartPercent;
 	float TweenTargetPercent;
