@@ -25,6 +25,7 @@ void UVDTargetLockOnComponent::ClearLockedOnTarget()
 	PotentialTargets.Empty();
 	LockedOnTarget = nullptr;
 
+	OnTargetLockOnChanged.Broadcast(nullptr, false);
 	OnTargetLockOnStateChanged.Broadcast(nullptr, false);
 }
 
@@ -106,9 +107,6 @@ void UVDTargetLockOnComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	}
 	else
 	{
-		OnTargetLockOnChanged.Broadcast(nullptr, false);
-
-		SetComponentTickEnabled(false);
 		ClearLockedOnTarget();
 	}
 }

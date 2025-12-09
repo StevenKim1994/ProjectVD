@@ -71,8 +71,8 @@ UVDEnemyAnimInstance* AVDEnemyCharacterBase::DefaultAttackMontagePlay(FOnAttackM
 				AttackMontageEndedDelegate.ExecuteIfBound();
 			});
 
-			AnimInstance->Montage_SetEndDelegate(EndDelegate, DefaultAttackAM);
 			AnimInstance->Montage_Play(DefaultAttackAM);
+			AnimInstance->Montage_SetEndDelegate(EndDelegate, DefaultAttackAM);
 
 			return AnimInstance;
 		}
@@ -191,14 +191,13 @@ void AVDEnemyCharacterBase::Die()
 			AnimInstance->SetIsDead(1);
 			FOnMontageEnded EndDelegate;
 			EndDelegate.BindUObject(this, &AVDEnemyCharacterBase::EndDieAM);
-			AnimInstance->Montage_SetEndDelegate(EndDelegate, DeathAM);
 			AnimInstance->Montage_Play(DeathAM);
+			AnimInstance->Montage_SetEndDelegate(EndDelegate, DeathAM);
 		}
 	}
 
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	SetActorEnableCollision(false);
-	// TODO :: 죽음처리를 위해 컴포넌트 비활성화 등 추가 작업 필요
 }
 
 void AVDEnemyCharacterBase::DefaultAttack()
@@ -230,13 +229,33 @@ void AVDEnemyCharacterBase::HitReact(const FVector& HitPos)
 
 void AVDEnemyCharacterBase::EndDieAM(UAnimMontage* AnimMontage, bool bInterept)
 {
-	FTimerHandle DeathTimerHandle;
-
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance)
 	{
 		AnimInstance->StopAllMontages(0.0f);
 	}
+
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+	if (Movement)
+	{
+		Movement->StopMovementImmediately();
+		Movement->DisableMovement();
+		Movement->SetMovementMode(EMovementMode::MOVE_None);
+	}
+
+	AVDEnemyAIController* AICon = Cast<AVDEnemyAIController>(GetController());
+	if (AICon)
+	{
+		AICon->StopAI();
+		AICon->UnPossess();
+	}
+	DetachFromControllerPendingDestroy();
+
+	SetActorEnableCollision(false);
+	SetActorHiddenInGame(true);
+
+	SetActorTickEnabled(false);
+	SetCanBeDamaged(false);
 }
 
 void AVDEnemyCharacterBase::BeginPlay()
