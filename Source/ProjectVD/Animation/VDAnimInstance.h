@@ -19,6 +19,7 @@ public:
 
 	void SetIsLockOnTarget(uint8 bIsLockOn);
 	void SetIsDead(uint8 InIsDead);
+	void SetIsDefence(uint8 InIsDefence);
 
 protected:
 	virtual void NativeInitializeAnimation() override;
@@ -33,11 +34,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
 	uint8 bIsIdle : 1;
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
 	float MovingThreshold;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat");
 	uint8 bIsLockOnTarget : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat");
+	uint8 bIsDefence : 1;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character");
 	uint8 bIsDead : 1;

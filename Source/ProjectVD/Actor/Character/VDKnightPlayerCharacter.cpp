@@ -146,6 +146,21 @@ void AVDKnightPlayerCharacter::Rooting(const FInputActionValue& Value)
 	Super::Rooting(Value);
 }
 
+void AVDKnightPlayerCharacter::Defence(const FInputActionValue& Value)
+{
+	Super::Defence(Value);
+
+	if(Value.Get<bool>())
+	{
+		CastingAnimInstance->SetIsDefence(true);
+	}
+	else
+	{
+		CastingAnimInstance->SetIsDefence(false);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("AVDKnightPlayerCharacter::Defence"));
+}
+
 void AVDKnightPlayerCharacter::Jump()
 {
 	// DESC :: 점프 비활성화 이캐릭터는 점프대신 구르기 가능 
@@ -340,7 +355,12 @@ void AVDKnightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Player
 				if (Action)
 				{
 					FString ActionName = Action->GetName();
-					if (ActionName.StartsWith(TEXT("IA_")))
+					if (ActionName == TEXT("IA_Defence"))
+					{
+						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Started, this, &AVDKnightPlayerCharacter::Defence);
+						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Completed, this, &AVDKnightPlayerCharacter::Defence);
+					}
+					else if (ActionName.StartsWith(TEXT("IA_")))
 					{
 						ActionName = ActionName.RightChop(3);
 						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Triggered, this, FName(ActionName));

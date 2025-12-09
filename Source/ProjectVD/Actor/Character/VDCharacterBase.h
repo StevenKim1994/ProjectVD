@@ -38,6 +38,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DrinkPotionAM;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> DefenceHitAM;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraSpringArmComponent;
 
@@ -102,6 +105,9 @@ protected:
 
 	UFUNCTION()
 	virtual void RollLeft(const FInputActionValue& Value);
+
+	UFUNCTION()
+	virtual void Defence(const FInputActionValue& Value);
 
 	UFUNCTION()
 	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint);

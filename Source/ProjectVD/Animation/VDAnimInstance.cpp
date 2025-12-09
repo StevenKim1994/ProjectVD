@@ -21,6 +21,11 @@ void UVDAnimInstance::SetIsDead(uint8 InIsDead)
 	bIsDead = InIsDead;
 }
 
+void UVDAnimInstance::SetIsDefence(uint8 InIsDefence)
+{
+	bIsDefence = InIsDefence;
+}
+
 void UVDAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
@@ -58,7 +63,7 @@ void UVDAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			ForwardSpeed = FS;
 			RightSpeed = RS;
 
-			bIsIdle = (ForwardSpeed == 0 && RightSpeed == 0) && (bIsDead == false);
+			bIsIdle = (ForwardSpeed == 0 && RightSpeed == 0) && (bIsDead == false) && ( !bIsDefence);
 		}
 	}
 }

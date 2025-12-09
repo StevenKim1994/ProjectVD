@@ -421,6 +421,32 @@ void AVDCharacterBase::RollLeft(const FInputActionValue& Value)
 
 }
 
+void AVDCharacterBase::Defence(const FInputActionValue& Value)
+{
+	CastingAnimInstance->SetIsDefence(Value.Get<bool>() );
+	//if (DefenceAM)
+	//{
+	//	if (!CastingAnimInstance->Montage_IsPlaying(DefenceAM))
+	//	{
+	//		GetCharacterMovement()->StopMovementImmediately();
+	//		GetCharacterMovement()->MovementMode = EMovementMode::MOVE_None;
+	//		CastingAnimInstance->Montage_Play(DefenceAM);
+	//		TWeakObjectPtr<AVDCharacterBase> SelfWeak = this;
+	//		FOnMontageEnded EndDel;
+	//		EndDel.BindWeakLambda(this, [SelfWeak](UAnimMontage* Montage, bool bInterrupted)
+	//			{
+	//				if (!SelfWeak.IsValid())
+	//				{
+	//					return;
+	//				}
+	//				AVDCharacterBase* Self = SelfWeak.Get();
+	//				Self->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	//			});
+	//		CastingAnimInstance->Montage_SetEndDelegate(EndDel);
+	//	}
+	//}
+}
+
 void AVDCharacterBase::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)
 {
 	UE_LOG(LogTemp, Log, TEXT("Weapon Colider Hit Actor : %s"), *OtherActor->GetName());
