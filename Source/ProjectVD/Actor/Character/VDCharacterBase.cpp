@@ -423,28 +423,20 @@ void AVDCharacterBase::RollLeft(const FInputActionValue& Value)
 
 void AVDCharacterBase::Defence(const FInputActionValue& Value)
 {
-	CastingAnimInstance->SetIsDefence(Value.Get<bool>() );
-	//if (DefenceAM)
-	//{
-	//	if (!CastingAnimInstance->Montage_IsPlaying(DefenceAM))
-	//	{
-	//		GetCharacterMovement()->StopMovementImmediately();
-	//		GetCharacterMovement()->MovementMode = EMovementMode::MOVE_None;
-	//		CastingAnimInstance->Montage_Play(DefenceAM);
-	//		TWeakObjectPtr<AVDCharacterBase> SelfWeak = this;
-	//		FOnMontageEnded EndDel;
-	//		EndDel.BindWeakLambda(this, [SelfWeak](UAnimMontage* Montage, bool bInterrupted)
-	//			{
-	//				if (!SelfWeak.IsValid())
-	//				{
-	//					return;
-	//				}
-	//				AVDCharacterBase* Self = SelfWeak.Get();
-	//				Self->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-	//			});
-	//		CastingAnimInstance->Montage_SetEndDelegate(EndDel);
-	//	}
-	//}
+	bool bIsDefence = Value.Get<bool>();
+
+	UE_LOG(LogTemp, Log, TEXT("AVDCharacterBase::Defence bIsDefence : %d"), bIsDefence);
+
+	CastingAnimInstance->SetIsDefence(bIsDefence);
+	if (bIsDefence)
+	{
+		GetCharacterMovement()->MovementMode = EMovementMode::MOVE_None;
+		GetCharacterMovement()->StopMovementImmediately();
+	}
+	else
+	{
+		GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Walking;
+	}
 }
 
 void AVDCharacterBase::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)

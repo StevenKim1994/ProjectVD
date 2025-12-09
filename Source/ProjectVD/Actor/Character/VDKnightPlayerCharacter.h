@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Actor/Character/VDCharacterBase.h"
 #include "Interface/VDAttackable.h"
+#include "Interface/VDDefencable.h"
 #include "VDKnightPlayerCharacter.generated.h"
 
 enum class EVDLockOnStateType : uint8;
@@ -12,7 +13,7 @@ class AVDStagePlayerController;
 class AActor;
 
 UCLASS()
-class PROJECTVD_API AVDKnightPlayerCharacter : public AVDCharacterBase, public IVDAttackable
+class PROJECTVD_API AVDKnightPlayerCharacter : public AVDCharacterBase, public IVDAttackable, public IVDDefencable
 {
 	GENERATED_BODY()
 
