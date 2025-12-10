@@ -52,7 +52,7 @@ void UVDAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			ForwardSpeed = FS;
 			RightSpeed = RS;
 
-			bIsIdle = (ForwardSpeed == 0 && RightSpeed == 0) && (bIsDead == false);
+			bIsIdle = (ForwardSpeed == 0 && RightSpeed == 0) && (bIsDead == false) && (bIsDefence == false);
 		}
 		else
 		{
@@ -63,7 +63,7 @@ void UVDAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			ForwardSpeed = FS;
 			RightSpeed = RS;
 
-			bIsIdle = (ForwardSpeed == 0 && RightSpeed == 0) && (bIsDead == false) && ( !bIsDefence);
+			bIsIdle = (ForwardSpeed == 0 && RightSpeed == 0) && (bIsDead == false) && (bIsDefence == false);
 		}
 	}
 }

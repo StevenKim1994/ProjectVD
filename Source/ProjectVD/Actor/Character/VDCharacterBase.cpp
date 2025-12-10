@@ -8,6 +8,10 @@
 #include "Actor/ItemProp/VDItemPropActorBase.h"
 #include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "Engine/DamageEvents.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
+#include "InputAction.h"
 #include "Animation/VDAnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
@@ -146,22 +150,23 @@ void AVDCharacterBase::BeginPlay()
 		{
 			if (CurrentHealth <= 0.0f)
 			{
-				// TODO :: 캐릭터 사망 처리
 				if (DeathAM)
 				{
-					UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-					if (AnimInstance && !AnimInstance->Montage_IsPlaying(DeathAM))
+					bIsDead = true;
+					if (!CastingAnimInstance->Montage_IsPlaying(DeathAM))
 					{
-						AnimInstance->Montage_Play(DeathAM);
+						CastingAnimInstance->SetIsDead(true);
+						CastingAnimInstance->Montage_Play(DeathAM);
+						FOnMontageEnded MontageEndDelegate;
+						MontageEndDelegate.BindUObject(this, &AVDCharacterBase::OnDeathAnimationEnded);
+						CastingAnimInstance->Montage_SetEndDelegate(MontageEndDelegate, DeathAM);
 					}
 
 					GetCharacterMovement()->DisableMovement();
 				
 				}
 
-				FTimerHandle DeathTimerHandle;
-				AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
-				VDPC->SetGameOver();
+				
 
 				UE_LOG(LogTemp, Warning, TEXT("AVDCharacterBase::BeginPlay Character Dead"));
 			}
@@ -233,6 +238,37 @@ bool AVDCharacterBase::PickItem(AVDItemPropActorBase* Item)
 void AVDCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	CastPlayerController = Cast<AVDStagePlayerController>(GetController());
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	if (CastPlayerController && EnhancedInputComponent)
+	{
+		CastPlayerController->SetCharacter(this);
+		UInputMappingContext* DefaultMappingContext = CastPlayerController->GetCharacterControllerIMC();
+		if (DefaultMappingContext)
+		{
+			const TArray<FEnhancedActionKeyMapping>& Mappings = DefaultMappingContext->GetMappings();
+			for (const FEnhancedActionKeyMapping& Mapping : Mappings)
+			{
+				const UInputAction* Action = Mapping.Action;
+				if (Action)
+				{
+					FString ActionName = Action->GetName();
+					if (ActionName == TEXT("IA_Defence"))
+					{
+						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Ongoing, this, &AVDCharacterBase::Defence);
+						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Completed, this, &AVDCharacterBase::Defence);
+						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Canceled, this, &AVDCharacterBase::Defence);
+					}
+					else if (ActionName.StartsWith(TEXT("IA_")))
+					{
+						ActionName = ActionName.RightChop(3);
+						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Triggered, this, FName(ActionName));
+					}
+				}
+			}
+		}
+	}
 }
 
 float AVDCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -289,6 +325,11 @@ void AVDCharacterBase::SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon)
 
 void AVDCharacterBase::Move(const FInputActionValue& Value)
 {
+	if (bIsDefence || bIsDead )
+	{
+		return;
+	}
+
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator Rotation = Controller->GetControlRotation();
@@ -423,20 +464,21 @@ void AVDCharacterBase::RollLeft(const FInputActionValue& Value)
 
 void AVDCharacterBase::Defence(const FInputActionValue& Value)
 {
-	bool bIsDefence = Value.Get<bool>();
+	bIsDefence = Value.Get<bool>();
 
 	UE_LOG(LogTemp, Log, TEXT("AVDCharacterBase::Defence bIsDefence : %d"), bIsDefence);
 
-	CastingAnimInstance->SetIsDefence(bIsDefence);
 	if (bIsDefence)
 	{
-		GetCharacterMovement()->MovementMode = EMovementMode::MOVE_None;
 		GetCharacterMovement()->StopMovementImmediately();
+		GetCharacterMovement()->MovementMode = EMovementMode::MOVE_None;
 	}
 	else
 	{
 		GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Walking;
 	}
+
+	CastingAnimInstance->SetIsDefence(bIsDefence);
 }
 
 void AVDCharacterBase::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)
@@ -447,5 +489,12 @@ void AVDCharacterBase::WeaponColiderHit(AActor* OtherActor, const FVector& Conta
 	{
 		OtherActor->TakeDamage(BaseStatsComponent->GetAttackPower(), FDamageEvent(), GetController(), this);
 	}
+}
+
+void AVDCharacterBase::OnDeathAnimationEnded(UAnimMontage* AnimMontage, bool bInterrupted)
+{
+	FTimerHandle DeathTimerHandle;
+	AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+	VDPC->SetGameOver();
 }
 

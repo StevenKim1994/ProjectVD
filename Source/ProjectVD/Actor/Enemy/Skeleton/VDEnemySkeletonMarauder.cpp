@@ -110,7 +110,7 @@ AVDEnemySkeletonMarauder::AVDEnemySkeletonMarauder()
 
 	if (LeftHandWeapon)
 	{
-		LeftHandWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_lSocket"));
+		LeftHandWeapon->SetupAttachment(GetMesh(),TEXT("hand_lSocket"));
 		LeftHandWeapon->SetRelativeLocation(FVector::ZeroVector);
 		LeftHandWeapon->SetRelativeRotation(FRotator::ZeroRotator);
 		LeftHandWeapon->SetRelativeScale3D(FVector::OneVector);
@@ -118,7 +118,7 @@ AVDEnemySkeletonMarauder::AVDEnemySkeletonMarauder()
 
 	if (RightHandShield)
 	{
-		RightHandShield->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetNotIncludingScale,TEXT("hand_rSocket"));
+		RightHandShield->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
 		RightHandShield->SetRelativeRotation(FRotator::ZeroRotator);
 		RightHandShield->SetRelativeLocation(FVector::ZeroVector);
 		RightHandShield->SetRelativeScale3D(FVector::OneVector);

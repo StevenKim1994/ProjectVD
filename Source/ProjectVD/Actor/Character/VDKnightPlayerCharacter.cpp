@@ -7,6 +7,7 @@
 #include "Actor/ActorComponent/VDHitStopComponent.h"
 #include "Actor/ActorComponent/VDTargetLockOnComponent.h"
 #include "Actor/EquipItem/VDEquipItemVisualActor.h"
+#include "Actor/Enemy/VDEnemyCharacterBase.h"
 #include "Animation/VDAnimInstance.h"
 #include "Engine/World.h"
 #include "Engine/DamageEvents.h"
@@ -15,15 +16,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "InputMappingContext.h"
-#include "InputAction.h"
 #include "Engine/OverlapResult.h"
 #include "System/VDDataTableSubsystem.h"
 #include "System/VDUISubsystem.h"
 #include "DataTable/VDCharacterDefaultStats.h"
-#include "Actor/Enemy/VDEnemyCharacterBase.h"
 
 AVDKnightPlayerCharacter::AVDKnightPlayerCharacter()
 {
@@ -59,9 +55,8 @@ void AVDKnightPlayerCharacter::Move(const FInputActionValue& Value)
 
 void AVDKnightPlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 {
-	if (EquippedWeapon == nullptr)
+	if (!EquippedWeapon)
 	{
-		GetGameInstance()->GetSubsystem<UVDUISubsystem>()->ShowToastMessage(FText::FromString(TEXT("무기가 장착되어 있지 않습니다.")));
 		return;
 	}
 
@@ -148,6 +143,11 @@ void AVDKnightPlayerCharacter::Rooting(const FInputActionValue& Value)
 
 void AVDKnightPlayerCharacter::Defence(const FInputActionValue& Value)
 {
+	if (!EquippedWeapon)
+	{
+		return;
+	}
+
 	Super::Defence(Value);
 }
 
@@ -330,36 +330,6 @@ void AVDKnightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Player
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	CastPlayerController = Cast<AVDStagePlayerController>(GetController());
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	if (CastPlayerController && EnhancedInputComponent)
-	{
-		CastPlayerController->SetCharacter(this);
-		UInputMappingContext* DefaultMappingContext = CastPlayerController->GetCharacterControllerIMC();
-		if (DefaultMappingContext)
-		{
-			const TArray<FEnhancedActionKeyMapping>& Mappings = DefaultMappingContext->GetMappings();
-			for (const FEnhancedActionKeyMapping& Mapping : Mappings)
-			{
-				const UInputAction* Action = Mapping.Action;
-				if (Action)
-				{
-					FString ActionName = Action->GetName();
-					if (ActionName == TEXT("IA_Defence"))
-					{
-						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Ongoing, this, &AVDKnightPlayerCharacter::Defence);
-						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Completed, this, &AVDKnightPlayerCharacter::Defence);
-						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Canceled, this, &AVDKnightPlayerCharacter::Defence);
-					}
-					else if (ActionName.StartsWith(TEXT("IA_")))
-					{
-						ActionName = ActionName.RightChop(3);
-						EnhancedInputComponent->BindAction(Action, ETriggerEvent::Triggered, this, FName(ActionName));
-					}
-				}
-			}
-		}
-	}
 }
 
 float AVDKnightPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

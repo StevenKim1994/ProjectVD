@@ -18,8 +18,6 @@ class PROJECTVD_API AVDKnightPlayerCharacter : public AVDCharacterBase, public I
 	GENERATED_BODY()
 
 private:
-	UPROPERTY()
-	TObjectPtr<AVDStagePlayerController> CastPlayerController;
 
 protected:
 

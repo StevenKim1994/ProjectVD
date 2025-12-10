@@ -14,10 +14,11 @@ class UVDCharacterStatsBaseComponent;
 class UVDBaseStaminaComponent;
 class UVDTargetLockOnComponent;
 class UVDInventoryComponent;
-class AVDItemPropActorBase;
-class AVDEquipItemVisualActor;
 class UVDAnimInstance;
 class UVDInventoryInfo;
+class AVDItemPropActorBase;
+class AVDEquipItemVisualActor;
+class AVDStagePlayerController;
 enum class EVDEquipType: uint8;
 
 UCLASS(Abstract)
@@ -26,6 +27,9 @@ class PROJECTVD_API AVDCharacterBase : public ACharacter
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY()
+	TObjectPtr<AVDStagePlayerController> CastPlayerController;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DefaultAttackAM;
 
@@ -111,12 +115,18 @@ protected:
 
 	UFUNCTION()
 	virtual void WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint);
+
+	UFUNCTION()
+	virtual void OnDeathAnimationEnded(UAnimMontage* AnimMontage, bool bInterrupted);
 	
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
 	virtual void FirstOverlappingItemPickUp();
-
 	virtual void OnChangeTargetLockOnActor(AActor* NewTargetActor, bool bIsLockOn);
+
+	uint8 bIsDefence : 1;
+	uint8 bIsDead : 1;
+
 public:	
 	AVDCharacterBase();
 
