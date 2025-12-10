@@ -12,11 +12,11 @@ struct FVDWeaponInfoTable : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Info")
-	float AttackPower; // DESC :: 무기 공격력
+	float AttackPower = 0.f; // DESC :: 무기 공격력
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Info")
-	float AttackSpeed; // DESC :: 무기 공격 속도
+	float AttackSpeed = 0.f; // DESC :: 무기 공격 속도
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Info")
-	float CriticalChance; // DESC :: 치명타 확률
+	float CriticalChance = 0.f; // DESC :: 치명타 확률
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Info")
 	TSoftClassPtr<AVDEquipItemVisualActor> WeaponVisualActorClass; // DESC :: 무기 시각적 액터 클래스

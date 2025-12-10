@@ -11,29 +11,29 @@ struct FVDEnemyStatsInfo : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
-	float MaxHealth;
+	float MaxHealth = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
-	float AttackPower;
+	float AttackPower = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
-	float AttackSpeed;
+	float AttackSpeed = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
-	float AttackRange;
+	float AttackRange = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
-	float FindPlayerRange;
+	float FindPlayerRange = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
-	float PatrolRange;
+	float PatrolRange = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
-	float PatrolWaitTime;
+	float PatrolWaitTime = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
-	float TurnSpeed;
+	float TurnSpeed = 0.f;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "EnemyStats")
-	float MaxMovementSpeed;
+	float MaxMovementSpeed = 0.f;
 };

@@ -11,5 +11,5 @@ struct FVDEquipInfoTable : public FTableRowBase
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equip Info")
-	float Defense; // DESC :: 방어력
+	float Defense = 0.f;
 };

@@ -11,8 +11,8 @@ struct FVDConsumeableInfo : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Consumeable Info")
-	float HealthRestoreAmount; // DESC :: 회복 아이템이 회복하는 체력량
+	float HealthRestoreAmount = 0.f; // DESC :: 회복 아이템이 회복하는 체력량
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Consumeable Info")
-	float ManaRestoreAmount; // DESC :: 회복 아이템이 회복하는 마나량
+	float ManaRestoreAmount = 0.f; // DESC :: 회복 아이템이 회복하는 마나량
 };
 

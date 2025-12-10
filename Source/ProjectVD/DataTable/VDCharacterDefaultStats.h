@@ -12,23 +12,23 @@ struct FVDCharacterDefaultStats : public FTableRowBase
 public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float MaxHealth;
+	float MaxHealth = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float MaxMana;
+	float MaxMana = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float AttackPower;
+	float AttackPower = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float AttackSpeed;
+	float AttackSpeed = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float AttackRange;
+	float AttackRange = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float MaxMovementSpeed;
+	float MaxMovementSpeed = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float MinMovementAnalogSpeed;
+	float MinMovementAnalogSpeed = 0.f;
 };
