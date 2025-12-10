@@ -274,13 +274,60 @@ void AVDCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 float AVDCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if (bIsDefence)
+	{
+		const float ElapseTime = CastingAnimInstance->GetElapseTimeInState(FName("MoveLocomotion"), FName("Defence"));
+		UE_LOG(LogTemp, Warning, TEXT("AVDCharacterBase::TakeDamage Defence Elapse Time : %f"), ElapseTime);
+		if (ElapseTime < 0.5f) 
+		{
+			UE_LOG(LogTemp, Warning, TEXT("AVDCharacterBase::TakeDamage Defence Start Reflect Damage"));
+			GetGameInstance()->GetSubsystem<UVDUISubsystem>()->ShowToastMessage(FText::FromString(TEXT("완벽 방어!")));
+			DamageAmount = 0.0f;
+		}
+		else
+		{
+			DamageAmount = DamageAmount * 0.7f;
+		}
+		UE_LOG(LogTemp, Warning, TEXT("AVDCharacterBase::TakeDamage Defence Hit No Damage Taken"));
 
-	if(BaseStatsComponent)
+		if (DefenceHitAM)
+		{
+			CastingAnimInstance->Montage_Play(DefenceHitAM);
+		}
+
+		bIsDefence = false;
+		CastingAnimInstance->SetIsDefence(bIsDefence);
+	}
+
+	if (BaseStatsComponent)
 	{
 		BaseStatsComponent->SetHealth(BaseStatsComponent->GetHealth() - DamageAmount);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("AVDCharacterBase::TakeDamage Current Health : %f"), BaseStatsComponent->GetHealth());
+
+	if (DamageAmount > 0.0f && !bIsDead)
+	{
+		FVector KnockbackDirection = -GetActorForwardVector();
+		if (DamageCauser)
+		{
+			KnockbackDirection = GetActorLocation() - DamageCauser->GetActorLocation();
+		}
+		else if (EventInstigator && EventInstigator->GetPawn())
+		{
+			KnockbackDirection = GetActorLocation() - EventInstigator->GetPawn()->GetActorLocation();
+		}
+
+		KnockbackDirection.Z = 0.0f;
+		if (!KnockbackDirection.Normalize())
+		{
+			KnockbackDirection = -GetActorForwardVector();
+		}
+
+		const float KnockbackStrength = FMath::Clamp(DamageAmount * 15.0f, 250.0f, 900.0f);
+		const FVector KnockbackVelocity = KnockbackDirection * KnockbackStrength;
+		LaunchCharacter(KnockbackVelocity, true, true);
+	}
 
 	return DamageAmount;
 }

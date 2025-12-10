@@ -29,8 +29,6 @@ APawn* UBTService_DetectTarget::DetectedTargetActor(UBehaviorTreeComponent& Owne
 		if (Result->GetController()->IsPlayerController())
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsObject(VDBB_KEY_TARGET, Result);
-			DrawDebugSphere(Result->GetWorld(), Result->GetActorLocation(), 3,10.f, FColor::Blue, false);
-			DrawDebugLine(Result->GetWorld(), OwnerComp.GetOwner()->GetActorLocation(), Result->GetActorLocation(), FColor::Blue, false);
 			break;
 		}
 	}

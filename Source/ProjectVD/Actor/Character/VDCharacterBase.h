@@ -140,4 +140,5 @@ public:
 	virtual bool UpdateEquippedItem(EVDEquipType EquipType, FName ItemID);
 	virtual bool UseConsumeableItem(UVDInventoryInfo* Item); 
 	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent; }
+	FORCEINLINE uint8 IsDead() const { return bIsDead; }
 };

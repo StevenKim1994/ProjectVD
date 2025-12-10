@@ -50,6 +50,11 @@ EBTNodeResult::Type UBTTask_DefaultAttack::ExecuteTask(UBehaviorTreeComponent& O
 	AVDCharacterBase* TargetCharacter = Cast<AVDCharacterBase>(Target);
 	if (TargetCharacter)
 	{
+		if(TargetCharacter->IsDead())
+		{
+			BlackboardComp->SetValueAsObject(VDBB_KEY_TARGET, nullptr);
+			return EBTNodeResult::Failed;
+		}
 		if (ControlledPawn->GetDistanceTo(TargetCharacter) > AttackRange)
 		{
 			return EBTNodeResult::Failed;

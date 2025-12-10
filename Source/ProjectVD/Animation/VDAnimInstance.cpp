@@ -4,6 +4,7 @@
 #include "Animation/VDAnimInstance.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Animation/AnimNode_StateMachine.h"
 #include "KismetAnimationLibrary.h"
 
 UVDAnimInstance::UVDAnimInstance()
@@ -26,6 +27,25 @@ void UVDAnimInstance::SetIsDefence(uint8 InIsDefence)
 	bIsDefence = InIsDefence;
 }
 
+float UVDAnimInstance::GetElapseTimeInState(FName MachineName, FName StateName) const
+{
+	const FAnimNode_StateMachine* StateMachine = GetStateMachineInstanceFromName(MachineName);
+	if (!StateMachine)
+	{
+		return -1.0f;
+	}
+
+	const int32 CurrentState = StateMachine->GetCurrentState();
+	const FName CurrentStateName = StateMachine->GetStateInfo(CurrentState).StateName;
+
+	if (CurrentStateName != StateName)
+	{
+		return -1.0f;
+	}
+
+	return StateMachine->GetCurrentStateElapsedTime();
+}
+
 void UVDAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
@@ -43,12 +63,12 @@ void UVDAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (OwnerCharacterMovement)
 	{
+		const FVector Vel = OwnerCharacterMovement->Velocity;
+		const float FS = FVector::DotProduct(OwnerCharacter->GetActorForwardVector(), Vel);
+		const float RS = FVector::DotProduct(OwnerCharacter->GetActorRightVector(), Vel);
+
 		if (bIsLockOnTarget)
 		{
-			const FVector Vel = OwnerCharacterMovement->Velocity;
-			const float FS = FVector::DotProduct(OwnerCharacter->GetActorForwardVector(), Vel);
-			const float RS = FVector::DotProduct(OwnerCharacter->GetActorRightVector(), Vel);
-
 			ForwardSpeed = FS;
 			RightSpeed = RS;
 
@@ -56,10 +76,6 @@ void UVDAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 		else
 		{
-			const FVector Vel = OwnerCharacterMovement->Velocity;
-			const float FS = FVector::DotProduct(OwnerCharacter->GetActorForwardVector(), Vel);
-			const float RS = FVector::DotProduct(OwnerCharacter->GetActorRightVector(), Vel);
-			
 			ForwardSpeed = FS;
 			RightSpeed = RS;
 

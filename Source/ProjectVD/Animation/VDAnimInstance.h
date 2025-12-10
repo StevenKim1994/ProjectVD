@@ -21,6 +21,9 @@ public:
 	void SetIsDead(uint8 InIsDead);
 	void SetIsDefence(uint8 InIsDefence);
 
+	float GetElapseTimeInState(FName MachineName, FName StateName) const;
+
+
 protected:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
@@ -51,4 +54,5 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character");
 	float RightSpeed;
+
 };
