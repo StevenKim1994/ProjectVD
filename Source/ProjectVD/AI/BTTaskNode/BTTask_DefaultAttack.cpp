@@ -88,20 +88,4 @@ EBTNodeResult::Type UBTTask_DefaultAttack::ExecuteTask(UBehaviorTreeComponent& O
 void UBTTask_DefaultAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-
-	if (CurrentAnimInstance == nullptr)
-	{
-		return;
-	}
-
-	if (!CurrentAnimInstance->Montage_IsPlaying(CurrentAttackAM.Get()))
-	{
-		// 몽타주가 재생되지 않으면 태스크 종료
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-	}
-	else
-	{
-		FinishLatentTask(OwnerComp, EBTNodeResult::InProgress);
-	}
-
 }
