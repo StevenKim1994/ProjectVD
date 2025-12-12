@@ -32,10 +32,11 @@ EBTNodeResult::Type UBTTask_UseSkill::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	if (IVDEnemyInterface* EnemyInterface = Cast<IVDEnemyInterface>(AIOwner))
 	{
 		FOnSkillUsedEnded SkillUseEndedDelegate;
-		SkillUseEndedDelegate.BindLambda([this, &OwnerComp]()
+
+		SkillUseEndedDelegate.BindWeakLambda(this, [this, OwnerCompPtr = &OwnerComp]()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Skill Use Ended Delegate Called"));
-			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+			FinishLatentTask(*OwnerCompPtr, EBTNodeResult::Succeeded);
 		});
 		EnemyInterface->UseSkill(SkillIndex, SkillUseEndedDelegate);
 
