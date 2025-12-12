@@ -37,7 +37,8 @@ void AVDEnemySkeletonMarauder::PostInitializeComponents()
 			->SetPatrolRange(DataTableInfo->PatrolRange)
 			->SetPatrolWaitTime(DataTableInfo->PatrolWaitTime)
 			->SetTurnSpeed(DataTableInfo->TurnSpeed)
-			->SetMaxMovementSpeed(DataTableInfo->MaxMovementSpeed)
+			->SetMaxPatrolMoveSpeed(DataTableInfo->MaxPatrolMoveSpeed)
+			->SetMaxChaseMoveSpeed(DataTableInfo->MaxChaseMoveSpeed)
 			->SetAttackRange(DataTableInfo->AttackRange)
 			->SetAttackSpeed(DataTableInfo->AttackSpeed)
 			->SetAttackPower(DataTableInfo->AttackPower)
@@ -49,7 +50,7 @@ void AVDEnemySkeletonMarauder::PostInitializeComponents()
 	if (Movement)
 	{
 		Movement->MinAnalogWalkSpeed = 50.f;
-		Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxMovementSpeed();
+		Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxPatrolMoveSpeed();
 	}
 }
 

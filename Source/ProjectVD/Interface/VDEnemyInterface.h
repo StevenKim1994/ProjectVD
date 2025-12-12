@@ -36,4 +36,7 @@ public:
 	virtual float GetTurnSpeed() const = 0;
 	virtual float GetAttackRadius() const = 0;
 	virtual float GetAttackRange() const = 0;
+
+	virtual void ChangePatrolMoveSpeed() = 0;
+	virtual void ChangeChaseMoveSpeed() = 0;
 };

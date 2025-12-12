@@ -69,9 +69,15 @@ UVDEnemyStatsBaseComponent* UVDEnemyStatsBaseComponent::SetTurnSpeed(float InTur
 	return this;
 }
 
-UVDEnemyStatsBaseComponent* UVDEnemyStatsBaseComponent::SetMaxMovementSpeed(float InMaxMovementSpeed)
+UVDEnemyStatsBaseComponent* UVDEnemyStatsBaseComponent::SetMaxPatrolMoveSpeed(float InMaxPatrolMoveSpeed)
 {
-	MaxMovementSpeed = InMaxMovementSpeed;
+	MaxPatrolMoveSpeed = InMaxPatrolMoveSpeed;
+	return this;
+}
+
+UVDEnemyStatsBaseComponent* UVDEnemyStatsBaseComponent::SetMaxChaseMoveSpeed(float InMaxChaseMoveSpeed)
+{
+	MaxChaseMoveSpeed = InMaxChaseMoveSpeed;
 	return this;
 }
 

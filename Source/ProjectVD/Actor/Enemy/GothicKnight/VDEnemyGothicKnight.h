@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
 #include "Interface/VDSequenceable.h"
-#include "Interface/VDPatrolPositionProvider.h"
 #include "VDEnemyGothicKnight.generated.h"
 
 class ULevelSequence;
@@ -14,7 +13,7 @@ class UStaticMeshComponent;
  * 
  */
 UCLASS()
-class PROJECTVD_API AVDEnemyGothicKnight : public AVDEnemyCharacterBase, public IVDSequenceable, public IVDPatrolPositionProvider
+class PROJECTVD_API AVDEnemyGothicKnight : public AVDEnemyCharacterBase, public IVDSequenceable
 {
 	GENERATED_BODY()
 	
@@ -24,9 +23,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = true))
 	TObjectPtr<ULevelSequence> CutSceneSequencer;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite , Category = "Patrol", Meta = (AllowPrivateAccess = true))
-	TArray<FVector> PatrolPositions;
 
 public:
 	AVDEnemyGothicKnight();
@@ -42,8 +38,6 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	void StartCutScene();
 	
-	// IVDPatrolPositionProvider을(를) 통해 상속됨
-	TArray<FVector> GetPatrolPosition() const override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -51,6 +45,6 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	void CheckPatrolPosition();
+	void DefaultAttack() override;
 
 };

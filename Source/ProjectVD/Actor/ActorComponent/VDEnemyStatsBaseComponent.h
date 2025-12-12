@@ -37,7 +37,10 @@ protected:
 	float TurnSpeed;
 
 	UPROPERTY()
-	float MaxMovementSpeed;
+	float MaxPatrolMoveSpeed;
+
+	UPROPERTY()
+	float MaxChaseMoveSpeed;
 
 	virtual void BeginPlay() override;
 	virtual void InitializeComponent() override;
@@ -52,7 +55,8 @@ public:
 	virtual UVDEnemyStatsBaseComponent* SetPatrolRange(float InPatrolRange);
 	virtual UVDEnemyStatsBaseComponent* SetPatrolWaitTime(float InPatrolWaitTime);
 	virtual UVDEnemyStatsBaseComponent* SetTurnSpeed(float InTurnSpeed);
-	virtual UVDEnemyStatsBaseComponent* SetMaxMovementSpeed(float InMaxMovementSpeed);
+	virtual UVDEnemyStatsBaseComponent* SetMaxPatrolMoveSpeed(float InMaxMovementSpeed);
+	virtual UVDEnemyStatsBaseComponent* SetMaxChaseMoveSpeed(float InMaxMovementSpeed);
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -63,5 +67,6 @@ public:
 	FORCEINLINE float GetPatrolRange() const { return PatrolRange; }
 	FORCEINLINE float GetPatrolWaitTime() const { return PatrolWaitTime; }
 	FORCEINLINE float GetTurnSpeed() const { return TurnSpeed; }
-	FORCEINLINE float GetMaxMovementSpeed() const { return MaxMovementSpeed; }
+	FORCEINLINE float GetMaxPatrolMoveSpeed() const { return MaxPatrolMoveSpeed; }
+	FORCEINLINE float GetMaxChaseMovementSpeed() const { return MaxChaseMoveSpeed; }
 };

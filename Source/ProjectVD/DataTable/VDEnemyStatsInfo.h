@@ -35,5 +35,8 @@ public:
 	float TurnSpeed = 0.f;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "EnemyStats")
-	float MaxMovementSpeed = 0.f;
+	float MaxPatrolMoveSpeed = 0.f;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "EnemyStats")
+	float MaxChaseMoveSpeed = 0.f;
 };

@@ -17,13 +17,7 @@ EBTNodeResult::Type UBTTask_SetNextPatrolIndex::ExecuteTask(UBehaviorTreeCompone
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	AAIController* AIController = OwnerComp.GetAIOwner();
-	if(!AIController)
-	{
-		return EBTNodeResult::Failed;
-	}
-
-	IVDPatrolPositionProvider* PatrolProvider = Cast<IVDPatrolPositionProvider>(AIController->GetPawn());
+	IVDPatrolPositionProvider* PatrolProvider = Cast<IVDPatrolPositionProvider>(OwnerComp.GetAIOwner()->GetPawn());
 	if(!PatrolProvider)
 	{
 		return EBTNodeResult::Failed;

@@ -76,6 +76,8 @@ public:
 	virtual UVDEnemyAnimInstance* DefaultAttackMontagePlay(FOnAttackMontageEnded AttackMontageEndedDelegate = nullptr) override;
 	virtual UAnimMontage* GetFindPlayerAnimMontage() const override;
 	virtual UVDEnemyStatsBaseComponent* GetStatsComp() const override;
+	virtual void ChangePatrolMoveSpeed() override;
+	virtual void ChangeChaseMoveSpeed() override;
 
 	float GetPatrolRadius() const override;
 	float GetPatrolWaitTime() const override;

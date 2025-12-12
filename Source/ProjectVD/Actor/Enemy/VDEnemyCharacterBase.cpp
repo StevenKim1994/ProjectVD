@@ -90,6 +90,16 @@ UVDEnemyStatsBaseComponent* AVDEnemyCharacterBase::GetStatsComp() const
 	return BaseStatsComponent;
 }
 
+void AVDEnemyCharacterBase::ChangePatrolMoveSpeed()
+{
+
+}
+
+void AVDEnemyCharacterBase::ChangeChaseMoveSpeed()
+{
+
+}
+
 void AVDEnemyCharacterBase::SetComboInputOn(bool bIsOn)
 {
 

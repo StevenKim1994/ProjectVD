@@ -125,7 +125,8 @@ void AVDEnemyGrux::PostInitializeComponents()
 			->SetPatrolRange(DataTableInfo->PatrolRange)
 			->SetPatrolWaitTime(DataTableInfo->PatrolWaitTime)
 			->SetTurnSpeed(DataTableInfo->TurnSpeed)
-			->SetMaxMovementSpeed(DataTableInfo->MaxMovementSpeed)
+			->SetMaxPatrolMoveSpeed(DataTableInfo->MaxPatrolMoveSpeed)
+			->SetMaxChaseMoveSpeed(DataTableInfo->MaxChaseMoveSpeed)
 			->SetAttackRange(DataTableInfo->AttackRange)
 			->SetAttackSpeed(DataTableInfo->AttackSpeed)
 			->SetAttackPower(DataTableInfo->AttackPower)
@@ -137,26 +138,13 @@ void AVDEnemyGrux::PostInitializeComponents()
 	Movement->bOrientRotationToMovement = true;
 	Movement->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
 	Movement->MinAnalogWalkSpeed = 50.f;
-	Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxMovementSpeed();
+	Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxPatrolMoveSpeed();
 
 }
 
 void AVDEnemyGrux::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-#if WITH_EDITOR
-	if (WeakPointCollision)
-	{
-		const FVector Center = WeakPointCollision->GetComponentLocation();
-		const FQuat Rotation = WeakPointCollision->GetComponentQuat();
-		const float HalfHeight = WeakPointCollision->GetScaledCapsuleHalfHeight();
-		const float Radius = WeakPointCollision->GetScaledCapsuleRadius();
-
-		// 프레임마다 WeakPoint 캡슐을 시각화
-		DrawDebugCapsule(GetWorld(), Center, HalfHeight, Radius, Rotation, FColor::Red, false, 0.0f, 0, 1.5f);
-	}
-#endif
 }
 
 void AVDEnemyGrux::SetComboInputOn(bool bIsOn)
