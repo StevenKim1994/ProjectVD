@@ -7,6 +7,7 @@
 #include "VDEnemyInterface.generated.h"
 
 DECLARE_DELEGATE(FOnAttackMontageEnded);
+DECLARE_DELEGATE(FOnSkillUsedEnded);
 
 class UVDEnemyAnimInstance;
 class UVDEnemyStatsBaseComponent;
@@ -36,7 +37,7 @@ public:
 	virtual float GetTurnSpeed() const = 0;
 	virtual float GetAttackRadius() const = 0;
 	virtual float GetAttackRange() const = 0;
-
 	virtual void ChangePatrolMoveSpeed() = 0;
 	virtual void ChangeChaseMoveSpeed() = 0;
+	virtual void UseSkill(uint8 SkillIndex, FOnSkillUsedEnded SkillUseEndedDelegate) = 0;
 };

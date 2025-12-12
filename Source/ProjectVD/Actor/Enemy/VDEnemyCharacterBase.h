@@ -78,6 +78,7 @@ public:
 	virtual UVDEnemyStatsBaseComponent* GetStatsComp() const override;
 	virtual void ChangePatrolMoveSpeed() override;
 	virtual void ChangeChaseMoveSpeed() override;
+	virtual void UseSkill(uint8 SkillIndex, FOnSkillUsedEnded SkillUseEndedDelegate) override;
 
 	float GetPatrolRadius() const override;
 	float GetPatrolWaitTime() const override;

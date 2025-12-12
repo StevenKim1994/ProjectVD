@@ -107,6 +107,28 @@ void AVDEnemyGothicKnight::DefaultAttackHit()
 	}
 }
 
+void AVDEnemyGothicKnight::UseSkill(uint8 SkillIndex, FOnSkillUsedEnded SkillUseEndedDelegate)
+{
+	// TODO :: GAS로 바꾸면 여기 수정 필요
+	Super::UseSkill(SkillIndex, SkillUseEndedDelegate);
+
+	switch (SkillIndex)
+	{
+		case 0:
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Gothic Knight Skill 0 Used"));
+			GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([SkillUseEndedDelegate]()
+			{
+				if (SkillUseEndedDelegate.IsBound())
+				{
+					SkillUseEndedDelegate.Execute();
+				}
+				}));
+		}
+		break;
+	}
+}
+
 float AVDEnemyGothicKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Result = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);

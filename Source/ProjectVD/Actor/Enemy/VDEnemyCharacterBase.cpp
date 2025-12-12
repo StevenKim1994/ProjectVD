@@ -100,6 +100,11 @@ void AVDEnemyCharacterBase::ChangeChaseMoveSpeed()
 
 }
 
+void AVDEnemyCharacterBase::UseSkill(uint8 SkillIndex, FOnSkillUsedEnded SkillUseEndedDelegate)
+{
+
+}
+
 void AVDEnemyCharacterBase::SetComboInputOn(bool bIsOn)
 {
 
