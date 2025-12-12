@@ -1,4 +1,4 @@
 ﻿Name,MaxHealth,AttackPower,AttackSpeed,AttackRange,FindPlayerRange,PatrolWaitTime,PatrolRange,TurnSpeed,MaxPatrolMoveSpeed,MaxChaseMoveSpeed
 Grux,1500,10,1,1200,2400,5,500,3,500,1000
-SkeletonMarauder,100,5,1,300,500,2.5,100,3,100,200
+SkeletonMarauder,100,5,1,300,500,2.5,100,3,100,500
 GothicKnight,750,10,1,450,1000,0,300,3,75,150

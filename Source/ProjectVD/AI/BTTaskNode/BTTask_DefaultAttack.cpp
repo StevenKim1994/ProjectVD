@@ -14,7 +14,7 @@
 
 UBTTask_DefaultAttack::UBTTask_DefaultAttack()
 {
-	bNotifyTick = false;
+	bNotifyTick = true;
 }
 
 EBTNodeResult::Type UBTTask_DefaultAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

@@ -12,7 +12,7 @@ EBTNodeResult::Type UBTTask_ChangePatrolMoveSpeed::ExecuteTask(UBehaviorTreeComp
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	AActor* AIOwnerActor = OwnerComp.GetAIOwner();
+	AActor* AIOwnerActor = OwnerComp.GetAIOwner()->GetPawn();
 	if (!AIOwnerActor)
 	{
 		return EBTNodeResult::Failed;

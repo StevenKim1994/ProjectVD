@@ -35,6 +35,7 @@ public:
 
 	virtual void SetComboInputOn(bool bIsOn) override;
 	virtual void DefaultAttackHit() override;
+
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	void StartCutScene();
 	
