@@ -39,7 +39,7 @@ protected:
 	TObjectPtr<AVDEnemyAIController> EnemyAIController;
 
 	UPROPERTY()
-	bool bIsDead = false;
+	uint8 bIsDead : 1;
 
 	UPROPERTY()
 	TObjectPtr<UVDEnemyStatsBaseComponent> BaseStatsComponent;

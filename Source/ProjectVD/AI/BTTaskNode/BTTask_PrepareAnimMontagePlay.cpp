@@ -39,19 +39,6 @@ EBTNodeResult::Type UBTTask_PrepareAnimMontagePlay::ExecuteTask(UBehaviorTreeCom
 		return EBTNodeResult::Failed;
 	}
 
-	// DESC :: 타겟 바라보게 회전
-	{
-		FVector TargetVector = OwnerComp.GetBlackboardComponent()->GetValueAsVector(VDBB_KEY_TARGET_POS);
-		FVector ToTarget = TargetVector - AIPawn->GetActorLocation();
-		ToTarget.Z = 0.f;
-		if (!ToTarget.IsNearlyZero())
-		{
-			const FRotator NewRot = ToTarget.Rotation();
-			AIController->SetControlRotation(NewRot);
-			AIPawn->SetActorRotation(NewRot);
-		}
-	}
-
 	UAnimMontage* AnimMontage = EnemyInterface->GetFindPlayerAnimMontage();
 	UVDEnemyAnimInstance* AnimInstance = EnemyInterface->PrepareAnimMontagePlay();
 
