@@ -23,22 +23,28 @@ class PROJECTVD_API AVDItemPropActorBase : public AActor , public IVDPickable
 	
 private:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemProp", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemProp", Meta = (AllowPrivateAccess = true))
 	bool bIsHoverable = true;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ItemProp", Meta = (AllowPrivateAccess ="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ItemProp", Meta = (AllowPrivateAccess =true))
 	TObjectPtr<UWidgetComponent> NamePlateWidgetComp;
 
 	UPROPERTY()
 	TObjectPtr<UVDItemPropNamePlateWidget> NamePlateWidget;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="ItemProp", Meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UNiagaraComponent> PickedEffectComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="ItemProp", Meta=(AllowPrivateAccess = true))
+	TObjectPtr<UNiagaraComponent> EffectComp;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite , Category = "ItemProp" , Meta = (AllowPrivateAccess ="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemProp", Meta=(AllowPrivateAccess =true))
+	TObjectPtr<UNiagaraSystem> GroundEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemProp", Meta = (AllowPrivateAccess = true))
+	TObjectPtr<UNiagaraSystem> PickedEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite , Category = "ItemProp" , Meta = (AllowPrivateAccess =true))
 	TObjectPtr<UStaticMeshComponent> MeshComp;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemProp", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemProp", Meta = (AllowPrivateAccess = true))
 	TObjectPtr<UBoxComponent> ColiderComp;
 
 	UPROPERTY()

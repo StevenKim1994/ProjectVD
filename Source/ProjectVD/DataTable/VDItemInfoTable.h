@@ -19,6 +19,9 @@ public:
 	int32 MaxQuantity = 1; // DESC :: 한번에 인벤토리 슬롯에 쌓을 수 있는 최대 갯수
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Info")
+	FString ItemName; // DESC :: 아이템 이름 추후 다국어 지원고려를 위해 Key값으로 변경 고려
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Info")
 	FString ItemDescription; // DESC :: 아이템 설명 추후 다국어 지원고려를 위해 Key값으로 변경 고려
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Info")

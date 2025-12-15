@@ -31,9 +31,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = true))
 	TObjectPtr<UAnimMontage> HeavyAttackAM;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara", Meta = (AllowPrivateAccess = true))
-	TObjectPtr<UNiagaraSystem> HeavyAttackEffect;
-
 public:
 	AVDEnemyGothicKnight();
 	// IVDSequenceable을(를) 통해 상속됨

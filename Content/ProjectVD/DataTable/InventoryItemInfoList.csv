@@ -1,4 +1,4 @@
-﻿Name,ItemType,ItemDescription,MaxQuantity,Icon
-Sword,Weapon,기본적으로  제공되는 무기입니다.,1,empty
-HealingPositon,Consumable,체력을 회복하는데 사용하는 물약입니다.,99,empty
-TwoHandSword,Weapon,양손검,1,empty
+﻿Name,ItemType,ItemName,ItemDescription,MaxQuantity,Icon
+Sword,Weapon,Sword,기본적으로  제공되는 무기입니다.,1,empty
+HealingPositon,Consumable,HealingPosition,체력을 회복하는데 사용하는 물약입니다.,99,empty
+TwoHandSword,Weapon,TwoHandSword,양손검,1,empty

@@ -34,10 +34,10 @@ AVDItemPropActorBase::AVDItemPropActorBase()
 	MeshComp->SetupAttachment(RootComponent);
 	MeshComp->SetCollisionProfileName(CPROFILE_NO_COLLISION);
 
-	PickedEffectComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("PickedEffectComp"));
-	PickedEffectComp->SetupAttachment(RootComponent);
-	PickedEffectComp->SetAutoActivate(false);
-	PickedEffectComp->OnSystemFinished.AddDynamic(this, &AVDItemPropActorBase::OnPickedEffectFinished);
+	EffectComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("EffectComp"));
+	EffectComp->SetupAttachment(RootComponent);
+	EffectComp->SetAutoActivate(false);
+	EffectComp->OnSystemFinished.AddDynamic(this, &AVDItemPropActorBase::OnPickedEffectFinished);
 	ColiderComp->SetCollisionProfileName(CPROFILE_PLACE_TRIGGER);
 	ColiderComp->OnComponentBeginOverlap.AddDynamic(this, &AVDItemPropActorBase::OnBeginOverlap);
 	ColiderComp->OnComponentEndOverlap.AddDynamic(this, &AVDItemPropActorBase::OnEndOverlap);
@@ -70,6 +70,12 @@ void AVDItemPropActorBase::BeginPlay()
 
 		NamePlateWidget->SetItemNameText(FText::FromName(ItemInfoTableRowName.RowName));
 		NamePlateWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if(GroundEffect && EffectComp)
+	{
+		EffectComp->SetAsset(GroundEffect);
+		EffectComp->Activate();
 	}
 }
 
@@ -171,9 +177,12 @@ void AVDItemPropActorBase::OnPicked(AActor* Picker)
 		UVDUISubsystem* UISubsystem = GetGameInstance()->GetSubsystem<UVDUISubsystem>();
 		if (Character->PickItem(this))
 		{
-			if (PickedEffectComp)
+			if (EffectComp && PickedEffect)
 			{
-				PickedEffectComp->Activate();
+				EffectComp->DeactivateImmediate();
+				EffectComp->SetAsset(PickedEffect);
+				EffectComp->Activate();
+				EffectComp->ResetSystem();
 			}
 			
 			MeshComp->SetHiddenInGame(true);
