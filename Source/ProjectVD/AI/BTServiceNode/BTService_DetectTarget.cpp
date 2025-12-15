@@ -70,7 +70,7 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		FCollisionShape::MakeSphere(DetectRadius),
 		CollisionQueryParam
 	);
-	DrawDebugSphere(ControllingPawn->GetWorld(), ControllingPawn->GetActorLocation(), DetectRadius, 1, FColor::Blue, false);
+	//DrawDebugSphere(ControllingPawn->GetWorld(), ControllingPawn->GetActorLocation(), DetectRadius, 1, FColor::Blue, false);
 
 	if (bResult)
 	{

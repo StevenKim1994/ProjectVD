@@ -14,6 +14,7 @@
 #include "Public/VDConstrants.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/InGame/VDItemPropNamePlateWidget.h"
+#include "DataTable/VDItemInfoTable.h"
 
 // Sets default values
 AVDItemPropActorBase::AVDItemPropActorBase()
@@ -68,7 +69,14 @@ void AVDItemPropActorBase::BeginPlay()
 			return;
 		}
 
-		NamePlateWidget->SetItemNameText(FText::FromName(ItemInfoTableRowName.RowName));
+		if (ItemInfoTableRowName.DataTable)
+		{
+			if (const FVDItemInfoTable* ItemInfo = ItemInfoTableRowName.DataTable->FindRow<FVDItemInfoTable>(ItemInfoTableRowName.RowName, TEXT("ItemName")))
+			{
+				NamePlateWidget->SetItemNameText(FText::FromString(ItemInfo->ItemName));
+			}
+		}
+
 		NamePlateWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 
