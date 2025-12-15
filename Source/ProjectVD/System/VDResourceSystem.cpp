@@ -6,6 +6,11 @@
 #include "DataAsset/VDUIRegistry.h"
 #include "Engine/AssetManager.h"
 
+UVDResourceSystem::UVDResourceSystem()
+{
+
+}
+
 void UVDResourceSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);

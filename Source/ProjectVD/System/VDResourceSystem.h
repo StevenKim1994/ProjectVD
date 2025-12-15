@@ -24,6 +24,7 @@ private:
 	UPROPERTY()
 	TMap<FPrimaryAssetId, TWeakObjectPtr<UPrimaryDataAsset>> LoadedPrimaryAssets;
 public:
+	UVDResourceSystem();
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 

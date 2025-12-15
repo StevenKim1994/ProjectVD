@@ -7,6 +7,11 @@
 #include "System/VDResourceSystem.h"
 
 
+UVDLevelSystem::UVDLevelSystem()
+{
+
+}
+
 void UVDLevelSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);

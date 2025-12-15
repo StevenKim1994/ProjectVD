@@ -9,7 +9,7 @@ void UVDDataTableSubSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	UVDResourceSystem* ResourceSystem = Collection.InitializeDependency<UVDResourceSystem>();
-	TableRegistry = ResourceSystem->GetLoadedPrimaryAsset<UVDTableRegistry>(FPrimaryAssetId(FName(TEXT("Table")), FName(TEXT("PAL_TableRegistry"))));
+	//TableRegistry = ResourceSystem->GetLoadedPrimaryAsset<UVDTableRegistry>(FPrimaryAssetId(FName(TEXT("Table")), FName(TEXT("PAL_TableRegistry"))));
 }
 
 void UVDDataTableSubSystem::Deinitialize()
@@ -19,5 +19,5 @@ void UVDDataTableSubSystem::Deinitialize()
 
 UVDDataTableSubSystem::UVDDataTableSubSystem()
 {
-
+	TableRegistry = ConstructorHelpers::FObjectFinder<UVDTableRegistry>(TEXT("/Game/ProjectVD/DataAsset/PAL_TableRegistry.PAL_TableRegistry")).Object;
 }

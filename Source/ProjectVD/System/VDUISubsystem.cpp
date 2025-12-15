@@ -15,14 +15,14 @@
 
 UVDUISubsystem::UVDUISubsystem()
 {
-
+	UIRegistry = ConstructorHelpers::FObjectFinder<UVDUIRegistry>(TEXT("/Game/ProjectVD/DataAsset/PAL_UIRegistry.PAL_UIRegistry")).Object;
 }
 
 void UVDUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	ResourceSystem = Collection.InitializeDependency<UVDResourceSystem>();
-	UIRegistry = ResourceSystem->GetLoadedPrimaryAsset<UVDUIRegistry>(FPrimaryAssetId(FName(TEXT("UI")), FName(TEXT("PAL_UIRegistry"))));
+		//ResourceSystem->GetLoadedPrimaryAsset<UVDUIRegistry>(FPrimaryAssetId(FName(TEXT("UI")), FName(TEXT("PAL_UIRegistry"))));
 	
 	ModalUIWidgetStack.Empty();
 	ActiveWidgetInstanceMap.Empty();

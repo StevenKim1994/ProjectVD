@@ -19,6 +19,7 @@ class PROJECTVD_API UVDLevelSystem : public UGameInstanceSubsystem
 
 
 public:
+	UVDLevelSystem();
 	void Initialize(FSubsystemCollectionBase& Collection) override;
 	void Deinitialize() override;
 
