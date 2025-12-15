@@ -397,3 +397,11 @@ void UVDUISubsystem::ShowToastMessage(const FText& Message)
 		ToastContainerWidget->ShowToast(Message);
 	}
 }
+
+void UVDUISubsystem::ShowToastMessage(const FText& MessageFormat, const float Duration)
+{
+	if (ToastContainerWidget)
+	{
+		ToastContainerWidget->ShowToast(MessageFormat, Duration);
+	}
+}

@@ -75,26 +75,13 @@ void UVDToastContainer::SpawnToast(const FToastRequest& Request)
 		return;
 	}
 
-	ToastWidget->SetToastMessageText(Request.Message);
-	ToastWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ToastWidget
+		->SetToastMessageText(Request.Message)
+		->SetToastDuration(Request.Duration)
+		->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
 	ToastStack->AddChildToVerticalBox(ToastWidget);
 	ActiveToasts.Add(ToastWidget);
-
-	// 타이머 설정하여 일정 시간 후 제거
-	/*
-	FTimerHandle ToastTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(
-		ToastTimerHandle,
-		[this, ToastWidget]()
-		{
-			HandleToastFinished(ToastWidget);
-		},
-		Request.Duration,
-		false
-	);
-	*/
-	// TODO :: 타이머는 어짜피 하위 위젯에서 애니메이션이 끝나면 자동으로 콜백호출되도록함.
 }
 
 void UVDToastContainer::NativeOnInitialized()
@@ -116,4 +103,9 @@ void UVDToastContainer::NativeDestruct()
 void UVDToastContainer::ShowToast(const FText& Message)
 {
 	SpawnToast(FToastRequest{ Message, nullptr, ToastDuration });
+}
+
+void UVDToastContainer::ShowToast(const FText& Message, float Duration)
+{
+	SpawnToast(FToastRequest{ Message, nullptr, Duration });
 }

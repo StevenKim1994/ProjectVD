@@ -72,6 +72,7 @@ public:
 	void PopModalUIWidget();
 	void AllModalUIWidgetClear();
 	void ShowToastMessage(const FText& Message);
+	void ShowToastMessage(const FText& MessageFormat, const float Duration);
 
 	TSoftClassPtr<UUserWidget> GetUIWidgetClassPathByName(const FName& WidgetName);
 

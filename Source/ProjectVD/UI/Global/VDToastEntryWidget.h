@@ -23,6 +23,8 @@ private:
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	TObjectPtr<UWidgetAnimation> ShowAnim;
 
+	float ToastDuration;
+
 	UFUNCTION()
 	void OnToastShowingAnimationFinished();
 
@@ -34,7 +36,10 @@ private:
 
 public:
 	UFUNCTION()
-	void SetToastMessageText(const FText& InText);
+	UVDToastEntryWidget* SetToastMessageText(const FText& InText);
+
+	UFUNCTION()
+	UVDToastEntryWidget* SetToastDuration(float InDuration);
 
 	FORCEINLINE FOnToastAnimationFinished& OnToastAnimationFinished() { return ToastAnimationFinishedDelegate; }
 };

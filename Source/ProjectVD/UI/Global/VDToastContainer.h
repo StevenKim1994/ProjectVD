@@ -57,5 +57,5 @@ private:
 public:
 	UFUNCTION()
 	void ShowToast(const FText& Message);
-
+	void ShowToast(const FText& Message, float Duration);
 };
