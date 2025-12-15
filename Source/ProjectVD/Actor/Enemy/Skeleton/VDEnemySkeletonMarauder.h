@@ -22,6 +22,7 @@ private:
 
 protected:
 
+	virtual FName GetEnemyStatsRowKey() const override;
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 

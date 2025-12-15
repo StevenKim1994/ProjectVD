@@ -98,6 +98,11 @@ void AVDEnemyGrux::HitReact(const FVector& HitPos)
 	}
 }
 
+FName AVDEnemyGrux::GetEnemyStatsRowKey() const
+{
+	return FName(TEXT("Grux"));
+}
+
 void AVDEnemyGrux::BeginPlay()
 {
 	Super::BeginPlay();
@@ -108,38 +113,6 @@ void AVDEnemyGrux::BeginPlay()
 void AVDEnemyGrux::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	UGameInstance* GameInstance = GetGameInstance();
-
-	if(GameInstance == nullptr)
-	{
-		return;
-	}
-
-	FVDEnemyStatsInfo* DataTableInfo = GameInstance->GetSubsystem<UVDDataTableSubSystem>()->GetDataTableRow<FVDEnemyStatsInfo>(FName(TEXT("EnemyStatsInfo")), FName(TEXT("Grux")));
-
-	if (DataTableInfo)
-	{
-		BaseStatsComponent
-			->SetFindPlayerRange(DataTableInfo->FindPlayerRange)
-			->SetPatrolRange(DataTableInfo->PatrolRange)
-			->SetPatrolWaitTime(DataTableInfo->PatrolWaitTime)
-			->SetTurnSpeed(DataTableInfo->TurnSpeed)
-			->SetMaxPatrolMoveSpeed(DataTableInfo->MaxPatrolMoveSpeed)
-			->SetMaxChaseMoveSpeed(DataTableInfo->MaxChaseMoveSpeed)
-			->SetAttackRange(DataTableInfo->AttackRange)
-			->SetAttackSpeed(DataTableInfo->AttackSpeed)
-			->SetAttackPower(DataTableInfo->AttackPower)
-			->SetMaxHealth(DataTableInfo->MaxHealth)
-			->SetHealth(DataTableInfo->MaxHealth);
-
-	}
-	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	Movement->bOrientRotationToMovement = true;
-	Movement->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
-	Movement->MinAnalogWalkSpeed = 50.f;
-	Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxPatrolMoveSpeed();
-
 }
 
 void AVDEnemyGrux::Tick(float DeltaTime)

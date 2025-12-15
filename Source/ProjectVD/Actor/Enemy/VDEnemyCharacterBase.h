@@ -56,6 +56,11 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void PostInitializeComponents() override;
+
+	virtual FName GetEnemyStatsRowKey() const PURE_VIRTUAL(AVDEnemyCharacterBase::GetEnemyStatsRowKey, return NAME_None;);
+
+
 public:	
 	AVDEnemyCharacterBase();
 

@@ -35,6 +35,7 @@ protected:
 	virtual void DefaultAttack() override;
 	virtual void HitReact(const FVector& HitPos) override;
 
+	virtual FName GetEnemyStatsRowKey() const override;
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaTime) override;

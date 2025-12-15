@@ -19,3 +19,8 @@ void IVDAttackable::ResetHitList()
 {
 	// DESC :: 기본 구현 없음 - 상속받은 클래스에서 구현
 }
+
+void IVDAttackable::SkillAttackHit(int32 SkillIndex, int32 SkillAttackCount)
+{
+	// DESC :: 기본 구현 없음 - 상속받은 클래스에서 구현
+}

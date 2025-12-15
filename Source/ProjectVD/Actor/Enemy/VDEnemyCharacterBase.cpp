@@ -9,6 +9,10 @@
 #include "Animation/VDEnemyAnimInstance.h"
 #include "Public/VDPhysicInfo.h"
 
+#include "Game/VDGameInstance.h"
+#include "DataTable/VDEnemyStatsInfo.h"
+#include "System/VDDataTableSubsystem.h"
+
 AVDEnemyCharacterBase::AVDEnemyCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -16,7 +20,6 @@ AVDEnemyCharacterBase::AVDEnemyCharacterBase()
 	HitStopComponent = CreateDefaultSubobject<UVDHitStopComponent>(TEXT("HitStopComponent"));
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	//AIControllerClass = AVDEnemyAIController::StaticClass();
 	EnemyAIController = Cast<AVDEnemyAIController>(GetController());
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
@@ -71,6 +74,16 @@ UVDEnemyAnimInstance* AVDEnemyCharacterBase::DefaultAttackMontagePlay(FOnAttackM
 				AttackMontageEndedDelegate.ExecuteIfBound();
 			});
 
+			if(AnimInstance->Montage_IsPlaying(DefaultAttackAM))
+			{
+				AttackMontageEndedDelegate.ExecuteIfBound();
+				return AnimInstance;
+			}
+			else if(AnimInstance->IsAnyMontagePlaying())
+			{
+				return AnimInstance;
+			}
+
 			AnimInstance->Montage_Play(DefaultAttackAM);
 			AnimInstance->Montage_SetEndDelegate(EndDelegate, DefaultAttackAM);
 
@@ -92,12 +105,14 @@ UVDEnemyStatsBaseComponent* AVDEnemyCharacterBase::GetStatsComp() const
 
 void AVDEnemyCharacterBase::ChangePatrolMoveSpeed()
 {
-
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+	Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxPatrolMoveSpeed();
 }
 
 void AVDEnemyCharacterBase::ChangeChaseMoveSpeed()
 {
-
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+	Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxChaseMoveSpeed();
 }
 
 void AVDEnemyCharacterBase::UseSkill(uint8 SkillIndex, FOnSkillUsedEnded SkillUseEndedDelegate)
@@ -228,6 +243,11 @@ void AVDEnemyCharacterBase::DefaultAttack()
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		if (AnimInstance)
 		{
+			if(AnimInstance->Montage_IsPlaying(DefaultAttackAM))
+			{
+				return;
+			}
+
 			AnimInstance->Montage_Play(DefaultAttackAM);
 		}
 	}
@@ -282,5 +302,44 @@ void AVDEnemyCharacterBase::BeginPlay()
 void AVDEnemyCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AVDEnemyCharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	UGameInstance* GameInstance = GetGameInstance();
+	if(GameInstance == nullptr)
+	{
+		return;
+	}
+
+	if (BaseStatsComponent)
+	{
+		FName RowKey = GetEnemyStatsRowKey();
+		FVDEnemyStatsInfo* DataTableInfo = GameInstance->GetSubsystem<UVDDataTableSubSystem>()->GetDataTableRow<FVDEnemyStatsInfo>(FName(TEXT("EnemyStatsInfo")), RowKey);
+
+		if(DataTableInfo)
+		{
+			BaseStatsComponent
+				->SetFindPlayerRange(DataTableInfo->FindPlayerRange)
+				->SetPatrolRange(DataTableInfo->PatrolRange)
+				->SetPatrolWaitTime(DataTableInfo->PatrolWaitTime)
+				->SetTurnSpeed(DataTableInfo->TurnSpeed)
+				->SetMaxPatrolMoveSpeed(DataTableInfo->MaxPatrolMoveSpeed)
+				->SetMaxChaseMoveSpeed(DataTableInfo->MaxChaseMoveSpeed)
+				->SetAttackRange(DataTableInfo->AttackRange)
+				->SetAttackSpeed(DataTableInfo->AttackSpeed)
+				->SetAttackPower(DataTableInfo->AttackPower)
+				->SetMaxHealth(DataTableInfo->MaxHealth)
+				->SetHealth(DataTableInfo->MaxHealth);
+
+			UCharacterMovementComponent* Movement = GetCharacterMovement();
+			Movement->bOrientRotationToMovement = true;
+			Movement->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
+			Movement->MinAnalogWalkSpeed = 50.f;
+			Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxPatrolMoveSpeed();
+		}
+	}
 }
 

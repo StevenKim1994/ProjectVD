@@ -43,5 +43,5 @@ EBTNodeResult::Type UBTTask_UseSkill::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		return EBTNodeResult::InProgress;
 	}
 
-	return EBTNodeResult::Failed;
+	return EBTNodeResult::InProgress;
 }

@@ -87,7 +87,7 @@ EBTNodeResult::Type UBTTask_DefaultAttack::ExecuteTask(UBehaviorTreeComponent& O
 		}
 	}
 
-	return EBTNodeResult::Failed;
+	return EBTNodeResult::InProgress;
 }
 
 void UBTTask_DefaultAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)

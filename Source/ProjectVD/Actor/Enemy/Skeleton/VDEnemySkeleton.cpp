@@ -12,3 +12,8 @@ void AVDEnemySkeleton::DefaultAttack()
 		PlayAnimMontage(DefaultAttackAM);
 	}
 }
+
+FName AVDEnemySkeleton::GetEnemyStatsRowKey() const
+{
+	return TEXT("Enemy_Skeleton");
+}

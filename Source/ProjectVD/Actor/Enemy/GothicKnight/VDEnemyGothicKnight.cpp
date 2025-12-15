@@ -3,6 +3,7 @@
 
 #include "Actor/Enemy/GothicKnight/VDEnemyGothicKnight.h"
 #include "Actor/Enemy/AIController/VDEnemyAIController.h"
+#include "Animation/VDEnemyAnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NavigationSystem.h"
 #include "Kismet/GameplayStatics.h"
@@ -107,6 +108,13 @@ void AVDEnemyGothicKnight::DefaultAttackHit()
 	}
 }
 
+void AVDEnemyGothicKnight::SkillAttackHit(int32 SkillIndex, int32 SkillAttackCount)
+{
+	Super::SkillAttackHit(SkillIndex, SkillAttackCount);
+
+	UE_LOG(LogTemp, Warning, TEXT("Gothic Knight Skill %d Hit - %d"), SkillIndex, SkillAttackCount);
+}
+
 void AVDEnemyGothicKnight::UseSkill(uint8 SkillIndex, FOnSkillUsedEnded SkillUseEndedDelegate)
 {
 	// TODO :: GAS로 바꾸면 여기 수정 필요
@@ -117,13 +125,20 @@ void AVDEnemyGothicKnight::UseSkill(uint8 SkillIndex, FOnSkillUsedEnded SkillUse
 		case 0:
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Gothic Knight Skill 0 Used"));
-			GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([SkillUseEndedDelegate]()
+			UVDEnemyAnimInstance* AnimInstance = Cast<UVDEnemyAnimInstance>(GetMesh()->GetAnimInstance());
+			if (AnimInstance == nullptr)
 			{
-				if (SkillUseEndedDelegate.IsBound())
-				{
-					SkillUseEndedDelegate.Execute();
-				}
-				}));
+				return;
+			}
+
+			FOnMontageEnded MontageEndedDelegate;
+			MontageEndedDelegate.BindWeakLambda(this, [SkillUseEndedDelegate](UAnimMontage* Montage, bool bInterrupted)
+			{
+				SkillUseEndedDelegate.ExecuteIfBound();
+			});
+
+			AnimInstance->Montage_Play(HeavyAttackAM);
+			AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, HeavyAttackAM);
 		}
 		break;
 	}
@@ -135,6 +150,11 @@ float AVDEnemyGothicKnight::TakeDamage(float DamageAmount, FDamageEvent const& D
 	return Result;
 }
 
+FName AVDEnemyGothicKnight::GetEnemyStatsRowKey() const
+{
+	return FName(TEXT("GothicKnight"));
+}
+
 void AVDEnemyGothicKnight::BeginPlay()
 {
 	Super::BeginPlay();
@@ -143,37 +163,6 @@ void AVDEnemyGothicKnight::BeginPlay()
 void AVDEnemyGothicKnight::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	UGameInstance* GameInstance = GetGameInstance();
-
-	if (GameInstance == nullptr)
-	{
-		return;
-	}
-
-	FVDEnemyStatsInfo* DataTableInfo = GameInstance->GetSubsystem<UVDDataTableSubSystem>()->GetDataTableRow<FVDEnemyStatsInfo>(FName(TEXT("EnemyStatsInfo")), FName(TEXT("GothicKnight")));
-
-	if(DataTableInfo)
-	{
-		BaseStatsComponent
-			->SetFindPlayerRange(DataTableInfo->FindPlayerRange)
-			->SetPatrolRange(DataTableInfo->PatrolRange)
-			->SetPatrolWaitTime(DataTableInfo->PatrolWaitTime)
-			->SetTurnSpeed(DataTableInfo->TurnSpeed)
-			->SetMaxPatrolMoveSpeed(DataTableInfo->MaxPatrolMoveSpeed)
-			->SetAttackRange(DataTableInfo->AttackRange)
-			->SetAttackSpeed(DataTableInfo->AttackSpeed)
-			->SetAttackPower(DataTableInfo->AttackPower)
-			->SetMaxHealth(DataTableInfo->MaxHealth)
-			->SetHealth(DataTableInfo->MaxHealth);
-
-		UCharacterMovementComponent* Movement = GetCharacterMovement();
-		Movement->bOrientRotationToMovement = true;
-		Movement->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
-		Movement->MinAnalogWalkSpeed = 10.f;
-		Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxPatrolMoveSpeed();
-	}
-
 }
 
 void AVDEnemyGothicKnight::Tick(float DeltaTime)

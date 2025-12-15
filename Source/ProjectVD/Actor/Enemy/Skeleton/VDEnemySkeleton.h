@@ -16,4 +16,6 @@ class PROJECTVD_API AVDEnemySkeleton : public AVDEnemyCharacterBase
 
 protected:
 	virtual void DefaultAttack() override;
+
+	virtual FName GetEnemyStatsRowKey() const override;
 };

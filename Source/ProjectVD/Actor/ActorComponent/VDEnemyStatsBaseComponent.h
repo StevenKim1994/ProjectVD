@@ -68,5 +68,5 @@ public:
 	FORCEINLINE float GetPatrolWaitTime() const { return PatrolWaitTime; }
 	FORCEINLINE float GetTurnSpeed() const { return TurnSpeed; }
 	FORCEINLINE float GetMaxPatrolMoveSpeed() const { return MaxPatrolMoveSpeed; }
-	FORCEINLINE float GetMaxChaseMovementSpeed() const { return MaxChaseMoveSpeed; }
+	FORCEINLINE float GetMaxChaseMoveSpeed() const { return MaxChaseMoveSpeed; }
 };

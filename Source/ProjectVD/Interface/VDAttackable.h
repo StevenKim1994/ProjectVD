@@ -26,4 +26,11 @@ public:
 	virtual void SetComboInputOn(bool bIsOn);
 	virtual void DefaultAttackHit();
 	virtual void ResetHitList();
+
+	/// <summary>
+	/// 스킬 사용시 애님 노티파이에서 호출
+	/// </summary>
+	/// <param name="SkillIndex">스킬인덱스</param>
+	/// <param name="SkillAttackCount">스킬애니메이션에서 해당 스킬이 몇번 공격하는지 구분자</param>
+	virtual void SkillAttackHit(int32 SkillIndex, int32 SkillAttackCount = 0);
 };

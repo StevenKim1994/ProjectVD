@@ -24,6 +24,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = true))
 	TObjectPtr<ULevelSequence> CutSceneSequencer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = true))
+	TObjectPtr<UAnimMontage> StaggredAM;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = true))
+	TObjectPtr<UAnimMontage> HeavyAttackAM;
+
 public:
 	AVDEnemyGothicKnight();
 	// IVDSequenceable을(를) 통해 상속됨
@@ -33,14 +39,20 @@ public:
 	void OnSequenceResume() override;
 	ULevelSequence* GetSequence() const override { return CutSceneSequencer; }
 
+	virtual void UseSkill(uint8 SkillIndex, FOnSkillUsedEnded SkillUseEndedDelegate) override;
+	// IVDAttackable을(를) 통해 상속됨
 	virtual void SetComboInputOn(bool bIsOn) override;
 	virtual void DefaultAttackHit() override;
-	virtual void UseSkill(uint8 SkillIndex, FOnSkillUsedEnded SkillUseEndedDelegate) override;
+	virtual void SkillAttackHit(int32 SkillIndex, int32 SkillAttackCount = 0) override;
+
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	void StartCutScene();
 	
 
 protected:
+
+	virtual FName GetEnemyStatsRowKey() const override;
+
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaTime) override;

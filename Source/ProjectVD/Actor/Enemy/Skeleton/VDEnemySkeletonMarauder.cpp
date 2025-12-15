@@ -13,6 +13,11 @@
 #include "Engine/DamageEvents.h"
 #include "Public/VDPhysicInfo.h"
 
+FName AVDEnemySkeletonMarauder::GetEnemyStatsRowKey() const
+{
+	return FName(TEXT("SkeletonMarauder"));
+}
+
 void AVDEnemySkeletonMarauder::BeginPlay()
 {
 	Super::BeginPlay();
@@ -21,37 +26,6 @@ void AVDEnemySkeletonMarauder::BeginPlay()
 void AVDEnemySkeletonMarauder::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	UGameInstance* GameInstance = GetGameInstance();
-	if(GameInstance == nullptr)
-	{
-		return;
-	}
-
-	FVDEnemyStatsInfo* DataTableInfo = GameInstance->GetSubsystem<UVDDataTableSubSystem>()->GetDataTableRow<FVDEnemyStatsInfo>(FName(TEXT("EnemyStatsInfo")), FName(TEXT("SkeletonMarauder")));
-
-	if (DataTableInfo)
-	{
-		BaseStatsComponent
-			->SetFindPlayerRange(DataTableInfo->FindPlayerRange)
-			->SetPatrolRange(DataTableInfo->PatrolRange)
-			->SetPatrolWaitTime(DataTableInfo->PatrolWaitTime)
-			->SetTurnSpeed(DataTableInfo->TurnSpeed)
-			->SetMaxPatrolMoveSpeed(DataTableInfo->MaxPatrolMoveSpeed)
-			->SetMaxChaseMoveSpeed(DataTableInfo->MaxChaseMoveSpeed)
-			->SetAttackRange(DataTableInfo->AttackRange)
-			->SetAttackSpeed(DataTableInfo->AttackSpeed)
-			->SetAttackPower(DataTableInfo->AttackPower)
-			->SetMaxHealth(DataTableInfo->MaxHealth)
-			->SetHealth(DataTableInfo->MaxHealth);
-	}
-
-	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	if (Movement)
-	{
-		Movement->MinAnalogWalkSpeed = 50.f;
-		Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxPatrolMoveSpeed();
-	}
 }
 
 void AVDEnemySkeletonMarauder::DefaultAttack()
