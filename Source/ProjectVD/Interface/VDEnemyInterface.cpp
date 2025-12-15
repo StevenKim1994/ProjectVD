@@ -31,3 +31,8 @@ UVDEnemyStatsBaseComponent* IVDEnemyInterface::GetStatsComp() const
 	// DESC :: 자식에서 오버라이드 해서 사용
 	return nullptr;
 }
+
+void IVDEnemyInterface::SetBerserking(bool InMode , FOnBerserkingModeChanged EndCallback)
+{
+	// DESC :: 자식에서 오버라이드 해서 사용
+}

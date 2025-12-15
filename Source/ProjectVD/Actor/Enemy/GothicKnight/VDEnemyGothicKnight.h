@@ -31,6 +31,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = true))
 	TObjectPtr<UAnimMontage> HeavyAttackAM;
 
+	FTimerHandle BerserkScaleTimerHandle; // DESC :: 버서크 스케일 타이머 핸들
+
 public:
 	AVDEnemyGothicKnight();
 	// IVDSequenceable을(를) 통해 상속됨
@@ -49,6 +51,8 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	void StartCutScene();
 	
+	
+	virtual void SetBerserking(bool InMode, FOnBerserkingModeChanged EndCallback) override;
 
 protected:
 

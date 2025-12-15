@@ -38,6 +38,7 @@ void AVDEnemyGothicKnight::OnSequenceStop()
 
 void AVDEnemyGothicKnight::OnSequencePause()
 {
+
 }
 
 void AVDEnemyGothicKnight::OnSequenceResume()
@@ -47,6 +48,60 @@ void AVDEnemyGothicKnight::OnSequenceResume()
 void AVDEnemyGothicKnight::StartCutScene()
 {
 
+}
+
+void AVDEnemyGothicKnight::SetBerserking(bool InMode, FOnBerserkingModeChanged EndCallback)
+{
+	Super::SetBerserking(InMode, EndCallback);
+
+	if (InMode)
+	{
+		USkeletalMeshComponent* MeshComponent = GetMesh(); // DESC :: 메시 컴포넌트 가져오기
+		if (MeshComponent == nullptr)
+		{
+			return;
+		}
+
+		const FVector InitialScale = MeshComponent->GetRelativeScale3D(); // DESC :: 초기 스케일 저장
+		const FVector TargetScale = InitialScale * 2.0f; // DESC :: 목표 스케일 (2배)
+		const float TweeningDuration = 3.0f; // DESC :: 트위닝 지속 시간 (3초)
+		const float UpdateInterval = 0.016f; // DESC :: 업데이트 간격 (약 60fps)
+		float ElapsedTime = 0.0f; // DESC :: 경과 시간
+
+		FTimerManager& TimerManager = GetWorld()->GetTimerManager(); // DESC :: 타이머 매니저 가져오기
+		
+		TimerManager.SetTimer(
+			BerserkScaleTimerHandle,
+			[this, EndCallback, MeshComponent, InitialScale, TargetScale, TweeningDuration, &ElapsedTime]() mutable
+			{
+				ElapsedTime += 0.016f; // DESC :: 경과 시간 증가
+				float Alpha = FMath::Clamp(ElapsedTime / TweeningDuration, 0.0f, 1.0f); // DESC :: 보간 알파 값 계산
+				FVector NewScale = FMath::Lerp(InitialScale, TargetScale, Alpha); // DESC :: 선형 보간으로 새 스케일 계산
+				
+				if (MeshComponent)
+				{
+					MeshComponent->SetRelativeScale3D(NewScale); // DESC :: 스케일 적용
+				}
+
+				if (Alpha >= 1.0f)
+				{
+					EndCallback.ExecuteIfBound(); // DESC :: 콜백 실행
+					GetWorld()->GetTimerManager().ClearTimer(BerserkScaleTimerHandle); // DESC :: 타이머 정리
+				}
+			},
+			UpdateInterval,
+			true
+		); // DESC :: 타이머 설정
+	}
+	else
+	{
+		USkeletalMeshComponent* MeshComponent = GetMesh(); // DESC :: 메시 컴포넌트 가져오기
+		if (MeshComponent)
+		{
+			GetWorld()->GetTimerManager().ClearTimer(BerserkScaleTimerHandle); // DESC :: 기존 타이머 정리
+			MeshComponent->SetRelativeScale3D(FVector(1.0f, 1.0f, 1.0f)); // DESC :: 원래 스케일로 복원
+		}
+	}
 }
 
 void AVDEnemyGothicKnight::SetComboInputOn(bool bIsOn)

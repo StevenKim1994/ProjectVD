@@ -19,6 +19,7 @@ class UVDEnemyInterface : public UInterface
 	GENERATED_BODY()
 };
 
+DECLARE_DELEGATE(FOnBerserkingModeChanged);
 /**
  * 
  */
@@ -31,6 +32,7 @@ public:
 	virtual UVDEnemyAnimInstance* DefaultAttackMontagePlay(FOnAttackMontageEnded AttackMontageEndedDelegate);
 	virtual UAnimMontage* GetFindPlayerAnimMontage() const;
 	virtual UVDEnemyStatsBaseComponent* GetStatsComp() const;
+	virtual void SetBerserking(bool InMode, FOnBerserkingModeChanged EndCallback);
 	virtual float GetPatrolRadius() const = 0;
 	virtual float GetPatrolWaitTime() const = 0;
 	virtual float GetFindingRange() const = 0;
