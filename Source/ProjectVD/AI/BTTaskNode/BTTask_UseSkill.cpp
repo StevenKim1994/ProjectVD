@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "AIController.h"
 #include "Interface/VDEnemyInterface.h"
+#include "System/VDUISubsystem.h"
 
 UBTTask_UseSkill::UBTTask_UseSkill()
 {
@@ -32,6 +33,12 @@ EBTNodeResult::Type UBTTask_UseSkill::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	if (IVDEnemyInterface* EnemyInterface = Cast<IVDEnemyInterface>(AIOwner))
 	{
 		FOnSkillUsedEnded SkillUseEndedDelegate;
+
+		UGameInstance* GI = OwnerComp.GetAIOwner()->GetWorld()->GetGameInstance();
+		if (UVDUISubsystem* VDUISubsystem = GI->GetSubsystem<UVDUISubsystem>())
+		{
+			VDUISubsystem->ShowToastMessage(FText::FromString(TEXT("적이 스킬을 사용합니다!")),5.f);
+		}
 
 		SkillUseEndedDelegate.BindWeakLambda(this, [this, OwnerCompPtr = &OwnerComp]()
 		{

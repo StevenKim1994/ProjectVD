@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/OverlapResult.h"
 #include "DrawDebugHelpers.h"
+#include "NiagaraFunctionLibrary.h"
 
 #include "DataTable/VDEnemyStatsInfo.h"
 #include "System/VDDataTableSubSystem.h"
@@ -112,6 +113,40 @@ void AVDEnemyGothicKnight::SkillAttackHit(int32 SkillIndex, int32 SkillAttackCou
 {
 	Super::SkillAttackHit(SkillIndex, SkillAttackCount);
 
+	switch(SkillIndex)
+	{
+		case 0:
+		{
+			if (HeavyAttackEffect)
+			{
+				UWorld* World = GetWorld();
+				if (World == nullptr)
+				{
+					break;
+				}
+
+				const FVector SpawnOrigin = GetActorLocation(); // DESC :: 이펙트 스폰 기준 위치
+				const FVector Forward = GetActorForwardVector(); // DESC :: 액터 전방 벡터
+				const float SpawnDistance = 150.0f; // DESC :: 전방 오프셋 거리
+				const FVector TraceStart = SpawnOrigin + Forward * SpawnDistance + FVector(0.0f, 0.0f, 100.0f); // DESC :: 라인트레이스 시작 지점
+				const FVector TraceEnd = TraceStart - FVector(0.0f, 0.0f, 500.0f); // DESC :: 라인트레이스 종료 지점
+				FHitResult HitResult;
+				FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(HeavyAttackEffectTrace), false, this); // DESC :: 충돌 쿼리 파라미터
+
+				FVector EffectScale = FVector(5.0f, 5.0f, 5.0f); // DESC :: 이펙트 스케일
+				FVector EffectLocation = TraceEnd; // DESC :: 기본 이펙트 위치
+				if (World->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
+				{
+					EffectLocation = HitResult.Location; // DESC :: 지면에 맞춘 이펙트 위치
+					EffectLocation.Z += 50.0f; // DESC :: 이펙트 약간 띄우기
+				}
+
+				const FRotator EffectRotation = Forward.Rotation(); // DESC :: 이펙트 회전값
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(World, HeavyAttackEffect,  EffectLocation, EffectRotation, EffectScale); // DESC :: 나이아가라 이펙트 스폰
+			}
+		}
+		break;
+	}
 	UE_LOG(LogTemp, Warning, TEXT("Gothic Knight Skill %d Hit - %d"), SkillIndex, SkillAttackCount);
 }
 

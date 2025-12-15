@@ -9,6 +9,7 @@
 
 class ULevelSequence;
 class UStaticMeshComponent;
+class UNiagaraSystem;
 /**
  * 
  */
@@ -29,6 +30,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", Meta = (AllowPrivateAccess = true))
 	TObjectPtr<UAnimMontage> HeavyAttackAM;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara", Meta = (AllowPrivateAccess = true))
+	TObjectPtr<UNiagaraSystem> HeavyAttackEffect;
 
 public:
 	AVDEnemyGothicKnight();
