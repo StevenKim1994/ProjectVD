@@ -62,10 +62,10 @@ void AVDEnemyGothicKnight::SetBerserking(bool InMode, FOnBerserkingModeChanged E
 			return;
 		}
 
-		const FVector InitialScale = MeshComponent->GetRelativeScale3D(); // DESC :: 초기 스케일 저장
-		const FVector TargetScale = InitialScale * 2.0f; // DESC :: 목표 스케일 (2배)
+		const FVector InitialScale = MeshComponent->GetRelativeScale3D(); 
+		const FVector TargetScale = InitialScale * 2.0f; 
 		const float TweeningDuration = 3.0f; // DESC :: 트위닝 지속 시간 (3초)
-		const float UpdateInterval = 0.016f; // DESC :: 업데이트 간격 (약 60fps)
+		const float UpdateInterval = 0.01f; 
 		float ElapsedTime = 0.0f; // DESC :: 경과 시간
 
 		FTimerManager& TimerManager = GetWorld()->GetTimerManager(); // DESC :: 타이머 매니저 가져오기
@@ -74,10 +74,11 @@ void AVDEnemyGothicKnight::SetBerserking(bool InMode, FOnBerserkingModeChanged E
 			BerserkScaleTimerHandle,
 			[this, EndCallback, MeshComponent, InitialScale, TargetScale, TweeningDuration, &ElapsedTime]() mutable
 			{
-				ElapsedTime += 0.016f; // DESC :: 경과 시간 증가
-				float Alpha = FMath::Clamp(ElapsedTime / TweeningDuration, 0.0f, 1.0f); // DESC :: 보간 알파 값 계산
-				FVector NewScale = FMath::Lerp(InitialScale, TargetScale, Alpha); // DESC :: 선형 보간으로 새 스케일 계산
+				ElapsedTime += 0.01f; 
+				float Alpha = FMath::Clamp(ElapsedTime / TweeningDuration, 0.0f, 1.0f); 
+				FVector NewScale = FMath::Lerp(InitialScale, TargetScale, Alpha); 
 				
+				UE_LOG(LogTemp, Warning, TEXT("Berserk Scaling Alpha: %f"), Alpha); 
 				if (MeshComponent)
 				{
 					MeshComponent->SetRelativeScale3D(NewScale); // DESC :: 스케일 적용

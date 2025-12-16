@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "VDAnimNotifyStateForComboAttack.generated.h"
+#include "AnimNotifyState_ForComboAttack.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTVD_API UVDAnimNotifyStateForComboAttack : public UAnimNotifyState
+class PROJECTVD_API UAnimNotifyState_ForComboAttack : public UAnimNotifyState
 {
 	GENERATED_BODY()
 	
