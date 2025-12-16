@@ -11,6 +11,7 @@
 #include "Interface/VDEnemyInterface.h"
 #include "Actor/Character/VDCharacterBase.h"
 #include "Animation/VDEnemyAnimInstance.h"
+#include "NiagaraAnimNotifies/Public/AnimNotify_PlayNiagaraEffect.h"
 
 UBTTask_DefaultAttack::UBTTask_DefaultAttack()
 {
@@ -61,7 +62,6 @@ EBTNodeResult::Type UBTTask_DefaultAttack::ExecuteTask(UBehaviorTreeComponent& O
 		}
 		else
 		{
-			// Target 방향으로 회전
 			const FVector PawnLocation = ControlledPawn->GetActorLocation();
 			const FVector TargetLocation = TargetCharacter->GetActorLocation();
 			const FRotator LookAtRotation = (TargetLocation - PawnLocation).Rotation();
@@ -72,17 +72,28 @@ EBTNodeResult::Type UBTTask_DefaultAttack::ExecuteTask(UBehaviorTreeComponent& O
 				AICon->SetControlRotation(NewPawnRotation);
 			}
 
-			// 공격 몽타주 재생 시작
 			FOnAttackMontageEnded AttackMontageEndedDelegate;
 			AttackMontageEndedDelegate.BindLambda([this, &OwnerComp]()
 			{
-				// 몽타주 종료 시점에 태스크 종료
 				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 			});
 
+			APawn* Pawn = OwnerComp.GetAIOwner()->GetPawn();
+			if(Pawn == nullptr)
+			{
+				return EBTNodeResult::Failed;
+			}
+
 			CurrentAnimInstance = EnemyInterface->DefaultAttackMontagePlay(AttackMontageEndedDelegate);
 			CurrentAttackAM = CurrentAnimInstance->GetCurrentActiveMontage();
-			// 몽타주 종료까지 대기하기 위해 InProgress 반환
+			for (const FAnimNotifyEvent& NotifyEvent : CurrentAttackAM->Notifies)
+			{
+				if (UAnimNotify_PlayNiagaraEffect* Notify = Cast<UAnimNotify_PlayNiagaraEffect>(NotifyEvent.Notify))
+				{
+					Notify->Scale = Pawn->GetActorScale3D() * 3.0f;
+					// DESC :: 현재 캐릭터 스케일에 맞게 이펙트 스케일 조정
+				}
+			}
 			return EBTNodeResult::InProgress;
 		}
 	}

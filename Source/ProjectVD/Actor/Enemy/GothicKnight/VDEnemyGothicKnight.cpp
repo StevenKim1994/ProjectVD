@@ -80,7 +80,6 @@ void AVDEnemyGothicKnight::SetBerserking(bool InMode, FOnBerserkingModeChanged E
 				const FVector NewScale = FMath::Lerp(InitialScale, TargetScale, Alpha); 				
 
 				MeshComponent->SetRelativeScale3D(NewScale); 
-
 				UE_LOG(LogTemp, Warning, TEXT("Berserk Scaling Alpha: %f"), Alpha);
 				if (Alpha >= 1.0f)
 				{

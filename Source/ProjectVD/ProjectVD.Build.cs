@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -12,7 +12,7 @@ public class ProjectVD : ModuleRules
 
         PublicDependencyModuleNames.AddRange(new string[] {
             "Core", "CoreUObject", "Engine", "InputCore", "UMG", "MediaAssets", "AudioMixer",
-            "EnhancedInput", "NavigationSystem", "AIModule" , "Niagara", "CinematicCamera", 
+            "EnhancedInput", "NavigationSystem", "AIModule" , "Niagara", "NiagaraAnimNotifies", "CinematicCamera", 
             "LevelSequence",  "MovieScene", "MovieSceneTracks", "AnimGraphRuntime", "GameplayCameras"
         });
 
