@@ -85,6 +85,12 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateTweenBar()
 	{
 		HPTween.bIsPlaying = false;
 		HealthBarTweenBar->SetPercent(HPTween.TargetPercent);
+
+		if(HPTween.TargetPercent <= 0.f)
+		{
+			World->GetTimerManager().SetTimer(BossHPVisibleTimerHandle, this, &UVDPlayerHUDEnemyStatusWidget::OnEnemyHPHideTimerExpired, 3.f, false);
+		}
+
 		World->GetTimerManager().ClearTimer(TweenTimerHandle);
 	}
 }

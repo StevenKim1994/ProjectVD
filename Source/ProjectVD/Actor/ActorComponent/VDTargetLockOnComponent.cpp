@@ -2,7 +2,7 @@
 
 
 #include "Actor/ActorComponent/VDTargetLockOnComponent.h"
-#include "GameFramework/Actor.h"
+#include "Actor/Enemy/VDEnemyCharacterBase.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/World.h"
 #include "Engine/OverlapResult.h"
@@ -29,7 +29,7 @@ void UVDTargetLockOnComponent::ClearLockedOnTarget()
 	OnTargetLockOnStateChanged.Broadcast(nullptr, false);
 }
 
-void UVDTargetLockOnComponent::SetLockedOnTarget(AActor* NewTarget)
+void UVDTargetLockOnComponent::SetLockedOnTarget(AVDEnemyCharacterBase* NewTarget)
 {
 	if (NewTarget == nullptr)
 	{
@@ -51,7 +51,7 @@ void UVDTargetLockOnComponent::LockOnTarget()
 	}
 
 	PotentialTargets.Empty();
-	const float MaxLockOnDistance = 1000.0f;
+	const float MaxLockOnDistance = 1000.0f; // DESC :: 최대 락온 거리
 	const FVector Origin = GetOwner()->GetActorLocation();
 	UWorld* World = GetWorld();
 	if (World)
@@ -76,20 +76,22 @@ void UVDTargetLockOnComponent::LockOnTarget()
 					continue;
 				}
 
-				const float DistSqr = FVector::DistSquared(Origin, OverlappedActor->GetActorLocation());
-				if (PotentialTargets.Contains(OverlappedActor) == false)
+				AVDEnemyCharacterBase* EnemyCharacter = Cast<AVDEnemyCharacterBase>(OverlappedActor);
+				if (!EnemyCharacter)
 				{
-					// Enemy 태그가 있는 대상만 잠금 후보에 추가
-					if (OverlappedActor->ActorHasTag(TEXT("Enemy")))
+					continue;
+				}
+
+				const float DistSqr = FVector::DistSquared(Origin, EnemyCharacter->GetActorLocation());
+				if (PotentialTargets.Contains(EnemyCharacter) == false)
+				{
+					PotentialTargets.Add(EnemyCharacter);
+					// DESC :: 가장 가까운 Enemy를 현재 잠금 대상에 설정
+					if (DistSqr < ClosestDistSqr)
 					{
-						PotentialTargets.Add(OverlappedActor);
-						// 가장 가까운 Enemy를 현재 잠금 대상에 설정
-						if (DistSqr < ClosestDistSqr)
-						{
-							ClosestDistSqr = DistSqr;
-							LockedOnTarget = OverlappedActor;
-							SetLockedOnTarget(LockedOnTarget.Get());
-						}
+						ClosestDistSqr = DistSqr;
+						LockedOnTarget = EnemyCharacter;
+						SetLockedOnTarget(LockedOnTarget.Get());
 					}
 				}
 			}
@@ -101,7 +103,7 @@ void UVDTargetLockOnComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (LockedOnTarget.IsValid())
+	if (LockedOnTarget.IsValid() && !LockedOnTarget.Get()->IsDead())
 	{
 		OnTargetLockOnChanged.Broadcast(LockedOnTarget.Get(), true);
 	}

@@ -10,7 +10,6 @@ UVDHitStopComponent::UVDHitStopComponent()
 
 void UVDHitStopComponent::SetHitStop( float TimeDilation, float InHitStopTime)
 {
-    // 이미 히트스톱 중이면 중복 적용 방지 (선택사항)
 	AActor* OwnerActor = GetOwner();
     if (OwnerActor == nullptr)
     {

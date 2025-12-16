@@ -9,6 +9,8 @@
 DECLARE_MULTICAST_DELEGATE_TwoParams(FTargetLockOnDelegate, AActor*, /*TargetActor*/ bool /*bIsLockOn*/); // DESC :: 락온 타겟 상태가 바뀌었을때 매 틱마다 호출
 DECLARE_MULTICAST_DELEGATE_TwoParams(FTargetLockOnChangedDelegate, AActor*, /*TargetActor*/ bool /*bIsLockOn*/); // DESC :: 락온 타겟 상태가 바뀌었을때 한번 호출
 
+class AVDEnemyCharacterBase;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTVD_API UVDTargetLockOnComponent : public UActorComponent
 {
@@ -17,7 +19,7 @@ class PROJECTVD_API UVDTargetLockOnComponent : public UActorComponent
 public:	
 	UVDTargetLockOnComponent();
 	void ClearLockedOnTarget();
-	void SetLockedOnTarget(AActor* NewTarget);
+	void SetLockedOnTarget(AVDEnemyCharacterBase* NewTarget);
 	void LockOnTarget();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -29,10 +31,10 @@ protected:
 
 private:
 	UPROPERTY()
-	TWeakObjectPtr<AActor> LockedOnTarget;
+	TWeakObjectPtr<AVDEnemyCharacterBase> LockedOnTarget;
 
 	UPROPERTY()
-	TArray<TWeakObjectPtr<AActor>> PotentialTargets;
+	TArray<TWeakObjectPtr<AVDEnemyCharacterBase>> PotentialTargets;
 
 	UPROPERTY(EditAnywhere, Category = "LockOn")
 	float LockOnRadius = 1000.0f;

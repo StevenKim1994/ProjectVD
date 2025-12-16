@@ -65,7 +65,7 @@ public:
 	AVDEnemyCharacterBase();
 
 	FORCEINLINE bool IsBossEnemy() const { return bIsBossEnemy; }
-
+	FORCEINLINE bool IsDead() const { return bIsDead; }
 	UFUNCTION(BlueprintCallable, Category = "EnemyInfo")
 	FORCEINLINE FName GetEnemyName() const { return EnemyName; }
 

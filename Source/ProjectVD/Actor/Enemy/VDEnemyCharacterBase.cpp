@@ -205,6 +205,9 @@ void AVDEnemyCharacterBase::Die()
 {
 	bIsDead = true;
 	AVDEnemyAIController * AICon = Cast<AVDEnemyAIController>(GetController());
+
+	HitStopComponent->StopHitStop();
+
 	if (AICon)
 	{
 		AICon->StopAI();

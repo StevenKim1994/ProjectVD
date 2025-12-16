@@ -274,7 +274,7 @@ void AVDKnightPlayerCharacter::WeaponColiderHit(AActor* OtherActor, const FVecto
 
 		if (UVDHitStopComponent* HitStopComp = HitEnemy->GetComponentByClass<UVDHitStopComponent>())
 		{
-			HitStopComp->SetHitStop(0.05f, 1.1f);
+			HitStopComp->SetHitStop(0.05f, 0.25f);
 			TakeDamage = HitEnemy->TakeDamage(BaseStatsComponent->GetAttackPower()+ 100 * CurrentAttackComboCount, DamageEvent, Controller, this);
 		}
 
