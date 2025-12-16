@@ -6,6 +6,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Interface/VDEnemyInterface.h"
 #include "AIController.h"
+#include "System/VDUISubsystem.h"
 
 UBTTaskNode_Berserking::UBTTaskNode_Berserking()
 {
@@ -25,6 +26,15 @@ EBTNodeResult::Type UBTTaskNode_Berserking::ExecuteTask(UBehaviorTreeComponent& 
 	{
 		return EBTNodeResult::Failed;
 	}
+
+	UWorld* World = GetWorld();
+	if (World == nullptr)
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	UGameInstance* GI = World->GetGameInstance();
+	GI->GetSubsystem<UVDUISubsystem>()->ShowToastMessage(FText::FromString(TEXT("적이 광폭화 중입니다.")));
 
 	FOnBerserkingModeChanged BerserkingEndDelegate;
 	BerserkingEndDelegate.BindWeakLambda(OwnerComp.GetAIOwner(), [&, this]()

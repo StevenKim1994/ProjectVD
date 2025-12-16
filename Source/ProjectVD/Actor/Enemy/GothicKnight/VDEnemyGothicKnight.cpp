@@ -56,7 +56,7 @@ void AVDEnemyGothicKnight::SetBerserking(bool InMode, FOnBerserkingModeChanged E
 
 	if (InMode)
 	{
-		USkeletalMeshComponent* MeshComponent = GetMesh(); // DESC :: 메시 컴포넌트 가져오기
+		USkeletalMeshComponent* MeshComponent = GetMesh(); 
 		if (MeshComponent == nullptr)
 		{
 			return;
@@ -64,35 +64,39 @@ void AVDEnemyGothicKnight::SetBerserking(bool InMode, FOnBerserkingModeChanged E
 
 		const FVector InitialScale = MeshComponent->GetRelativeScale3D(); 
 		const FVector TargetScale = InitialScale * 2.0f; 
-		const float TweeningDuration = 3.0f; // DESC :: 트위닝 지속 시간 (3초)
+		const float TweeningDuration = 3.0f; 
 		const float UpdateInterval = 0.01f; 
-		float ElapsedTime = 0.0f; // DESC :: 경과 시간
+		const float StartTime = GetWorld()->GetTimeSeconds(); 
 
-		FTimerManager& TimerManager = GetWorld()->GetTimerManager(); // DESC :: 타이머 매니저 가져오기
+		FTimerManager& TimerManager = GetWorld()->GetTimerManager(); 
 		
 		TimerManager.SetTimer(
 			BerserkScaleTimerHandle,
-			[this, EndCallback, MeshComponent, InitialScale, TargetScale, TweeningDuration, &ElapsedTime]() mutable
+			[this, EndCallback, MeshComponent, InitialScale, TargetScale, TweeningDuration, StartTime]()
 			{
-				ElapsedTime += 0.01f; 
-				float Alpha = FMath::Clamp(ElapsedTime / TweeningDuration, 0.0f, 1.0f); 
-				FVector NewScale = FMath::Lerp(InitialScale, TargetScale, Alpha); 
-				
-				UE_LOG(LogTemp, Warning, TEXT("Berserk Scaling Alpha: %f"), Alpha); 
-				if (MeshComponent)
-				{
-					MeshComponent->SetRelativeScale3D(NewScale); // DESC :: 스케일 적용
-				}
+				const float CurrentTime = GetWorld()->GetTimeSeconds(); 
+				const float ElapsedTime = CurrentTime - StartTime; 
+				const float Alpha = FMath::Clamp(ElapsedTime / TweeningDuration, 0.0f, 1.0f); 
+				const FVector NewScale = FMath::Lerp(InitialScale, TargetScale, Alpha); 				
 
+				MeshComponent->SetRelativeScale3D(NewScale); 
+
+				UE_LOG(LogTemp, Warning, TEXT("Berserk Scaling Alpha: %f"), Alpha);
 				if (Alpha >= 1.0f)
 				{
-					EndCallback.ExecuteIfBound(); // DESC :: 콜백 실행
-					GetWorld()->GetTimerManager().ClearTimer(BerserkScaleTimerHandle); // DESC :: 타이머 정리
+					MeshComponent->SetRelativeScale3D(TargetScale); 
+
+					if (EndCallback.IsBound())
+					{
+						EndCallback.Execute();
+					}
+
+					GetWorld()->GetTimerManager().ClearTimer(BerserkScaleTimerHandle); 
 				}
 			},
 			UpdateInterval,
 			true
-		); // DESC :: 타이머 설정
+		); 
 	}
 	else
 	{

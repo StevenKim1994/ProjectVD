@@ -270,12 +270,12 @@ void AVDKnightPlayerCharacter::WeaponColiderHit(AActor* OtherActor, const FVecto
 		}
 
 
-		CastPlayerController->ShakePlayerHitCameraEffect(15);
+		//CastPlayerController->ShakePlayerHitCameraEffect(15);
 
 		if (UVDHitStopComponent* HitStopComp = HitEnemy->GetComponentByClass<UVDHitStopComponent>())
 		{
-			HitStopComp->SetHitStop(0.05f, 0.1f);
-			TakeDamage = HitEnemy->TakeDamage(BaseStatsComponent->GetAttackPower() * CurrentAttackComboCount, DamageEvent, Controller, this);
+			HitStopComp->SetHitStop(0.05f, 1.1f);
+			TakeDamage = HitEnemy->TakeDamage(BaseStatsComponent->GetAttackPower()+ 100 * CurrentAttackComboCount, DamageEvent, Controller, this);
 		}
 
 	}
