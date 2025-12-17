@@ -45,6 +45,7 @@ void UVDPlayerHUDStateWidget::SetHPBarPercent(float CurrentHP, float MaxHP)
 	HPTween.StartPercent = CurrentTweenPercent;
 	HPTween.TargetPercent = NewPercent;
 	HPTween.ElapsedTime = 0.0f;
+	HPTween.DurationTime = 3.5f;
 	HPTween.LastRealTime = -1.0; // DESC :: 실제 시간 추적 초기화
 	HPTween.bIsPlaying = true;
 
@@ -80,6 +81,7 @@ void UVDPlayerHUDStateWidget::SetMPBarPercent(float CurrentMP, float MaxMP)
 	MPTween.TargetPercent = NewPercent;
 	MPTween.ElapsedTime = 0.0f;
 	MPTween.LastRealTime = -1.0; // DESC :: 실제 시간 추적 초기화
+	MPTween.DurationTime = 1.5f;
 	MPTween.bIsPlaying = true;
 	
 	MPBar->SetPercent(MPTween.TargetPercent);
@@ -98,7 +100,7 @@ bool UVDPlayerHUDStateWidget::TickHPBarTween(float DeltaTime)
 {
 	if (!HPTween.bIsPlaying || HPTween.DurationTime <= 0.0f)
 	{
-		return false; // DESC :: false 반환 시 자동으로 틱커 제거됨
+		return false;
 	}
 
 	const double CurrentRealTime = FPlatformTime::Seconds();
@@ -109,15 +111,13 @@ bool UVDPlayerHUDStateWidget::TickHPBarTween(float DeltaTime)
 
 	const float UnscaledDeltaTime = static_cast<float>(CurrentRealTime - HPTween.LastRealTime);
 	HPTween.LastRealTime = CurrentRealTime;
-	HPTween.ElapsedTime += UnscaledDeltaTime; // DESC :: Time Dilation에 영향 받지 않도록 처리
+	HPTween.ElapsedTime += UnscaledDeltaTime;
 
 	float RawAlpha = HPTween.ElapsedTime / HPTween.DurationTime;
 	RawAlpha = FMath::Clamp(RawAlpha, 0.0f, 1.0f);
 
-	float EasedAlpha = RawAlpha;
-
+	const float EasedAlpha = FMath::InterpEaseOut(0.0f, 1.0f, RawAlpha, 3.0f);
 	const float NewValue = FMath::Lerp(HPTween.StartPercent, HPTween.TargetPercent, EasedAlpha);
-	UE_LOG(LogTemp, Warning, TEXT("HP Bar Tween Update: NewPercent = %f"), NewValue);
 	HPBarTween->SetPercent(NewValue);
 	
 	if (RawAlpha >= 1.0f)
@@ -125,10 +125,10 @@ bool UVDPlayerHUDStateWidget::TickHPBarTween(float DeltaTime)
 		HPTween.bIsPlaying = false;
 		HPTween.LastRealTime = -1.0;
 		HPBarTween->SetPercent(HPTween.TargetPercent);
-		return false; // DESC :: 완료 시 틱커 제거
+		return false;
 	}
 
-	return true; // DESC :: 계속 실행
+	return true;
 }
 
 bool UVDPlayerHUDStateWidget::TickMPBarTween(float DeltaTime)
@@ -151,7 +151,7 @@ bool UVDPlayerHUDStateWidget::TickMPBarTween(float DeltaTime)
 	float RawAlpha = MPTween.ElapsedTime / MPTween.DurationTime;
 	RawAlpha = FMath::Clamp(RawAlpha, 0.0f, 1.0f);
 
-	float EasedAlpha = RawAlpha;
+	float EasedAlpha = FMath::InterpEaseOut(0.0f, 1.0f, RawAlpha, 3.0f);
 	const float NewValue = FMath::Lerp(MPTween.StartPercent, MPTween.TargetPercent, EasedAlpha);
 	
 	MPBarTween->SetPercent(NewValue);

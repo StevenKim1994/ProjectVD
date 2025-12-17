@@ -35,6 +35,7 @@ protected:
 	virtual void InitializeComponent() override;
 
 public:
+	UVDCharacterStatsBaseComponent();
 	UVDCharacterStatsBaseComponent* SetMana(float InMana);
 	UVDCharacterStatsBaseComponent* SetMaxMana(float InMaxMana, bool bClampCurrent = true);
 	UVDCharacterStatsBaseComponent* AddMana(float Delta);
@@ -45,7 +46,6 @@ public:
 	virtual UVDCharacterStatsBaseComponent* SetAttackPower(float InAttackPower);
 	virtual UVDCharacterStatsBaseComponent* SetAttackRange(float InAttackRange);
 	virtual UVDCharacterStatsBaseComponent* SetAttackSpeed(float InAttackSpeed);
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	FORCEINLINE float GetMana() const { return Mana; }
 	FORCEINLINE float GetMaxMana() const { return MaxMana; }

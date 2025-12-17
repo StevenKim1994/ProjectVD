@@ -46,6 +46,7 @@ protected:
 	virtual void InitializeComponent() override;
 
 public:
+	UVDEnemyStatsBaseComponent();
 	virtual UVDEnemyStatsBaseComponent* SetHealth(float InHealth) override;
 	virtual UVDEnemyStatsBaseComponent* SetMaxHealth(float InMaxHealth, bool bClampCurrent = true) override;
 	virtual UVDEnemyStatsBaseComponent* SetAttackPower(float InAttackPower);
@@ -57,8 +58,6 @@ public:
 	virtual UVDEnemyStatsBaseComponent* SetTurnSpeed(float InTurnSpeed);
 	virtual UVDEnemyStatsBaseComponent* SetMaxPatrolMoveSpeed(float InMaxMovementSpeed);
 	virtual UVDEnemyStatsBaseComponent* SetMaxChaseMoveSpeed(float InMaxMovementSpeed);
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	FORCEINLINE float GetAttackPower() const { return AttackPower; }
 	FORCEINLINE float GetAttackRange() const { return AttackRange; }

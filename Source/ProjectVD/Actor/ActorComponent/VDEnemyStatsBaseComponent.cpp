@@ -13,6 +13,11 @@ void UVDEnemyStatsBaseComponent::InitializeComponent()
 	Super::InitializeComponent();
 }
 
+UVDEnemyStatsBaseComponent::UVDEnemyStatsBaseComponent()
+{
+	PrimaryComponentTick.bCanEverTick = false;
+}
+
 UVDEnemyStatsBaseComponent* UVDEnemyStatsBaseComponent::SetHealth(float InHealth)
 {
 	Super::SetHealth(InHealth);
@@ -79,9 +84,4 @@ UVDEnemyStatsBaseComponent* UVDEnemyStatsBaseComponent::SetMaxChaseMoveSpeed(flo
 {
 	MaxChaseMoveSpeed = InMaxChaseMoveSpeed;
 	return this;
-}
-
-void UVDEnemyStatsBaseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }

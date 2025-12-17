@@ -33,7 +33,6 @@ public:
 	virtual UVDBaseStatsComponent* SetHealth(float InHealth);
 	virtual UVDBaseStatsComponent* SetMaxHealth(float InMaxHealth, bool bClampCurrent = true);
 	virtual UVDBaseStatsComponent* AddHealth(float Delta);
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual FORCEINLINE float GetHealth() const { return Health; }
 	virtual FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 	virtual FORCEINLINE FOnChangeStateStats& GetOnChangeHealth() { return OnChangeHealth; }

@@ -14,6 +14,11 @@ void UVDCharacterStatsBaseComponent::InitializeComponent()
 	Mana = MaxMana;
 }
 
+UVDCharacterStatsBaseComponent::UVDCharacterStatsBaseComponent()
+{
+	PrimaryComponentTick.bCanEverTick = false;
+}
+
 UVDCharacterStatsBaseComponent* UVDCharacterStatsBaseComponent::SetMana(float InMana)
 {
 	Mana = FMath::Clamp(InMana, 0.f, MaxMana);
@@ -80,7 +85,3 @@ UVDCharacterStatsBaseComponent* UVDCharacterStatsBaseComponent::SetAttackSpeed(f
 	return this;
 }
 
-void UVDCharacterStatsBaseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}

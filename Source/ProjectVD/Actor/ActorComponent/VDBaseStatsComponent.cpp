@@ -28,13 +28,6 @@ void UVDBaseStatsComponent::InitializeComponent()
 	Health = MaxHealth;
 }
 
-
-// Called every frame
-void UVDBaseStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
 UVDBaseStatsComponent* UVDBaseStatsComponent::SetHealth(float InHealth)
 {
 	Health = FMath::Clamp(InHealth, 0.f, MaxHealth);
