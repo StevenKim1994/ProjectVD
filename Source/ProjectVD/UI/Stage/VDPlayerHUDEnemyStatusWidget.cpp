@@ -34,9 +34,10 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateEnemyHealthBar(float CurrentHP , float
 		if (FMath::IsNearlyEqual(CurrentTweenPercent, NewPercent))
 		{
 			HPTween.bIsPlaying = false;
-			if (TweenTimerHandle.IsValid())
+			if (HPTickerHandle.IsValid())
 			{
-				World->GetTimerManager().ClearTimer(TweenTimerHandle);
+				FTSTicker::GetCoreTicker().RemoveTicker(HPTickerHandle);
+				HPTickerHandle.Reset();
 			}
 			return;
 		}
@@ -46,31 +47,18 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateEnemyHealthBar(float CurrentHP , float
 		HPTween.ElapsedTime = 0.0f;
 		HPTween.bIsPlaying = true;
 
-		World->GetTimerManager().ClearTimer(TweenTimerHandle);
-		World->GetTimerManager().SetTimer(TweenTimerHandle,
-			this,
-			&UVDPlayerHUDEnemyStatusWidget::UpdateTweenBar,
-			0.01f,
-			true);
+		HPTickerHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UVDPlayerHUDEnemyStatusWidget::TickHealthBarTween), 0.01f);
 	}
 
 }
 
-void UVDPlayerHUDEnemyStatusWidget::UpdateTweenBar()
+bool UVDPlayerHUDEnemyStatusWidget::TickHealthBarTween(float DeltaTime)
 {
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		return;
-	}
-
 	if (!HPTween.bIsPlaying || HPTween.DurationTime <= 0.0f)
 	{
-		World->GetTimerManager().ClearTimer(TweenTimerHandle);
-		return;
+		return false;
 	}
 
-	const float DeltaTime = World->GetDeltaSeconds();
 	HPTween.ElapsedTime += DeltaTime;
 
 	float RawAlpha = HPTween.ElapsedTime / HPTween.DurationTime ;
@@ -85,14 +73,10 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateTweenBar()
 	{
 		HPTween.bIsPlaying = false;
 		HealthBarTweenBar->SetPercent(HPTween.TargetPercent);
-
-		if(HPTween.TargetPercent <= 0.f)
-		{
-			World->GetTimerManager().SetTimer(BossHPVisibleTimerHandle, this, &UVDPlayerHUDEnemyStatusWidget::OnEnemyHPHideTimerExpired, 3.f, false);
-		}
-
-		World->GetTimerManager().ClearTimer(TweenTimerHandle);
+		return false;
 	}
+
+	return true;
 }
 
 void UVDPlayerHUDEnemyStatusWidget::SetTargetEnemy(AVDEnemyCharacterBase* Enemy)
@@ -182,13 +166,9 @@ void UVDPlayerHUDEnemyStatusWidget::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-void UVDPlayerHUDEnemyStatusWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-}
-
 void UVDPlayerHUDEnemyStatusWidget::OnEnemyHPHideTimerExpired()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
-	GetWorld()->GetTimerManager().ClearTimer(BossHPVisibleTimerHandle);
+	FTSTicker::GetCoreTicker().RemoveTicker(BossHPHideTickerHandle);
+	BossHPHideTickerHandle.Reset();
 }

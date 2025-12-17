@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Containers/Ticker.h"
 #include "VDPlayerHUDEnemyStatusWidget.generated.h"
 
 class UTextBlock;
@@ -26,8 +27,6 @@ protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
 
 private:
 
@@ -64,11 +63,11 @@ private:
 
 	FTweenInfo HPTween;
 
-	FTimerHandle BossHPVisibleTimerHandle;
-	FTimerHandle TweenTimerHandle;
+	FTSTicker::FDelegateHandle HPTickerHandle;
+	FTSTicker::FDelegateHandle BossHPHideTickerHandle;
 
 	void UpdateEnemyHealthBar(float CurrentHP, float MaxHP);
-	void UpdateTweenBar();
+	bool TickHealthBarTween(float DeltaTime);
 
 	void OnEnemyHPHideTimerExpired();
 };

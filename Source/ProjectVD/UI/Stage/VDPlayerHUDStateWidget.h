@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Containers/Ticker.h"
 #include "VDPlayerHUDStateWidget.generated.h"
 
 class UProgressBar;
@@ -62,12 +63,12 @@ private:
 	FTweenInfo HPTween;
 	FTweenInfo MPTween;
 
-	FTimerHandle HPTweenHandle;
-	FTimerHandle MPTweenHandle;
+	FTSTicker::FDelegateHandle HPTickerHandle;
+	FTSTicker::FDelegateHandle MPTickerHandle;
 
 	void SetHPBarPercent(float CurrentHP, float MaxHP);
 	void SetMPBarPercent(float CurrentMP, float MaxMP);
 
-	void UpdateHPBarTween();
-	void UpdateMPBarTween();
+	bool TickHPBarTween(float DeltaTime);
+	bool TickMPBarTween(float DeltaTime);
 };

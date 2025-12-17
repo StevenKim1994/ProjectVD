@@ -8,7 +8,7 @@
 
 void UVDPlayerHUDStateWidget::SetCharacterState(UVDCharacterStatsBaseComponent* BaseStats)
 {
-	PlayerName->SetVisibility(ESlateVisibility::Collapsed); // 임시로 이름 숨김
+	PlayerName->SetVisibility(ESlateVisibility::Collapsed); // DESC :: 임시로 이름 숨김
 	HPBar->SetPercent(BaseStats->GetHealth() / BaseStats->GetMaxHealth());
 	HPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), BaseStats->GetHealth(), BaseStats->GetMaxHealth())));
 	BaseStats->GetOnChangeHealth().RemoveAll(this);
@@ -30,19 +30,14 @@ void UVDPlayerHUDStateWidget::SetHPBarPercent(float CurrentHP, float MaxHP)
 
 	HPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentHP, MaxHP)));
 
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		return;
-	}
-
 	const float CurrentTweenPercent = HPBarTween->GetPercent();
-	if (FMath::IsNearlyEqual( CurrentTweenPercent, NewPercent))
+	if (FMath::IsNearlyEqual(CurrentTweenPercent, NewPercent))
 	{
 		HPTween.bIsPlaying = false;
-		if (HPTweenHandle.IsValid())
+		if (HPTickerHandle.IsValid())
 		{
-			World->GetTimerManager().ClearTimer(HPTweenHandle);
+			FTSTicker::GetCoreTicker().RemoveTicker(HPTickerHandle);
+			HPTickerHandle.Reset();
 		}
 		return;
 	}
@@ -52,12 +47,15 @@ void UVDPlayerHUDStateWidget::SetHPBarPercent(float CurrentHP, float MaxHP)
 	HPTween.ElapsedTime = 0.0f;
 	HPTween.bIsPlaying = true;
 
-	HPBar->SetPercent(HPTween.TargetPercent); 
-	World->GetTimerManager().ClearTimer(HPTweenHandle);
-	World->GetTimerManager().SetTimer(HPTweenHandle, this, &UVDPlayerHUDStateWidget::UpdateHPBarTween, 0.01f , true);
+	HPBar->SetPercent(HPTween.TargetPercent);
+	
+	if (HPTickerHandle.IsValid())
+	{
+		FTSTicker::GetCoreTicker().RemoveTicker(HPTickerHandle);
+	}
+	
+	HPTickerHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UVDPlayerHUDStateWidget::TickHPBarTween), 0.01f);
 }
-
-
 
 void UVDPlayerHUDStateWidget::SetMPBarPercent(float CurrentMP, float MaxMP)
 {
@@ -65,19 +63,14 @@ void UVDPlayerHUDStateWidget::SetMPBarPercent(float CurrentMP, float MaxMP)
 
 	MPBarText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentMP, MaxMP)));
 
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		return;
-	}
-
 	const float CurrentTweenPercent = MPBarTween->GetPercent();
 	if (FMath::IsNearlyEqual(CurrentTweenPercent, NewPercent))
 	{
 		MPTween.bIsPlaying = false;
-		if (MPTweenHandle.IsValid())
+		if (MPTickerHandle.IsValid())
 		{
-			World->GetTimerManager().ClearTimer(MPTweenHandle);
+			FTSTicker::GetCoreTicker().RemoveTicker(MPTickerHandle);
+			MPTickerHandle.Reset();
 		}
 		return;
 	}
@@ -86,60 +79,62 @@ void UVDPlayerHUDStateWidget::SetMPBarPercent(float CurrentMP, float MaxMP)
 	MPTween.TargetPercent = NewPercent;
 	MPTween.ElapsedTime = 0.0f;
 	MPTween.bIsPlaying = true;
+	
 	MPBar->SetPercent(MPTween.TargetPercent);
-	World->GetTimerManager().ClearTimer(MPTweenHandle);
-	World->GetTimerManager().SetTimer(MPTweenHandle, this, &UVDPlayerHUDStateWidget::UpdateMPBarTween, 0.01f, true);
+	
+	// DESC :: 기존 틱커 제거
+	if (MPTickerHandle.IsValid())
+	{
+		FTSTicker::GetCoreTicker().RemoveTicker(MPTickerHandle);
+	}
+	
+	// DESC :: 비동기 틱커 등록
+	MPTickerHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UVDPlayerHUDStateWidget::TickMPBarTween), 0.01f);
 }
 
-void UVDPlayerHUDStateWidget::UpdateHPBarTween()
+bool UVDPlayerHUDStateWidget::TickHPBarTween(float DeltaTime)
 {
-	UWorld* World = GetWorld();
-
-	if (!World)
-	{
-		return;
-	}
-
 	if (!HPTween.bIsPlaying || HPTween.DurationTime <= 0.0f)
 	{
-		World->GetTimerManager().ClearTimer(HPTweenHandle);
-		return;
+		return false; // DESC :: false 반환 시 자동으로 틱커 제거됨
 	}
 
-	HPTween.ElapsedTime += 0.01f; // DESC :: GetDeltaSeconds()는 SetTimer의 간격과 다를 수 있으므로 고정 델타타임 사용
+	HPTween.ElapsedTime += DeltaTime;
 	const float Alpha = FMath::Clamp(HPTween.ElapsedTime / HPTween.DurationTime, 0.0f, 1.0f);
 	const float NewPercent = FMath::Lerp(HPTween.StartPercent, HPTween.TargetPercent, Alpha);
 
 	UE_LOG(LogTemp, Warning, TEXT("HP Bar Tween Update: NewPercent = %f"), NewPercent);
 	HPBarTween->SetPercent(NewPercent);
+	
 	if (Alpha >= 1.0f)
 	{
 		HPTween.bIsPlaying = false;
 		HPBarTween->SetPercent(HPTween.TargetPercent);
-		World->GetTimerManager().ClearTimer(HPTweenHandle);
+		return false; // DESC :: 완료 시 틱커 제거
 	}
+
+	return true; // DESC :: 계속 실행
 }
 
-void UVDPlayerHUDStateWidget::UpdateMPBarTween()
+bool UVDPlayerHUDStateWidget::TickMPBarTween(float DeltaTime)
 {
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		return;
-	}
 	if (!MPTween.bIsPlaying || MPTween.DurationTime <= 0.0f)
 	{
-		World->GetTimerManager().ClearTimer(MPTweenHandle);
-		return;
+		return false; 
 	}
-	MPTween.ElapsedTime += 0.01f; // DESC :: GetDeltaSeconds()는 SetTimer의 간격과 다를 수 있으므로 고정 델타타임 사용
+	
+	MPTween.ElapsedTime += DeltaTime;
 	const float Alpha = FMath::Clamp(MPTween.ElapsedTime / MPTween.DurationTime, 0.0f, 1.0f);
 	const float NewPercent = FMath::Lerp(MPTween.StartPercent, MPTween.TargetPercent, Alpha);
+	
 	MPBarTween->SetPercent(NewPercent);
+	
 	if (Alpha >= 1.0f)
 	{
 		MPTween.bIsPlaying = false;
 		MPBarTween->SetPercent(MPTween.TargetPercent);
-		World->GetTimerManager().ClearTimer(MPTweenHandle);
+		return false; 
 	}
+
+	return true; 
 }
