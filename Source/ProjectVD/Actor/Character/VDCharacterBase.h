@@ -126,6 +126,7 @@ protected:
 
 	uint8 bIsDefence : 1;
 	uint8 bIsDead : 1;
+	int32 CurrentAttackComboCount;
 
 public:	
 	AVDCharacterBase();

@@ -5,7 +5,9 @@
 #include "Actor/ActorComponent/VDInventoryComponent.h"
 #include "Actor/ActorComponent/VDBaseStaminaComponent.h"
 #include "Actor/ActorComponent/VDTargetLockOnComponent.h"
+#include "Actor/ActorComponent/VDHitStopComponent.h"
 #include "Actor/ItemProp/VDItemPropActorBase.h"
+#include "Actor/Enemy/VDEnemyCharacterBase.h"
 #include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "Engine/DamageEvents.h"
 #include "EnhancedInputComponent.h"
@@ -534,9 +536,21 @@ void AVDCharacterBase::WeaponColiderHit(AActor* OtherActor, const FVector& Conta
 {
 	UE_LOG(LogTemp, Log, TEXT("Weapon Colider Hit Actor : %s"), *OtherActor->GetName());
 
-	if (OtherActor && OtherActor != this)
+	if (AVDEnemyCharacterBase* HitEnemy = Cast<AVDEnemyCharacterBase>(OtherActor))
 	{
-		OtherActor->TakeDamage(BaseStatsComponent->GetAttackPower(), FDamageEvent(), GetController(), this);
+		FDamageEvent DamageEvent;
+
+		AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
+		if (VDPC)
+		{
+			VDPC->ShowBossStateBar(HitEnemy);
+		}
+
+		if (UVDHitStopComponent* HitStopComp = HitEnemy->GetComponentByClass<UVDHitStopComponent>())
+		{
+			HitStopComp->SetHitStop(0.05f, 0.25f);
+		}
+		HitEnemy->TakeDamage(BaseStatsComponent->GetAttackPower() + (10 * CurrentAttackComboCount - 1), DamageEvent, Controller, this);
 	}
 }
 

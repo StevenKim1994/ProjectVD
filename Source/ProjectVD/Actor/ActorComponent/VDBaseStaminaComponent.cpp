@@ -18,11 +18,11 @@ void UVDBaseStaminaComponent::BeginPlay()
 	OnChangedStamina.Broadcast(StaminaRatio);
 }
 
-void UVDBaseStaminaComponent::ConsumeStamina(float StaminaCost)
+bool UVDBaseStaminaComponent::ConsumeStamina(float StaminaCost)
 {
-	if (StaminaCost <= 0.f || MaxStamina <= 0.f)
+	if (CurrentStamina < StaminaCost)
 	{
-		return;
+		return false;
 	}
 
 	const float NewStamina = FMath::Clamp(CurrentStamina - StaminaCost, 0.f, MaxStamina);
@@ -32,11 +32,21 @@ void UVDBaseStaminaComponent::ConsumeStamina(float StaminaCost)
 		const float StaminaRatio = FMath::Clamp(MaxStamina > 0.f ? CurrentStamina / MaxStamina : 0.f, 0.f, 1.f);
 		OnChangedStamina.Broadcast(StaminaRatio);
 	}
+
+	if(CurrentStamina < MaxStamina)
+	{
+		SetStaminaRecovery(true);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("UVDBaseStaminaComponent::ConsumeStamina Current Stamina : %f"), CurrentStamina);
+
+	return true;
 }
 
 void UVDBaseStaminaComponent::SetStaminaRecovery(bool bCanRecover)
 {
 	bIsStaminaRecovery = bCanRecover;
+	PrimaryComponentTick.SetTickFunctionEnable(bIsStaminaRecovery);
 }
 
 void UVDBaseStaminaComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -51,6 +61,11 @@ void UVDBaseStaminaComponent::TickComponent(float DeltaTime, ELevelTick TickType
 			CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, MaxStamina);
 			const float StaminaRatio = FMath::Clamp(CurrentStamina / MaxStamina, 0.f, 1.f);
 			OnChangedStamina.Broadcast(StaminaRatio);
+		}
+
+		if(CurrentStamina >= MaxStamina)
+		{
+			SetStaminaRecovery(false);
 		}
 	}
 }

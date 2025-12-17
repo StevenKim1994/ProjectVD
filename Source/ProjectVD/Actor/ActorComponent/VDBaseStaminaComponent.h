@@ -30,7 +30,7 @@ public:
 
 	void SetMaxStamina(float NewMaxStamina) { MaxStamina = NewMaxStamina; }
 	void SetCurrentStamina(float NewCurrentStamina) { CurrentStamina = NewCurrentStamina; }
-	void ConsumeStamina(float StaminaCost);
+	bool ConsumeStamina(float StaminaCost);
 	
 	FORCEINLINE float GetCurrentStamina() const { return CurrentStamina; }
 	FORCEINLINE float GetMaxStamina() const { return MaxStamina; }

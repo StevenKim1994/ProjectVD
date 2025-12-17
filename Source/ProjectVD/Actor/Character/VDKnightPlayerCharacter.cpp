@@ -35,7 +35,7 @@ void AVDKnightPlayerCharacter::SetEquippedWeapon(AVDEquipItemVisualActor* NewWea
 void AVDKnightPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 void AVDKnightPlayerCharacter::Look(const FInputActionValue& Value)
@@ -60,7 +60,7 @@ void AVDKnightPlayerCharacter::DefaultAttack(const FInputActionValue& Value)
 		return;
 	}
 
-	const float StaminaCost = 0.0f;//15.0f;
+
 
 	if (DefaultAttackAM)
 	{
@@ -88,8 +88,12 @@ void AVDKnightPlayerCharacter::DefaultAttackCombo()
 	{
 		FOnMontageEnded EndDelegate;
 		EndDelegate.BindUObject(this, &AVDKnightPlayerCharacter::DefaultAttackComboEnded);
-		CastingAnimInstance->Montage_Play(DefaultAttackAM, BaseStatsComponent->GetAttackSpeed());
-		CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, DefaultAttackAM);
+		const float StaminaCost = 10.0f;
+		if (StaminaComponent->ConsumeStamina(StaminaCost))
+		{
+			CastingAnimInstance->Montage_Play(DefaultAttackAM, BaseStatsComponent->GetAttackSpeed());
+			CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, DefaultAttackAM);
+		}
 	}
 }
 
@@ -117,18 +121,28 @@ void AVDKnightPlayerCharacter::CheckComboInput()
 	FName CurrentSection = *FString::Printf(TEXT("Attack%d"), CurrentAttackComboCount);
 	CurrentAttackComboCount = FMath::Clamp(CurrentAttackComboCount + 1, 1, DefaultAttackAM->GetNumSections());
 	FName NextSection = *FString::Printf(TEXT("Attack%d"), CurrentAttackComboCount);
-	CastingAnimInstance->Montage_SetNextSection(CurrentSection, NextSection, DefaultAttackAM);
 
-	bIsNextComboInputOn = false;
+	const float StaminaCost = 10.0f;
+	//if (StaminaComponent->ConsumeStamina(StaminaCost))
+	{
+		FOnMontageSectionChanged SectionChangedDelegate;
 
-	UE_LOG(LogTemp, Log, TEXT("AVDKnightPlayerCharacter::CheckComboInput : %d, ComboIsOn: %s"), CurrentAttackComboCount, bIsNextComboInputOn ? TEXT("true") : TEXT("false"));
+		SectionChangedDelegate.BindWeakLambda(this, [this](UAnimMontage* Montage, FName SectionName, bool bLoop)
+			{
+				UE_LOG(LogTemp, Log, TEXT("AVDKnightPlayerCharacter::CheckComboInput - Section Changed : %s"), *SectionName.ToString());
+			});
+
+		CastingAnimInstance->Montage_SetNextSection(CurrentSection, NextSection, DefaultAttackAM);
+		CastingAnimInstance->Montage_SetSectionChangedDelegate(SectionChangedDelegate, DefaultAttackAM);
+		bIsNextComboInputOn = false;
+
+		UE_LOG(LogTemp, Log, TEXT("AVDKnightPlayerCharacter::CheckComboInput : %d, ComboIsOn: %s"), CurrentAttackComboCount, bIsNextComboInputOn ? TEXT("true") : TEXT("false"));
+	}
 }
 
 void AVDKnightPlayerCharacter::Zoom(const FInputActionValue& Value)
 {
 	Super::Zoom(Value);
-
-	UE_LOG(LogTemp, Warning, TEXT("AVDKnightPlayerCharacter::Zoom"));
 }
 
 void AVDKnightPlayerCharacter::LockOnTarget(const FInputActionValue& Value)
@@ -157,22 +171,26 @@ void AVDKnightPlayerCharacter::Jump()
 
 	if (FowardRollingAM)
 	{
-		if(CastingAnimInstance->Montage_IsPlaying(FowardRollingAM))
+		if (CastingAnimInstance->Montage_IsPlaying(FowardRollingAM))
 		{
 			return;
 		}
-		FOnMontageEnded EndDelegate;
-		EndDelegate.BindWeakLambda(this, [this](UAnimMontage* Montage, bool bInterrupted)
-			{
-				// TODO :: 구르기 끝나면 처리해야할것들 EX-> 이제부터 스태미나 회복같은거
-				UE_LOG(LogTemp, Log, TEXT("VDKnghtCharacter::Foward Rolling Ended"));
-			});
+		const float StaminaCost = 20.0f;
+		if (StaminaComponent->ConsumeStamina(StaminaCost))
+		{
+			FOnMontageEnded EndDelegate;
+			EndDelegate.BindWeakLambda(this, [this](UAnimMontage* Montage, bool bInterrupted)
+				{
+					// TODO :: 구르기 끝나면 처리해야할것들 EX-> 이제부터 스태미나 회복같은거
+					UE_LOG(LogTemp, Log, TEXT("VDKnghtCharacter::Foward Rolling Ended"));
+				});
 
-		CastingAnimInstance->Montage_Play(FowardRollingAM);
-		CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, FowardRollingAM);
+			CastingAnimInstance->Montage_Play(FowardRollingAM);
+			CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, FowardRollingAM);
 
-		bIsNextComboInputOn = false;
-		CurrentAttackComboCount = 0;
+			bIsNextComboInputOn = false;
+			CurrentAttackComboCount = 0;
+		}
 	}
 }
 
@@ -186,37 +204,39 @@ void AVDKnightPlayerCharacter::RollLeft(const FInputActionValue& Value)
 		return;
 	}
 
-	// 이미 롤링 중이면 중복 재생 방지
 	if (CastingAnimInstance->Montage_IsPlaying(FowardRollingAM))
 	{
 		return;
 	}
 
-	TargetLockOnComponent->Deactivate();
-	// 현재 바라보는 방향에서 왼쪽(시계반대)으로 90도 회전하여 바라보게 설정
-	const FRotator CurrentRot = GetActorRotation();
-	const FRotator LeftFacingRot = FRotator(0.0f, CurrentRot.Yaw - 90.0f, 0.0f);
-	SetActorRotation(LeftFacingRot);
+	const float StaminaCost = 20.0f;
+	if (StaminaComponent->ConsumeStamina(StaminaCost))
+	{
+		TargetLockOnComponent->Deactivate();
 
-	FOnMontageEnded EndDelegate;
-	EndDelegate.BindWeakLambda(this, [this, CurrentRot](UAnimMontage* Montage, bool bInterrupted)
-		{
-			UE_LOG(LogTemp, Log, TEXT("VDKnightCharacter::Left Rolling Ended"));
-			this->TargetLockOnComponent->Activate();
-			this->SetActorRotation(FRotator(0.0f, CurrentRot.Yaw, 0.0f));
-		});
+		const FRotator CurrentRot = GetActorRotation();
+		const FRotator LeftFacingRot = FRotator(0.0f, CurrentRot.Yaw - 90.0f, 0.0f);
+		SetActorRotation(LeftFacingRot);
 
-	CastingAnimInstance->Montage_Play(FowardRollingAM);
-	CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, FowardRollingAM);
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindWeakLambda(this, [this, CurrentRot](UAnimMontage* Montage, bool bInterrupted)
+			{
+				UE_LOG(LogTemp, Log, TEXT("VDKnightCharacter::Left Rolling Ended"));
+				this->TargetLockOnComponent->Activate();
+				this->SetActorRotation(FRotator(0.0f, CurrentRot.Yaw, 0.0f));
+			});
 
-	// 콤보 입력 초기화
-	bIsNextComboInputOn = false;
-	CurrentAttackComboCount = 0;
+		CastingAnimInstance->Montage_Play(FowardRollingAM);
+		CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, FowardRollingAM);
+
+		// 콤보 입력 초기화
+		bIsNextComboInputOn = false;
+		CurrentAttackComboCount = 0;
+	}
 }
 
 void AVDKnightPlayerCharacter::RollRight(const FInputActionValue& Value)
 {
-
 	Super::RollRight(Value);
 	UE_LOG(LogTemp, Warning, TEXT("AVDKnightPlayerCharacter::RollRight"));
 
@@ -231,60 +251,40 @@ void AVDKnightPlayerCharacter::RollRight(const FInputActionValue& Value)
 		return;
 	}
 
-	TargetLockOnComponent->Deactivate();
-	const FRotator CurrentRot = GetActorRotation();
-	const FRotator LeftFacingRot = FRotator(0.0f, CurrentRot.Yaw + 90.0f, 0.0f);
-	SetActorRotation(LeftFacingRot);
+	const float StaminaCost = 20.0f;
+	if(StaminaComponent->ConsumeStamina(StaminaCost))
+	{ 
+		TargetLockOnComponent->Deactivate();
+		const FRotator CurrentRot = GetActorRotation();
+		const FRotator LeftFacingRot = FRotator(0.0f, CurrentRot.Yaw + 90.0f, 0.0f);
+		SetActorRotation(LeftFacingRot);
 
-	FOnMontageEnded EndDelegate;
-	EndDelegate.BindWeakLambda(this, [this, CurrentRot](UAnimMontage* Montage, bool bInterrupted)
-		{
-			UE_LOG(LogTemp, Log, TEXT("VDKnightCharacter::Left Rolling Ended"));
-			this->SetActorRotation(FRotator(0.0f, CurrentRot.Yaw, 0.0f));
-			this->TargetLockOnComponent->Activate();
-		});
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindWeakLambda(this, [this, CurrentRot](UAnimMontage* Montage, bool bInterrupted)
+			{
+				UE_LOG(LogTemp, Log, TEXT("VDKnightCharacter::Left Rolling Ended"));
+				this->SetActorRotation(FRotator(0.0f, CurrentRot.Yaw, 0.0f));
+				this->TargetLockOnComponent->Activate();
+			});
 
-	CastingAnimInstance->Montage_Play(FowardRollingAM);
-	CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, FowardRollingAM);
+		CastingAnimInstance->Montage_Play(FowardRollingAM);
+		CastingAnimInstance->Montage_SetEndDelegate(EndDelegate, FowardRollingAM);
 
-	// 콤보 입력 초기화
-	bIsNextComboInputOn = false;
-	CurrentAttackComboCount = 0;
+		// 콤보 입력 초기화
+		bIsNextComboInputOn = false;
+		CurrentAttackComboCount = 0;
+	}
 }
 
 void AVDKnightPlayerCharacter::WeaponColiderHit(AActor* OtherActor, const FVector& ContactPoint)
 {
-	//Super::WeaponColiderHit(OtherActor, ContactPoint);
-	if (AVDEnemyCharacterBase* HitEnemy = Cast<AVDEnemyCharacterBase>(OtherActor))
-	{
-		FDamageEvent DamageEvent;
-		float TakeDamage = 0.0f;
-
-		//if (HitEnemy->IsBossEnemy())
-		{
-			AVDStagePlayerController* VDPC = Cast<AVDStagePlayerController>(Controller);
-			if (VDPC)
-			{
-				VDPC->ShowBossStateBar(HitEnemy);
-			}
-		}
-
-
-		//CastPlayerController->ShakePlayerHitCameraEffect(15);
-
-		if (UVDHitStopComponent* HitStopComp = HitEnemy->GetComponentByClass<UVDHitStopComponent>())
-		{
-			HitStopComp->SetHitStop(0.05f, 0.25f);
-			TakeDamage = HitEnemy->TakeDamage(BaseStatsComponent->GetAttackPower()+ 100 * CurrentAttackComboCount, DamageEvent, Controller, this);
-		}
-
-	}
+	Super::WeaponColiderHit(OtherActor, ContactPoint);
 }
 
 void AVDKnightPlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	
+
 	UGameInstance* GI = GetGameInstance();
 	if (GI == nullptr)
 	{
@@ -335,9 +335,6 @@ void AVDKnightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Player
 float AVDKnightPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Result = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-	//CastPlayerController->ShakePlayerHitCameraEffect(33);
-	// TODO :: 방향에 따른 피격애님몽타주 재생 및 맞은 방향에 따른 넉백 처리
 
 	return Result;
 }
