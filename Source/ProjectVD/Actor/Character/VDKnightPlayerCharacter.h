@@ -37,7 +37,7 @@ protected:
 	int32 MaxAttackComboCount = 3;
 
 	UPROPERTY()
-	bool bIsNextComboInputOn = false;
+	uint8 bIsNextComboInputOn : 1;
 
 	void DefaultAttack(const FInputActionValue& Value) override;
 	void DefaultAttackCombo();

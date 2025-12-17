@@ -32,22 +32,22 @@ protected:
 private:
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* GameOverText;
+	TObjectPtr<UTextBlock> GameOverText;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* RetryButton;
+	TObjectPtr<UButton> RetryButton;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* RetryButtonText;
+	TObjectPtr<UTextBlock> RetryButtonText;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* ExitButton;
+	TObjectPtr<UButton> ExitButton;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ExitButtonText;
+	TObjectPtr<UTextBlock> ExitButtonText;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-	UWidgetAnimation* ShowUpAnim;
+	TObjectPtr<UWidgetAnimation> ShowUpAnim;
 
 	UFUNCTION()
 	void OnRetryButtonClicked();

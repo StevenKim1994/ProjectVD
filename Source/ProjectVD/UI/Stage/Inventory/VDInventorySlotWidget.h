@@ -18,10 +18,10 @@ class PROJECTVD_API UVDInventorySlotWidget : public UUserWidget, public IUserObj
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	UImage* ItemIconImage;
+	TObjectPtr<UImage> ItemIconImage;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ItemQuantityText;
+	TObjectPtr<UTextBlock> ItemQuantityText;
 
 	UPROPERTY()
 	TWeakObjectPtr<UVDInventoryInfo> CurrentInventoryInfo;
