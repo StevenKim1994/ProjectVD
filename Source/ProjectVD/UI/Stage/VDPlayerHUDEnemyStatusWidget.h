@@ -37,12 +37,14 @@ private:
 		float ElapsedTime;
 		float DurationTime;
 		bool bIsPlaying;
+		double LastRealTime;
 		FTweenInfo()
 			: StartPercent(0.0f)
 			, TargetPercent(0.0f)
 			, ElapsedTime(0.0f)
 			, DurationTime(1.0f)
 			, bIsPlaying(false)
+			, LastRealTime(-1.0)
 		{}
 	};
 

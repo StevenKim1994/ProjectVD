@@ -25,11 +25,6 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateEnemyHealthBar(float CurrentHP , float
 	if (HealthBarTweenBar)
 	{
 		const float CurrentTweenPercent = HealthBarTweenBar->GetPercent();
-		UWorld* World = GetWorld();
-		if (!World)
-		{
-			return;
-		}
 
 		if (FMath::IsNearlyEqual(CurrentTweenPercent, NewPercent))
 		{
@@ -46,8 +41,9 @@ void UVDPlayerHUDEnemyStatusWidget::UpdateEnemyHealthBar(float CurrentHP , float
 		HPTween.TargetPercent = NewPercent;
 		HPTween.ElapsedTime = 0.0f;
 		HPTween.bIsPlaying = true;
+		HPTween.LastRealTime = -1.0; // DESC :: 실제 시간 추적 초기화
 
-		HPTickerHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UVDPlayerHUDEnemyStatusWidget::TickHealthBarTween), 0.01f);
+		HPTickerHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UVDPlayerHUDEnemyStatusWidget::TickHealthBarTween));
 	}
 
 }
@@ -59,19 +55,30 @@ bool UVDPlayerHUDEnemyStatusWidget::TickHealthBarTween(float DeltaTime)
 		return false;
 	}
 
-	HPTween.ElapsedTime += DeltaTime;
+	// DESC :: Global Time Dilation 영향을 받지 않도록 실제 경과 시간 사용
+	const double CurrentRealTime = FPlatformTime::Seconds();
+	if (HPTween.LastRealTime < 0.0)
+	{
+		HPTween.LastRealTime = CurrentRealTime;
+	}
 
-	float RawAlpha = HPTween.ElapsedTime / HPTween.DurationTime ;
+	const float UnscaledDeltaTime = static_cast<float>(CurrentRealTime - HPTween.LastRealTime);
+	HPTween.LastRealTime = CurrentRealTime;
+
+	HPTween.ElapsedTime += UnscaledDeltaTime;
+
+	float RawAlpha = HPTween.ElapsedTime / HPTween.DurationTime;
 	RawAlpha = FMath::Clamp(RawAlpha, 0.0f, 1.0f);
 
 	float EaseAlpha = RawAlpha;
 
-	const float NewValue = FMath::Lerp(HPTween.StartPercent , HPTween.TargetPercent, EaseAlpha);
+	const float NewValue = FMath::Lerp(HPTween.StartPercent, HPTween.TargetPercent, EaseAlpha);
 	HealthBarTweenBar->SetPercent(NewValue);
 
 	if (RawAlpha >= 1.0f)
 	{
 		HPTween.bIsPlaying = false;
+		HPTween.LastRealTime = -1.0;
 		HealthBarTweenBar->SetPercent(HPTween.TargetPercent);
 		return false;
 	}

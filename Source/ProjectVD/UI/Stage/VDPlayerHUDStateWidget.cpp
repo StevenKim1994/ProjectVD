@@ -45,6 +45,7 @@ void UVDPlayerHUDStateWidget::SetHPBarPercent(float CurrentHP, float MaxHP)
 	HPTween.StartPercent = CurrentTweenPercent;
 	HPTween.TargetPercent = NewPercent;
 	HPTween.ElapsedTime = 0.0f;
+	HPTween.LastRealTime = -1.0; // DESC :: 실제 시간 추적 초기화
 	HPTween.bIsPlaying = true;
 
 	HPBar->SetPercent(HPTween.TargetPercent);
@@ -54,7 +55,7 @@ void UVDPlayerHUDStateWidget::SetHPBarPercent(float CurrentHP, float MaxHP)
 		FTSTicker::GetCoreTicker().RemoveTicker(HPTickerHandle);
 	}
 	
-	HPTickerHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UVDPlayerHUDStateWidget::TickHPBarTween), 0.01f);
+	HPTickerHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UVDPlayerHUDStateWidget::TickHPBarTween));
 }
 
 void UVDPlayerHUDStateWidget::SetMPBarPercent(float CurrentMP, float MaxMP)
@@ -78,6 +79,7 @@ void UVDPlayerHUDStateWidget::SetMPBarPercent(float CurrentMP, float MaxMP)
 	MPTween.StartPercent = CurrentTweenPercent;
 	MPTween.TargetPercent = NewPercent;
 	MPTween.ElapsedTime = 0.0f;
+	MPTween.LastRealTime = -1.0; // DESC :: 실제 시간 추적 초기화
 	MPTween.bIsPlaying = true;
 	
 	MPBar->SetPercent(MPTween.TargetPercent);
@@ -89,7 +91,7 @@ void UVDPlayerHUDStateWidget::SetMPBarPercent(float CurrentMP, float MaxMP)
 	}
 	
 	// DESC :: 비동기 틱커 등록
-	MPTickerHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UVDPlayerHUDStateWidget::TickMPBarTween), 0.01f);
+	MPTickerHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UVDPlayerHUDStateWidget::TickMPBarTween));
 }
 
 bool UVDPlayerHUDStateWidget::TickHPBarTween(float DeltaTime)
@@ -99,16 +101,29 @@ bool UVDPlayerHUDStateWidget::TickHPBarTween(float DeltaTime)
 		return false; // DESC :: false 반환 시 자동으로 틱커 제거됨
 	}
 
-	HPTween.ElapsedTime += DeltaTime;
-	const float Alpha = FMath::Clamp(HPTween.ElapsedTime / HPTween.DurationTime, 0.0f, 1.0f);
-	const float NewPercent = FMath::Lerp(HPTween.StartPercent, HPTween.TargetPercent, Alpha);
+	const double CurrentRealTime = FPlatformTime::Seconds();
+	if (HPTween.LastRealTime < 0.0)
+	{
+		HPTween.LastRealTime = CurrentRealTime;
+	}
 
-	UE_LOG(LogTemp, Warning, TEXT("HP Bar Tween Update: NewPercent = %f"), NewPercent);
-	HPBarTween->SetPercent(NewPercent);
+	const float UnscaledDeltaTime = static_cast<float>(CurrentRealTime - HPTween.LastRealTime);
+	HPTween.LastRealTime = CurrentRealTime;
+	HPTween.ElapsedTime += UnscaledDeltaTime; // DESC :: Time Dilation에 영향 받지 않도록 처리
+
+	float RawAlpha = HPTween.ElapsedTime / HPTween.DurationTime;
+	RawAlpha = FMath::Clamp(RawAlpha, 0.0f, 1.0f);
+
+	float EasedAlpha = RawAlpha;
+
+	const float NewValue = FMath::Lerp(HPTween.StartPercent, HPTween.TargetPercent, EasedAlpha);
+	UE_LOG(LogTemp, Warning, TEXT("HP Bar Tween Update: NewPercent = %f"), NewValue);
+	HPBarTween->SetPercent(NewValue);
 	
-	if (Alpha >= 1.0f)
+	if (RawAlpha >= 1.0f)
 	{
 		HPTween.bIsPlaying = false;
+		HPTween.LastRealTime = -1.0;
 		HPBarTween->SetPercent(HPTween.TargetPercent);
 		return false; // DESC :: 완료 시 틱커 제거
 	}
@@ -123,15 +138,28 @@ bool UVDPlayerHUDStateWidget::TickMPBarTween(float DeltaTime)
 		return false; 
 	}
 	
-	MPTween.ElapsedTime += DeltaTime;
-	const float Alpha = FMath::Clamp(MPTween.ElapsedTime / MPTween.DurationTime, 0.0f, 1.0f);
-	const float NewPercent = FMath::Lerp(MPTween.StartPercent, MPTween.TargetPercent, Alpha);
+	const double CurrentRealTime = FPlatformTime::Seconds();
+	if (MPTween.LastRealTime < 0.0)
+	{
+		MPTween.LastRealTime = CurrentRealTime;
+	}
+
+	const float UnscaledDeltaTime = static_cast<float>(CurrentRealTime - MPTween.LastRealTime);
+	MPTween.LastRealTime = CurrentRealTime;
+	MPTween.ElapsedTime += UnscaledDeltaTime;
+
+	float RawAlpha = MPTween.ElapsedTime / MPTween.DurationTime;
+	RawAlpha = FMath::Clamp(RawAlpha, 0.0f, 1.0f);
+
+	float EasedAlpha = RawAlpha;
+	const float NewValue = FMath::Lerp(MPTween.StartPercent, MPTween.TargetPercent, EasedAlpha);
 	
-	MPBarTween->SetPercent(NewPercent);
+	MPBarTween->SetPercent(NewValue);
 	
-	if (Alpha >= 1.0f)
+	if (RawAlpha >= 1.0f)
 	{
 		MPTween.bIsPlaying = false;
+		MPTween.LastRealTime = -1.0;
 		MPBarTween->SetPercent(MPTween.TargetPercent);
 		return false; 
 	}
