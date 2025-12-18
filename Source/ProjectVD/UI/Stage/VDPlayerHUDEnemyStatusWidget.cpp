@@ -63,6 +63,7 @@ bool UVDPlayerHUDEnemyStatusWidget::TickHealthBarTween(float DeltaTime)
 	}
 
 	const float UnscaledDeltaTime = static_cast<float>(CurrentRealTime - HPTween.LastRealTime);
+
 	HPTween.LastRealTime = CurrentRealTime;
 
 	HPTween.ElapsedTime += UnscaledDeltaTime;
@@ -88,7 +89,7 @@ bool UVDPlayerHUDEnemyStatusWidget::TickHealthBarTween(float DeltaTime)
 
 void UVDPlayerHUDEnemyStatusWidget::SetTargetEnemy(AVDEnemyCharacterBase* Enemy)
 {
-	if (TargetEnemy == Enemy)
+	if (TargetEnemy.UEOpEquals(Enemy))
 	{
 		return;
 	}
