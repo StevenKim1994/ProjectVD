@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "AbilitySystemInterface.h"
 #include "VDCharacterBase.generated.h"
 
 class UAnimMontage;
@@ -19,10 +20,11 @@ class UVDInventoryInfo;
 class AVDItemPropActorBase;
 class AVDEquipItemVisualActor;
 class AVDStagePlayerController;
+class UAbilitySystemComponent;
 enum class EVDEquipType: uint8;
 
 UCLASS(Abstract)
-class PROJECTVD_API AVDCharacterBase : public ACharacter
+class PROJECTVD_API AVDCharacterBase : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -74,6 +76,9 @@ protected:
 
 	UPROPERTY()
 	TArray<TWeakObjectPtr<AVDItemPropActorBase>> OverlappingItemList;
+
+	UPROPERTY()
+	TObjectPtr< UAbilitySystemComponent> AbilitySystemComponent;
 
 	virtual void BeginPlay() override;
 
@@ -142,4 +147,7 @@ public:
 	virtual bool UseConsumeableItem(UVDInventoryInfo* Item); 
 	FORCEINLINE UVDCharacterStatsBaseComponent* GetBaseStatsComponent() const { return BaseStatsComponent; }
 	FORCEINLINE uint8 IsDead() const { return bIsDead; }
+
+	// IAbilitySystemInterface을(를) 통해 상속됨
+	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 };

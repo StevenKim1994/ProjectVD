@@ -114,6 +114,13 @@ void UVDPlayerHUDEnemyStatusWidget::SetTargetEnemy(AVDEnemyCharacterBase* Enemy)
 		return;
 	}
 
+	TArray<UObject*> Subobjects;
+	TargetEnemy->GetDefaultSubobjects(Subobjects);
+	for (UObject* UObject : Subobjects)
+	{
+
+	}
+
 	if (UVDEnemyStatsBaseComponent* NewStats = TargetEnemy->GetBaseStatsComponent())
 	{
 		NewStats->GetOnChangeHealth().RemoveAll(this);

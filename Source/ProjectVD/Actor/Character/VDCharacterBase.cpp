@@ -30,6 +30,8 @@
 #include "DataTable/VDItemInfoTable.h"
 #include "Engine/OverlapResult.h"
 
+#include "AbilitySystemComponent.h"
+
 AVDCharacterBase::AVDCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -55,6 +57,9 @@ AVDCharacterBase::AVDCharacterBase()
 	Movement->BrakingDecelerationWalking = 2000.0f;
 	Movement->bOrientRotationToMovement = true;
 	Movement->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(false); // DESC :: 싱글게임이므로 복제 비활성화
 
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
@@ -382,6 +387,11 @@ bool AVDCharacterBase::UseConsumeableItem(UVDInventoryInfo* ItemInfo)
 	// TODO :: 소비아이템 사용 효과 StatComponent에 반영
 
 	return true;
+}
+
+UAbilitySystemComponent* AVDCharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
 }
 
 void AVDCharacterBase::SetEquippedWeapon(AVDEquipItemVisualActor* NewWeapon)
