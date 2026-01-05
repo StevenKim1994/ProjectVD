@@ -32,6 +32,12 @@ UVDEnemyStatsBaseComponent* IVDEnemyInterface::GetStatsComp() const
 	return nullptr;
 }
 
+uint8 IVDEnemyInterface::IsPreAttacking() const
+{
+	// DESC :: 자식에서 오버라이드 해서 사용
+	return false;
+}
+
 void IVDEnemyInterface::SetBerserking(bool InMode , FOnBerserkingModeChanged EndCallback)
 {
 	// DESC :: 자식에서 오버라이드 해서 사용

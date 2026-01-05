@@ -115,6 +115,16 @@ void AVDEnemyCharacterBase::ChangeChaseMoveSpeed()
 	Movement->MaxWalkSpeed = BaseStatsComponent->GetMaxChaseMoveSpeed();
 }
 
+void IVDEnemyInterface::ShowPerfectDodgeNotify()
+{
+	UE_LOG(LogTemp, Warning, TEXT("IVDEnemyInterface::ShowPerfectDodgeNotify called"));
+}
+
+void IVDEnemyInterface::HidePerfectDodgeNotify()
+{
+	UE_LOG(LogTemp, Warning, TEXT("IVDEnemyInterface::HidePerfectDodgeNotify called"));
+}
+
 void AVDEnemyCharacterBase::UseSkill(uint8 SkillIndex, FOnSkillUsedEnded SkillUseEndedDelegate)
 {
 
