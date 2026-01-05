@@ -6,6 +6,7 @@
 #include "Actor/ActorComponent/VDBaseStaminaComponent.h"
 #include "Actor/ActorComponent/VDTargetLockOnComponent.h"
 #include "Actor/ActorComponent/VDHitStopComponent.h"
+#include "Actor/ActorComponent/VDEnemySensorComponent.h"
 #include "Actor/ItemProp/VDItemPropActorBase.h"
 #include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
@@ -85,6 +86,9 @@ AVDCharacterBase::AVDCharacterBase()
 	StaminaComponent->SetMaxStamina(100.0f);
 	StaminaComponent->SetCurrentStamina(100.0f);
 	StaminaComponent->SetStaminaRecovery(true);
+
+	EnemySensorComponent = CreateDefaultSubobject<UVDEnemySensorComponent>(TEXT("EnemySensorComponent"));
+	EnemySensorComponent->SetDetectionRadius(1000.0f);
 
 	Tags.Add(FName("Player"));
 }

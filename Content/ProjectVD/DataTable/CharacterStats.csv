@@ -1,2 +1,2 @@
-﻿Name,MaxHealth,MaxMana,AttackPower,AttackRange,AttackSpeed,MaxMovementSpeed,MinMovementAnalogSpeed
-1,100,100,10,70,1,400,25
+﻿Name,MaxHealth,MaxMana,AttackPower,AttackRange,AttackSpeed,MaxMovementSpeed,MinMovementAnalogSpeed,EnemyThreatRadius
+1,100,100,10,70,1,400,25,1000

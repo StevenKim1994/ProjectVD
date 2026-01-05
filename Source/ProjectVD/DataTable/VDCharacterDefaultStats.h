@@ -31,4 +31,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	float MinMovementAnalogSpeed = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float EnemyThreatRadius = 0.f;
 };

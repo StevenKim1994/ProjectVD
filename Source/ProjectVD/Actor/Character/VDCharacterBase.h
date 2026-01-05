@@ -15,6 +15,7 @@ class UVDCharacterStatsBaseComponent;
 class UVDBaseStaminaComponent;
 class UVDTargetLockOnComponent;
 class UVDInventoryComponent;
+class UVDEnemySensorComponent;
 class UVDAnimInstance;
 class UVDInventoryInfo;
 class AVDItemPropActorBase;
@@ -64,6 +65,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockOn", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UVDTargetLockOnComponent> TargetLockOnComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnemySensor", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UVDEnemySensorComponent> EnemySensorComponent;
 
 	UPROPERTY()
 	TObjectPtr<AVDEquipItemVisualActor> EquippedWeapon;

@@ -6,6 +6,7 @@
 #include "Actor/ActorComponent/VDBaseStaminaComponent.h"
 #include "Actor/ActorComponent/VDHitStopComponent.h"
 #include "Actor/ActorComponent/VDTargetLockOnComponent.h"
+#include "Actor/ActorComponent/VDEnemySensorComponent.h"
 #include "Actor/EquipItem/VDEquipItemVisualActor.h"
 #include "Actor/Enemy/VDEnemyCharacterBase.h"
 #include "Animation/VDAnimInstance.h"
@@ -305,6 +306,9 @@ void AVDKnightPlayerCharacter::PostInitializeComponents()
 				->SetMaxMana(DataTableInfo->MaxMana)
 				->SetHealth(DataTableInfo->MaxHealth)
 				->SetMana(DataTableInfo->MaxMana);
+
+			EnemySensorComponent
+				->SetDetectionRadius(DataTableInfo->EnemyThreatRadius);
 
 			UCharacterMovementComponent* Movement = GetCharacterMovement();
 			Movement->MaxWalkSpeed = DataTableInfo->MaxMovementSpeed;
