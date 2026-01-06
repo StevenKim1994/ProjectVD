@@ -358,5 +358,5 @@ void AVDEnemyCharacterBase::PostInitializeComponents()
 
 uint8 AVDEnemyCharacterBase::IsPreAttacking() const
 {
-	return false;
+	return bIsPreAttacking;
 }
