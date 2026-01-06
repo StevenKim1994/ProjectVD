@@ -89,6 +89,7 @@ AVDCharacterBase::AVDCharacterBase()
 
 	EnemySensorComponent = CreateDefaultSubobject<UVDEnemySensorComponent>(TEXT("EnemySensorComponent"));
 	EnemySensorComponent->SetDetectionRadius(1000.0f);
+	EnemySensorComponent->
 
 	Tags.Add(FName("Player"));
 }

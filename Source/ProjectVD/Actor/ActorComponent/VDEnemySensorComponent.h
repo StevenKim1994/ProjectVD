@@ -7,13 +7,15 @@
 #include "Interface/VDEnemyInterface.h"
 #include "VDEnemySensorComponent.generated.h"
 
+DECLARE_DELEGATE_TwoParams(FOnDetectPreAttacking, IVDEnemyInterface*/*DetectedEnemy*/, bool /*bIsPreAttacking*/);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTVD_API UVDEnemySensorComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	UVDEnemySensorComponent();
+	FOnDetectPreAttacking OnDetectPreAttacking;
 
 private:
 
@@ -27,6 +29,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	UVDEnemySensorComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	FORCEINLINE const TArray<TScriptInterface<IVDEnemyInterface>>& GetDetectedEnemies() const { return DetectedEnemies; }
