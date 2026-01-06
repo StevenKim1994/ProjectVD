@@ -20,6 +20,9 @@ class PROJECTVD_API IVDAttackable
 {
 	GENERATED_BODY()
 
+protected:
+	uint8 bIsPreAttacking : 1;
+
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
@@ -33,4 +36,11 @@ public:
 	/// <param name="SkillIndex">스킬인덱스</param>
 	/// <param name="SkillAttackCount">스킬애니메이션에서 해당 스킬이 몇번 공격하는지 구분자</param>
 	virtual void SkillAttackHit(int32 SkillIndex, int32 SkillAttackCount = 0);
+
+	/// <summary>
+	/// 스킬 사용시 공격준비 상태 설정 (퍼펙트 막기용)
+	/// </summary>
+	/// <param name="bIsOn"></param>
+	virtual void SetPreAttackingState(bool bIsOn);
+
 };

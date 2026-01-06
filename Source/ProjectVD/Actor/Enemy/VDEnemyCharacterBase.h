@@ -84,6 +84,7 @@ public:
 	virtual void ChangePatrolMoveSpeed() override;
 	virtual void ChangeChaseMoveSpeed() override;
 	virtual void UseSkill(uint8 SkillIndex, FOnSkillUsedEnded SkillUseEndedDelegate) override;
+	virtual uint8 IsPreAttacking() const override;
 
 	float GetPatrolRadius() const override;
 	float GetPatrolWaitTime() const override;
